@@ -56,8 +56,10 @@
 
             {% if page.text %}
             
-            <div style="white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.8;"
-                dir="auto">{{ page.text }}</div>
+            <!-- <div style="white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.8;"
+                dir="auto">{{ page.text }}</div> -->
+
+            <pre lang="km" style="white-space: pre-wrap; overflow-wrap: anywhere;">{{ page.text }}</pre>
 
             {% else %}
             <p>No text could be extracted from this page.</p>
