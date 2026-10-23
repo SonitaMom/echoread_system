@@ -30,3 +30,11 @@
     src: url('../fonts/Inter-Bold.woff2') format('woff2');
 }
 
+
+.extracted-text {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    line-height: 1.8;
+    font-size: 1.05rem;
+    text-align: start;
+}

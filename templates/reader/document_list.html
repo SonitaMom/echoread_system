@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,60 +9,65 @@
     <!-- Use your project's local Bootstrap CSS if available. -->
     <link rel="stylesheet" href="/static/css/bootstrap.min.css">
 </head>
-<body>
-<main class="container py-5">
-    <h1 class="mb-2">My Documents</h1>
-    <p>Upload a PDF to start reading.</p>
 
-    {% if messages %}
+<body>
+    <main class="container py-5">
+        <h1 class="mb-2">My Documents</h1>
+        <p>Upload a PDF to start reading.</p>
+
+        {% if messages %}
         <div aria-live="polite" aria-atomic="true">
             {% for message in messages %}
-                <p role="status">{{ message }}</p>
+            <p role="status">{{ message }}</p>
             {% endfor %}
         </div>
-    {% endif %}
+        {% endif %}
 
-    <section aria-labelledby="upload-heading" class="mb-5">
-        <h2 id="upload-heading">Import a PDF</h2>
+        <section aria-labelledby="upload-heading" class="mb-5">
+            <h2 id="upload-heading">Import a PDF</h2>
 
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
 
-            <div class="mb-3">
-                {{ form.pdf_file.label_tag }}
-                {{ form.pdf_file }}
+                <div class="mb-3">
+                    {{ form.pdf_file.label_tag }}
+                    {{ form.pdf_file }}
 
-                {% for error in form.pdf_file.errors %}
+                    {% for error in form.pdf_file.errors %}
                     <p class="text-danger" role="alert">
                         {{ error }}
                     </p>
-                {% endfor %}
-            </div>
+                    {% endfor %}
+                </div>
 
-            <button type="submit" class="btn btn-primary">
-                Upload PDF
-            </button>
-        </form>
-    </section>
+                <button type="submit" class="btn btn-primary">
+                    Upload PDF
+                </button>
+            </form>
+        </section>
 
-    <section aria-labelledby="documents-heading">
-        <h2 id="documents-heading">Uploaded documents</h2>
+        <section aria-labelledby="documents-heading">
+            <h2 id="documents-heading">Uploaded documents</h2>
 
-        {% if documents %}
+            {% if documents %}
             <ul class="list-group">
                 {% for document in documents %}
-                    <li class="list-group-item">
-                        <span>{{ document.title }}</span>
-                        <span class="text-muted">
-                            Uploaded {{ document.uploaded_at|date:"M d, Y" }}
-                        </span>
-                    </li>
+                <li class="list-group-item">
+                    <span>{{ document.title }}</span>
+                    <span class="text-muted">
+                        Uploaded {{ document.uploaded_at|date:"M d, Y" }}
+                    </span>
+                    <a href="{% url 'reader:document_detail' document.pk %}">
+                        Read {{ document.title }}
+                    </a>
+                </li>
                 {% endfor %}
             </ul>
-        {% else %}
+            {% else %}
             <p>You haven't uploaded any documents yet.</p>
-        {% endif %}
-    </section>
-</main>
+            {% endif %}
+        </section>
+    </main>
 </body>
+
 </html>

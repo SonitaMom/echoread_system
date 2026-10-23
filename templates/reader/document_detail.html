@@ -1,0 +1,71 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ document.title }} - EchoRead</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+</head>
+
+<body>
+    <main class="container py-4">
+        <p>
+            <a href="{% url 'reader:document_list' %}">
+                Back to My Documents
+            </a>
+        </p>
+
+        <h1>{{ document.title }}</h1>
+
+        <h2 class="h4 mt-4">Choose scan mode</h2>
+        <p>
+            Normal Scan extracts existing text first.
+            Hard Scan uses OCR on every page and may take longer.
+        </p>
+
+        <form method="post" class="mb-4">
+            {% csrf_token %}
+
+            <button type="submit" name="scan_mode" value="normal" class="btn btn-primary">
+                Normal Scan
+            </button>
+
+            <button type="submit" name="scan_mode" value="hard" class="btn btn-outline-primary">
+                Hard Scan (OCR)
+            </button>
+        </form>
+
+        {% if error %}
+        <p role="alert" class="text-danger">{{ error }}</p>
+        {% endif %}
+
+        {% if pages %}
+        <h2 class="h4">Extracted text</h2>
+
+        {% for page in pages %}
+        <section class="border rounded p-3 mb-3" aria-labelledby="page-heading-{{ page.page_number }}">
+            <h3 class="h5" id="page-heading-{{ page.page_number }}">
+                Page {{ page.page_number }}
+            </h3>
+
+            {% if page.used_ocr %}
+            <p class="text-muted">Text extracted using OCR.</p>
+            {% endif %}
+
+            {% if page.text %}
+            
+            <div style="white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.8;"
+                dir="auto">{{ page.text }}</div>
+
+            {% else %}
+            <p>No text could be extracted from this page.</p>
+            {% endif %}
+        </section>
+        {% endfor %}
+        {% endif %}
+    </main>
+</body>
+
+</html>
