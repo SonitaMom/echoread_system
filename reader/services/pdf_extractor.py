@@ -1,4 +1,3 @@
-
 import logging
 import os
 from io import BytesIO
@@ -8,8 +7,6 @@ import fitz
 import pytesseract
 from PIL import Image
 
-import os
-from pathlib import Path
 
 TESSERACT_DIR = Path(
     r"C:\Program Files\Tesseract-OCR"
@@ -287,28 +284,121 @@ def _order_blocks(page, blocks):
 
 
 
-def _ocr_page(page):
-    """Render one PDF page and recognize text using Tesseract."""
 
+def _get_ocr_blocks(page):
+    """
+    Extract OCR text with positional information.
+
+    Convert OCR pixel coordinates back to PDF page coordinates
+    so the existing column-ordering logic can be reused.
+    """
     for language in ("eng", "khm"):
         traineddata = TESSDATA_DIR / f"{language}.traineddata"
-
         if not traineddata.is_file():
             raise FileNotFoundError(
                 f"Missing Tesseract language data: {traineddata}"
             )
 
+    scale = 2.5
     pixmap = page.get_pixmap(
-        matrix=fitz.Matrix(2.5, 2.5),
+        matrix=fitz.Matrix(scale, scale),
         alpha=False,
     )
 
     with Image.open(BytesIO(pixmap.tobytes("png"))) as image:
-        return pytesseract.image_to_string(
+        data = pytesseract.image_to_data(
             image,
             lang=OCR_LANGUAGES,
             config="--psm 3",
-        ).strip()
+            output_type=pytesseract.Output.DICT,
+        )
+
+    # Group recognized words by their OCR paragraph.
+    paragraphs = {}
+
+    for i, word in enumerate(data["text"]):
+        word = word.strip()
+        if not word:
+            continue
+
+        block_num = data["block_num"][i]
+        par_num = data["par_num"][i]
+        line_num = data["line_num"][i]
+        word_num = data["word_num"][i]
+
+        key = (block_num, par_num)
+
+        left = data["left"][i]
+        top = data["top"][i]
+        right = left + data["width"][i]
+        bottom = top + data["height"][i]
+
+        if key not in paragraphs:
+            paragraphs[key] = {
+                "words": [],
+                "x0": left,
+                "y0": top,
+                "x1": right,
+                "y1": bottom,
+            }
+
+        paragraph = paragraphs[key]
+        paragraph["words"].append(
+            (line_num, word_num, word)
+        )
+
+        paragraph["x0"] = min(paragraph["x0"], left)
+        paragraph["y0"] = min(paragraph["y0"], top)
+        paragraph["x1"] = max(paragraph["x1"], right)
+        paragraph["y1"] = max(paragraph["y1"], bottom)
+
+    blocks = []
+
+    for index, paragraph in enumerate(paragraphs.values()):
+        words = sorted(
+            paragraph["words"],
+            key=lambda item: (item[0], item[1]),
+        )
+
+        lines = []
+        current_line = []
+        previous_line_num = None
+
+        for line_num, word_num, word in words:
+            if (
+                previous_line_num is not None
+                and line_num != previous_line_num
+            ):
+                lines.append(" ".join(current_line))
+                current_line = []
+
+            current_line.append(word)
+            previous_line_num = line_num
+
+        if current_line:
+            lines.append(" ".join(current_line))
+
+        blocks.append({
+            "id": index,
+            "x0": paragraph["x0"] / scale,
+            "y0": paragraph["y0"] / scale,
+            "x1": paragraph["x1"] / scale,
+            "y1": paragraph["y1"] / scale,
+            "text": "\n".join(lines),
+        })
+
+    return blocks
+
+
+def _ocr_page(page):
+    """OCR a page and apply the shared reading-order logic."""
+    blocks = _get_ocr_blocks(page)
+
+    if not blocks:
+        return ""
+
+    return _order_blocks(page, blocks).strip()
+
 
 
 def extract_pdf_pages(pdf_bytes, mode="normal"):
@@ -350,5 +440,4 @@ def extract_pdf_pages(pdf_bytes, mode="normal"):
                 "text": text,
                 "used_ocr": used_ocr,
             })
-
     return results
