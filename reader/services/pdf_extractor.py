@@ -441,3 +441,5 @@ def extract_pdf_pages(pdf_bytes, mode="normal"):
                 "used_ocr": used_ocr,
             })
     return results
+
+

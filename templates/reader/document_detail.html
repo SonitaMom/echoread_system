@@ -43,7 +43,10 @@
 
         {% if pages %}
         <h2 class="h4">Extracted text</h2>
-
+        <a href="{% url 'reader:edit_reader' document.pk %}?discard_preview=1"
+            class="btn btn-outline-primary">
+            Edit extracted text
+        </a>
 
 
         <section class="page-navigation" aria-label="Page navigation">

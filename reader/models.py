@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.db import models
 
-
 class ReaderDocument(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -45,6 +44,41 @@ class Bookmark(models.Model):
 
     def __str__(self):
         return self.label or f"Page {self.page_number}"
+
+
+
+
+
+
+class ReaderPage(models.Model):
+    document = models.ForeignKey(
+        "reader.ReaderDocument",
+        on_delete=models.CASCADE,
+        related_name="pages",
+    )
+    page_number = models.PositiveIntegerField()
+    original_text = models.TextField(blank=True, default="")
+    text = models.TextField(blank=True, default="")
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["page_number"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["document", "page_number"],
+                name="unique_reader_page_per_document",
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.document.title} - Page {self.page_number}"
+
+
+
+
+
+
+
 
 
 
