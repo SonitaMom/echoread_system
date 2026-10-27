@@ -18,6 +18,9 @@ from django.db import transaction
 from .forms import NoteForm
 from .services.ai import generate_note
 from .services.ai_scan import scan_pdf
+from .services.ai_helper import clean_editor_pages
+
+
 
 
 logger = logging.getLogger(__name__)
@@ -869,6 +872,79 @@ def ask_ai_ajax(request, pk):
             "text": note.text,
         },
     })
+
+
+
+
+
+
+
+
+
+
+
+@login_required
+@require_POST
+def ai_helper_ajax(request, pk):
+    document = get_object_or_404(
+        ReaderDocument,
+        pk=pk,
+        user=request.user,
+    )
+
+    if len(request.body) > 500_000:
+        return JsonResponse(
+            {"error": "The editor content is too large."},
+            status=413,
+        )
+
+    try:
+        payload = json.loads(request.body)
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return JsonResponse(
+            {"error": "Invalid JSON request."},
+            status=400,
+        )
+
+    pages = payload.get("pages") if isinstance(payload, dict) else None
+
+    if not isinstance(pages, list) or not pages:
+        return JsonResponse(
+            {"error": "No editor pages were provided."},
+            status=400,
+        )
+
+    try:
+        cleaned_pages = clean_editor_pages(pages)
+    except ValueError as exc:
+        return JsonResponse(
+            {"error": str(exc)},
+            status=400,
+        )
+    except Exception:
+        logger.exception(
+            "AI Helper failed for document %s",
+            document.pk,
+        )
+        return JsonResponse(
+            {
+                "error": (
+                    "AI Helper couldn't process the pages. "
+                    "Your editor text has not been saved."
+                )
+            },
+            status=502,
+        )
+
+    return JsonResponse({"pages": cleaned_pages})
+
+
+
+
+
+
+
+
 
 
 

@@ -1,4 +1,3 @@
-
 import json
 import os
 import time
@@ -64,11 +63,9 @@ RULES:
 - Fix excessive spaces and awkward spacing.
 - Preserve intentional paragraphs, lists, and readable table structure.
 - Do not rewrite, paraphrase, summarize, translate, or expand text.
-- Do not correct spelling, grammar, punctuation, or suspected OCR errors.
+- Do not correct spelling, grammar, or punctuation.
 - Preserve every word, including dialect words and idioms.
-- Preserve Khmer characters, diacritics, subscript characters,
-  digits, punctuation, and the original language.
-- If a word or character looks incorrect or uncertain, leave it unchanged.
+- Preserve diacritics, subscript characters, digits, punctuation, and the original language.
 - Do not add explanations or Markdown code fences.
 - Return cleaned text for every page, even if a page needs no changes.
 - Never move text from one page to another.
