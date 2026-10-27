@@ -17,7 +17,7 @@ from django.urls import reverse
 from django.db import transaction
 from .forms import NoteForm
 from .services.ai import generate_note
-
+from .services.ai_scan import scan_pdf
 
 
 logger = logging.getLogger(__name__)
@@ -31,7 +31,6 @@ def document_list(request):
             document = form.save(commit=False)
             document.user = request.user
 
-            # Use the uploaded filename as the document title.
             document.title = document.pdf_file.name.split("/")[-1]
             document.save()
 
@@ -141,11 +140,6 @@ def document_detail(request, pk):
             ),
         },
     )
-
-
-
-
-
 
 
 
@@ -262,9 +256,6 @@ def text_to_speech(request, pk):
 
 
 
-
-
-
 @login_required
 @require_POST
 def create_bookmark(request, pk):
@@ -374,7 +365,7 @@ def edit_reader(request, pk):
     if request.method == "POST":
         selected_mode = request.POST.get("scan_mode")
 
-        if selected_mode not in ("normal", "hard"):
+        if selected_mode not in ("normal", "hard", "ai"):
             error = "Invalid scan mode."
         else:
             try:
@@ -384,34 +375,98 @@ def edit_reader(request, pk):
                 finally:
                     document.pdf_file.close()
 
-                # Extract text only; do not save to ReaderPage.
-                preview_pages = extract_pdf_pages(
-                    pdf_bytes,
-                    mode=selected_mode,
-                )
+                if selected_mode == "ai":
+                    preview_pages = scan_pdf(pdf_bytes)
 
-                # Hold temporary results in the user's session.
+                    with fitz.open(
+                        stream=pdf_bytes,
+                        filetype="pdf",
+                    ) as pdf:
+                        expected_pages = len(pdf)
+
+                    if not isinstance(preview_pages, list):
+                        raise ValueError(
+                            "Invalid AI Scan response."
+                        )
+
+                    page_map = {}
+
+                    for item in preview_pages:
+                        if not isinstance(item, dict):
+                            raise ValueError(
+                                "Invalid page result."
+                            )
+
+                        page_number = item.get("page_number")
+                        page_text = item.get("text")
+
+                        if (
+                            not isinstance(page_number, int)
+                            or isinstance(page_number, bool)
+                            or not 1 <= page_number <= expected_pages
+                            or page_number in page_map
+                            or not isinstance(page_text, str)
+                        ):
+                            raise ValueError(
+                                "Invalid AI Scan page data."
+                            )
+
+                        page_map[page_number] = page_text
+
+                    expected_numbers = set(
+                        range(1, expected_pages + 1)
+                    )
+
+                    if set(page_map) != expected_numbers:
+                        raise ValueError(
+                            "AI Scan missed one or more pages."
+                        )
+
+                    preview_pages = [
+                        {
+                            "page_number": number,
+                            "text": page_map[number],
+                        }
+                        for number in range(
+                            1, expected_pages + 1
+                        )
+                    ]
+
+                else:
+                    preview_pages = extract_pdf_pages(
+                        pdf_bytes,
+                        mode=selected_mode,
+                    )
+
+                # Preview only; do not modify ReaderPage.
                 request.session[session_key] = preview_pages
 
-                return redirect("reader:edit_reader", pk=document.pk)
+                return redirect(
+                    "reader:edit_reader",
+                    pk=document.pk,
+                )
 
             except Exception:
                 logger.exception(
-                    "PDF scan failed: document_id=%s, mode=%s",
+                    "PDF processing failed: document_id=%s, mode=%s",
                     document.pk,
                     selected_mode,
                 )
-                error = "We couldn't process this PDF. Please try again."
+                error = (
+                    "We couldn't process this PDF. "
+                    "Please try again or check the server logs."
+                )
 
     preview_pages = request.session.get(session_key)
 
-    # A preview should only exist during the current editing visit.
-    if request.method == "GET" and request.GET.get("discard_preview") == "1":
+    if (
+        request.method == "GET"
+        and request.GET.get("discard_preview") == "1"
+    ):
         request.session.pop(session_key, None)
         preview_pages = None
 
     if preview_pages is not None:
-        # Show the newly scanned text, even though it is not saved yet.
         pages = [
             {
                 "page_number": item["page_number"],
@@ -421,7 +476,9 @@ def edit_reader(request, pk):
         ]
     else:
         pages = list(
-            ReaderPage.objects.filter(document=document)
+            ReaderPage.objects.filter(
+                document=document
+            )
         )
 
     return render(
@@ -434,13 +491,6 @@ def edit_reader(request, pk):
             "has_unsaved_scan": preview_pages is not None,
         },
     )
-
-
-
-
-
-
-
 
 
 

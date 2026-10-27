@@ -30,10 +30,6 @@ urlpatterns = [
         name="delete_bookmark",
     ),
 
-    # path("new-reader/", views.new_reader, name="new_reader"),
-    # path("edit-reader/<str:pdf_name>/", views.edit_reader, name="edit_reader"),
-    # path("<str:pdf_name>/", views.reader, name="reader"),
-
     path(
         "<int:pk>/edit/",
         views.edit_reader,

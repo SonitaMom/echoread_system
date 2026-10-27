@@ -14,7 +14,7 @@ def get_gemini_keys():
     return [
         value.strip()
         for index in range(1, 5)
-        if (value := os.getenv(f"GEMINI_API_KEY_{index}", "").strip())
+        if (value := os.getenv(f"GEMINI_NOTE_API_KEY_{index}", "").strip())
     ]
 
 
