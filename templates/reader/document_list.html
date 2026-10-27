@@ -14,6 +14,9 @@
     <main class="container py-5">
         <h1 class="mb-2">My Documents</h1>
         <p>Upload a PDF to start reading.</p>
+        <a href="{% url 'reader:new_reader' %}" class="btn btn-primary">
+            New Reader
+        </a>
 
         {% if messages %}
         <div aria-live="polite" aria-atomic="true">
@@ -23,7 +26,7 @@
         </div>
         {% endif %}
 
-        <section aria-labelledby="upload-heading" class="mb-5">
+        <!-- <section aria-labelledby="upload-heading" class="mb-5">
             <h2 id="upload-heading">Import a PDF</h2>
 
             <form method="post" enctype="multipart/form-data">
@@ -44,7 +47,7 @@
                     Upload PDF
                 </button>
             </form>
-        </section>
+        </section> -->
 
         <section aria-labelledby="documents-heading">
             <h2 id="documents-heading">Uploaded documents</h2>
