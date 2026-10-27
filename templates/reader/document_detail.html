@@ -170,6 +170,35 @@
 
 
 
+        <section class="mt-5" id="ai-section">
+            <h2>Ask AI about this PDF</h2>
+            <p>Answers are automatically saved to your Notes.</p>
+
+            <form id="ai-form" data-ai-url="{% url 'reader:ask_ai_ajax' document.pk %}">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label for="ai-question" class="form-label">
+                        Your question
+                    </label>
+                    <textarea id="ai-question" name="question" class="form-control" rows="3" maxlength="2000" required
+                        placeholder="Ask a question about this document..."></textarea>
+                </div>
+
+                <button type="submit" id="ask-ai-btn" class="btn btn-primary">
+                    Ask AI
+                </button>
+
+                <p id="ai-status" role="status" aria-live="polite" class="mt-2"></p>
+            </form>
+        </section>
+
+
+
+
+
+
+
 
 
         <section class="mt-5" id="notes-section">
@@ -495,6 +524,112 @@
 
 
         })();
+
+
+
+        (() => {
+            const form = document.getElementById("ai-form");
+            const list = document.getElementById("notes-list");
+            const status = document.getElementById("ai-status");
+            const questionInput = document.getElementById("ai-question");
+            const askButton = document.getElementById("ask-ai-btn");
+
+            if (!form || !list || !status || !questionInput || !askButton) {
+                return;
+            }
+
+            function addNoteToList(note) {
+                let article = list.querySelector(
+                    `[data-note-id="${note.id}"]`
+                );
+
+                if (!article) {
+                    article = document.createElement("article");
+                    article.className = "card mb-3";
+                    article.dataset.noteId = note.id;
+
+                    article.innerHTML = `
+                <div class="card-body">
+                    <h3 class="h5 note-title"></h3>
+                    <div class="note-text"
+                         style="white-space: pre-wrap;"></div>
+
+                    <button type="button"
+                            class="btn btn-outline-primary btn-sm mt-3 edit-note-btn">
+                        Edit
+                    </button>
+
+                    <button type="button"
+                            class="btn btn-outline-danger btn-sm mt-3 delete-note-btn">
+                        Delete
+                    </button>
+                </div>
+            `;
+
+                    const deleteUrlTemplate =
+                        "{% url 'reader:delete_note_ajax' document.pk 999999 %}";
+
+                    article.querySelector(".delete-note-btn").dataset.deleteUrl =
+                        deleteUrlTemplate.replace("999999", note.id);
+
+                    list.prepend(article);
+                }
+
+                article.querySelector(".note-title").textContent = note.title;
+                article.querySelector(".note-text").textContent = note.text;
+
+                const emptyMessage = document.getElementById("no-notes-message");
+                if (emptyMessage) emptyMessage.remove();
+            }
+
+            form.addEventListener("submit", async event => {
+                event.preventDefault();
+
+                askButton.disabled = true;
+                status.textContent = "Generating your answer...";
+
+                try {
+                    const response = await fetch(form.dataset.aiUrl, {
+                        method: "POST",
+                        body: new FormData(form),
+                        headers: {
+                            "X-Requested-With": "XMLHttpRequest",
+                            "Accept": "application/json"
+                        },
+                        mode: "same-origin"
+                    });
+
+                    const contentType =
+                        response.headers.get("content-type") || "";
+
+                    if (!contentType.includes("application/json")) {
+                        throw new Error(
+                            "The server returned an unexpected response. Check the Network tab."
+                        );
+                    }
+
+                    const data = await response.json();
+
+                    if (!response.ok || !data.success) {
+                        throw new Error(data.error || "Unable to generate an answer.");
+                    }
+
+                    addNoteToList(data.note);
+
+                    questionInput.value = "";
+                    status.textContent = "Answer generated and saved to Notes.";
+                } catch (error) {
+                    status.textContent = error.message;
+                } finally {
+                    askButton.disabled = false;
+                }
+            });
+        })();
+
+
+
+
+
 
 
     </script>

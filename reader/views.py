@@ -16,6 +16,8 @@ import fitz
 from django.urls import reverse
 from django.db import transaction
 from .forms import NoteForm
+from .services.ai import generate_note
+
 
 
 logger = logging.getLogger(__name__)
@@ -735,6 +737,88 @@ def delete_note_ajax(request, pk, note_id):
 
 
 
+
+@login_required
+@require_POST
+def ask_ai_ajax(request, pk):
+    document = get_object_or_404(
+        ReaderDocument,
+        pk=pk,
+        user=request.user,
+    )
+
+    question = request.POST.get("question", "").strip()
+
+    if not question:
+        return JsonResponse(
+            {"success": False, "error": "Please enter a question."},
+            status=400,
+        )
+
+    if len(question) > 2000:
+        return JsonResponse(
+            {"success": False, "error": "Your question is too long."},
+            status=400,
+        )
+
+    pages = ReaderPage.objects.filter(document=document).order_by(
+        "page_number"
+    )
+
+    document_text = "\n\n".join(
+        f"Page {page.page_number}:\n{page.text}"
+        for page in pages
+        if page.text.strip()
+    )
+
+    if not document_text:
+        return JsonResponse(
+            {
+                "success": False,
+                "error": (
+                    "This PDF has no saved extracted text yet. "
+                    "Scan the PDF before asking AI."
+                ),
+            },
+            status=400,
+        )
+
+    # Keep requests bounded to avoid sending an excessively large context.
+    document_text = document_text[:60000]
+
+    try:
+        result = generate_note(question, document_text)
+    except RuntimeError as exc:
+        return JsonResponse(
+            {"success": False, "error": str(exc)},
+            status=503,
+        )
+    except Exception:
+        logger.exception("Unexpected AI error for document %s", document.pk)
+        return JsonResponse(
+            {
+                "success": False,
+                "error": "AI couldn't answer right now. Please try again.",
+            },
+            status=502,
+        )
+
+    # Save automatically only after generation succeeds.
+    note = Note.objects.create(
+        document=document,
+        user=request.user,
+        title=result["title"][:200],
+        text=result["text"],
+    )
+
+    return JsonResponse({
+        "success": True,
+        "note": {
+            "id": note.pk,
+            "title": note.title,
+            "text": note.text,
+        },
+    })
 
 
 

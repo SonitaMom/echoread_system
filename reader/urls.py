@@ -75,6 +75,13 @@ urlpatterns = [
 
 
 
+    path(
+        "<int:pk>/ai/ask/",
+        views.ask_ai_ajax,
+        name="ask_ai_ajax",
+    ),
+
+
 ]
 
 
