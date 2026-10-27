@@ -1,30 +1,20 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-
 from .forms import PDFUploadForm
-from .models import ReaderDocument
-
+from .models import ReaderDocument, ReaderPage, Bookmark
 from .services.pdf_extractor import extract_pdf_pages
-
 import logging
-
 import asyncio
 import json
-
 import edge_tts
-
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_POST
-
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import ensure_csrf_cookie
-
-from .models import ReaderDocument, Bookmark
-
 import fitz
-
-
+from django.urls import reverse
+from django.db import transaction
 
 
 logger = logging.getLogger(__name__)
@@ -66,6 +56,7 @@ def document_list(request):
 
 
 
+
 @login_required
 def document_detail(request, pk):
     document = get_object_or_404(
@@ -74,7 +65,6 @@ def document_detail(request, pk):
         user=request.user,
     )
 
-    pages = []
     error = None
     selected_mode = "normal"
 
@@ -82,7 +72,6 @@ def document_detail(request, pk):
         selected_mode = request.POST.get("scan_mode", "normal")
 
         if selected_mode not in ("normal", "hard"):
-            selected_mode = "normal"
             error = "Please select a valid scan mode."
         else:
             try:
@@ -92,10 +81,28 @@ def document_detail(request, pk):
                 finally:
                     document.pdf_file.close()
 
-                pages = extract_pdf_pages(
+                extracted_pages = extract_pdf_pages(
                     pdf_bytes,
                     mode=selected_mode,
                 )
+
+                for extracted in extracted_pages:
+                    ReaderPage.objects.update_or_create(
+                        document=document,
+                        page_number=extracted["page_number"],
+                        defaults={
+                            "original_text": extracted["text"],
+                            "text": extracted["text"],
+                        },
+                    )
+
+                    if not created:
+                        # Update the extracted original, but preserve
+                        # the user's previously edited text.
+                        saved_page.original_text = extracted["text"]
+                        saved_page.save(
+                            update_fields=["original_text"]
+                        )
 
             except Exception:
                 logger.exception(
@@ -109,6 +116,10 @@ def document_detail(request, pk):
                     "Please try again or contact support."
                 )
 
+    pages = ReaderPage.objects.filter(
+        document=document,
+    )
+
     return render(
         request,
         "reader/document_detail.html",
@@ -117,14 +128,15 @@ def document_detail(request, pk):
             "pages": pages,
             "error": error,
             "selected_mode": selected_mode,
-
             "bookmarks": Bookmark.objects.filter(
                 document=document,
                 user=request.user,
             ),
-            
         },
     )
+
+
+
 
 
 
@@ -334,5 +346,198 @@ def delete_bookmark(request, pk, bookmark_id):
     bookmark.delete()
 
     return JsonResponse({"success": True})
+
+
+
+
+
+
+
+@login_required
+def edit_reader(request, pk):
+    document = get_object_or_404(
+        ReaderDocument,
+        pk=pk,
+        user=request.user,
+    )
+
+    error = None
+    session_key = f"reader_scan_preview_{document.pk}"
+
+    if request.method == "POST":
+        selected_mode = request.POST.get("scan_mode")
+
+        if selected_mode not in ("normal", "hard"):
+            error = "Invalid scan mode."
+        else:
+            try:
+                document.pdf_file.open("rb")
+                try:
+                    pdf_bytes = document.pdf_file.read()
+                finally:
+                    document.pdf_file.close()
+
+                # Extract text only; do not save to ReaderPage.
+                preview_pages = extract_pdf_pages(
+                    pdf_bytes,
+                    mode=selected_mode,
+                )
+
+                # Hold temporary results in the user's session.
+                request.session[session_key] = preview_pages
+
+                return redirect("reader:edit_reader", pk=document.pk)
+
+            except Exception:
+                logger.exception(
+                    "PDF scan failed: document_id=%s, mode=%s",
+                    document.pk,
+                    selected_mode,
+                )
+                error = "We couldn't process this PDF. Please try again."
+
+    preview_pages = request.session.get(session_key)
+
+    # A preview should only exist during the current editing visit.
+    if request.method == "GET" and request.GET.get("discard_preview") == "1":
+        request.session.pop(session_key, None)
+        preview_pages = None
+
+    if preview_pages is not None:
+        # Show the newly scanned text, even though it is not saved yet.
+        pages = [
+            {
+                "page_number": item["page_number"],
+                "text": item["text"],
+            }
+            for item in preview_pages
+        ]
+    else:
+        pages = list(
+            ReaderPage.objects.filter(document=document)
+        )
+
+    return render(
+        request,
+        "reader/edit_reader.html",
+        {
+            "document": document,
+            "pages": pages,
+            "error": error,
+            "has_unsaved_scan": preview_pages is not None,
+        },
+    )
+
+
+
+
+
+
+
+
+
+
+@login_required
+def save_reader(request, pk):
+    if request.method != "POST":
+        return redirect("reader:edit_reader", pk=pk)
+
+    document = get_object_or_404(
+        ReaderDocument,
+        pk=pk,
+        user=request.user,
+    )
+
+    session_key = f"reader_scan_preview_{document.pk}"
+    preview_pages = request.session.get(session_key)
+
+    try:
+        with transaction.atomic():
+            if preview_pages is not None:
+                # Save the scanned text as the new original and edited text.
+                for item in preview_pages:
+                    ReaderPage.objects.update_or_create(
+                        document=document,
+                        page_number=item["page_number"],
+                        defaults={
+                            "original_text": item["text"],
+                            "text": request.POST.get(
+                                f"page_{item['page_number']}",
+                                item["text"],
+                            ),
+                        },
+                    )
+            else:
+                # Save edits to existing pages.
+                pages = ReaderPage.objects.filter(
+                    document=document
+                )
+
+                for page in pages:
+                    field_name = f"page_{page.page_number}"
+
+                    if field_name not in request.POST:
+                        raise ValueError(
+                            f"Missing text for page {page.page_number}."
+                        )
+
+                    page.text = request.POST[field_name]
+                    page.save(update_fields=["text", "updated_at"])
+
+    except Exception:
+        logger.exception(
+            "Failed to save reader: document_id=%s",
+            document.pk,
+        )
+        messages.error(request, "Could not save your changes.")
+        return redirect("reader:edit_reader", pk=document.pk)
+
+    # Clear the temporary scan only after a successful database save.
+    if preview_pages is not None:
+        del request.session[session_key]
+        request.session.modified = True
+
+    messages.success(request, "Your changes have been saved.")
+    return redirect("/home/")
+
+
+
+
+
+
+
+
+@login_required
+def new_reader(request):
+    if request.method == "POST":
+        pdf_file = request.FILES.get("pdf_file")
+
+        if not pdf_file:
+            messages.error(request, "Please select a PDF file.")
+            return render(request, "reader/new_reader.html")
+
+        if not pdf_file.name.lower().endswith(".pdf"):
+            messages.error(request, "Please upload a PDF file.")
+            return render(request, "reader/new_reader.html")
+
+        document = ReaderDocument.objects.create(
+            user=request.user,
+            title=pdf_file.name,
+            pdf_file=pdf_file,
+        )
+
+        return redirect(
+            "reader:document_detail",
+            pk=document.pk,
+        )
+
+    return render(request, "reader/new_reader.html")
+
+
+
+
+
+
+
 
 
