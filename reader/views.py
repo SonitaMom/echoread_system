@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import PDFUploadForm
-from .models import ReaderDocument, ReaderPage, Bookmark
+from .models import ReaderDocument, ReaderPage, Bookmark, Note
 from .services.pdf_extractor import extract_pdf_pages
 import logging
 import asyncio
@@ -15,6 +15,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 import fitz
 from django.urls import reverse
 from django.db import transaction
+from .forms import NoteForm
 
 
 logger = logging.getLogger(__name__)
@@ -129,6 +130,10 @@ def document_detail(request, pk):
             "error": error,
             "selected_mode": selected_mode,
             "bookmarks": Bookmark.objects.filter(
+                document=document,
+                user=request.user,
+            ),
+            "notes": Note.objects.filter(
                 document=document,
                 user=request.user,
             ),
@@ -532,6 +537,208 @@ def new_reader(request):
         )
 
     return render(request, "reader/new_reader.html")
+
+
+
+
+
+
+
+
+@login_required
+def create_note(request, pk):
+    document = get_object_or_404(
+        ReaderDocument,
+        pk=pk,
+        user=request.user,
+    )
+
+    if request.method == "POST":
+        form = NoteForm(request.POST)
+
+        if form.is_valid():
+            note = form.save(commit=False)
+            note.document = document
+            note.user = request.user
+            note.save()
+
+            messages.success(request, "Note created successfully.")
+            return redirect(
+                "reader:document_detail",
+                pk=document.pk,
+            )
+    else:
+        form = NoteForm()
+
+    return render(
+        request,
+        "reader/note_form.html",
+        {
+            "document": document,
+            "form": form,
+            "page_title": "Create Note",
+        },
+    )
+
+
+@login_required
+def edit_note(request, pk, note_id):
+    document = get_object_or_404(
+        ReaderDocument,
+        pk=pk,
+        user=request.user,
+    )
+    note = get_object_or_404(
+        Note,
+        pk=note_id,
+        document=document,
+        user=request.user,
+    )
+
+    if request.method == "POST":
+        form = NoteForm(request.POST, instance=note)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Note updated successfully.")
+            return redirect(
+                "reader:document_detail",
+                pk=document.pk,
+            )
+    else:
+        form = NoteForm(instance=note)
+
+    return render(
+        request,
+        "reader/note_form.html",
+        {
+            "document": document,
+            "form": form,
+            "page_title": "Edit Note",
+        },
+    )
+
+
+@login_required
+def delete_note(request, pk, note_id):
+    document = get_object_or_404(
+        ReaderDocument,
+        pk=pk,
+        user=request.user,
+    )
+    note = get_object_or_404(
+        Note,
+        pk=note_id,
+        document=document,
+        user=request.user,
+    )
+
+    if request.method == "POST":
+        note.delete()
+        messages.success(request, "Note deleted.")
+        return redirect(
+            "reader:document_detail",
+            pk=document.pk,
+        )
+
+    return redirect(
+        "reader:document_detail",
+        pk=document.pk,
+    )
+
+
+
+
+
+
+
+
+
+@login_required
+@require_POST
+def save_note_ajax(request, pk):
+    document = get_object_or_404(
+        ReaderDocument,
+        pk=pk,
+        user=request.user,
+    )
+
+    note_id = request.POST.get("note_id")
+    title = request.POST.get("title", "").strip()
+    text = request.POST.get("text", "").strip()
+
+    if not title or not text:
+        return JsonResponse(
+            {
+                "success": False,
+                "error": "Title and text are required.",
+            },
+            status=400,
+        )
+
+    if note_id:
+        note = get_object_or_404(
+            Note,
+            pk=note_id,
+            document=document,
+            user=request.user,
+        )
+        note.title = title
+        note.text = text
+        note.save(update_fields=["title", "text", "updated_at"])
+    else:
+        note = Note.objects.create(
+            document=document,
+            user=request.user,
+            title=title,
+            text=text,
+        )
+
+    return JsonResponse({
+        "success": True,
+        "note": {
+            "id": note.pk,
+            "title": note.title,
+            "text": note.text,
+        },
+    })
+
+
+
+
+
+@login_required
+@require_POST
+def delete_note_ajax(request, pk, note_id):
+    document = get_object_or_404(
+        ReaderDocument,
+        pk=pk,
+        user=request.user,
+    )
+
+    note = get_object_or_404(
+        Note,
+        pk=note_id,
+        document=document,
+        user=request.user,
+    )
+
+    note.delete()
+
+    return JsonResponse({"success": True})
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

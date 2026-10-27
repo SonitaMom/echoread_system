@@ -43,8 +43,7 @@
 
         {% if pages %}
         <h2 class="h4">Extracted text</h2>
-        <a href="{% url 'reader:edit_reader' document.pk %}?discard_preview=1"
-            class="btn btn-outline-primary">
+        <a href="{% url 'reader:edit_reader' document.pk %}?discard_preview=1" class="btn btn-outline-primary">
             Edit extracted text
         </a>
 
@@ -124,11 +123,8 @@
 
 
 
-        <section 
-            class="bookmark-controls" 
-            aria-labelledby="bookmark-heading" 
-            data-create-url="{% url 'reader:create_bookmark' document.pk %}"
-        >
+        <section class="bookmark-controls" aria-labelledby="bookmark-heading"
+            data-create-url="{% url 'reader:create_bookmark' document.pk %}">
 
             <h2 id="bookmark-heading">Bookmarks</h2>
 
@@ -170,6 +166,84 @@
             {% endfor %}
         </div>
 
+
+
+
+
+
+
+        <section class="mt-5" id="notes-section">
+            <h2>Notes</h2>
+
+            <button type="button" id="add-note-btn" class="btn btn-primary mb-3">
+                Add Note
+            </button>
+
+            <div id="note-editor" class="card mb-4" hidden>
+                <div class="card-body">
+                    <h3 class="h5" id="note-form-heading">Create Note</h3>
+
+                    <form id="note-form" data-save-url="{% url 'reader:save_note_ajax' document.pk %}">
+                        {% csrf_token %}
+
+                        <input type="hidden" id="note-id" name="note_id">
+
+                        <div class="mb-3">
+                            <label for="note-title" class="form-label">Title</label>
+                            <input id="note-title" name="title" class="form-control" maxlength="200" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="note-text" class="form-label">Text</label>
+                            <textarea id="note-text" name="text" class="form-control" rows="6" required></textarea>
+                        </div>
+
+                        <p id="note-status" role="status" aria-live="polite"></p>
+
+                        <button type="submit" class="btn btn-primary">
+                            Save Note
+                        </button>
+                        <button type="button" id="cancel-note-btn" class="btn btn-outline-secondary">
+                            Cancel
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="notes-list">
+                {% for note in notes %}
+                <article class="card mb-3" data-note-id="{{ note.pk }}">
+                    <div class="card-body">
+                        <h3 class="h5 note-title">{{ note.title }}</h3>
+                        <div class="note-text" style="white-space: pre-wrap;">{{ note.text }}</div>
+
+                        <button type="button" class="btn btn-outline-primary btn-sm mt-3 edit-note-btn">
+                            Edit
+                        </button>
+                        <button type="button" class="btn btn-outline-danger btn-sm mt-3 delete-note-btn"
+                            data-delete-url="{% url 'reader:delete_note_ajax' document.pk note.pk %}">
+                            Delete
+                        </button>
+                    </div>
+                </article>
+                {% empty %}
+                <p id="no-notes-message">No notes yet.</p>
+                {% endfor %}
+            </div>
+        </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
         <div class="mt-4">
             <button type="button" id="download-mp3">
                 Download full document as MP3
@@ -185,11 +259,8 @@
 
 
 
-        <section
-            class="delete-bookmark-controls"
-            aria-labelledby="delete-bookmark-heading"
-            data-delete-url-template="{% url 'reader:delete_bookmark' document.pk 0 %}"
-        >
+        <section class="delete-bookmark-controls" aria-labelledby="delete-bookmark-heading"
+            data-delete-url-template="{% url 'reader:delete_bookmark' document.pk 0 %}">
 
             <h2 id="delete-bookmark-heading">Manage bookmarks</h2>
 
@@ -225,9 +296,208 @@
     </main>
 
     <script src="{% static 'js/reader/reader.js' %}" defer></script>
+    <script>
+
+        (() => {
+            const form = document.getElementById("note-form");
+            const editor = document.getElementById("note-editor");
+            const list = document.getElementById("notes-list");
+            const status = document.getElementById("note-status");
+
+            if (!form || !editor || !list || !status) return;
+
+            const titleInput = document.getElementById("note-title");
+            const textInput = document.getElementById("note-text");
+            const idInput = document.getElementById("note-id");
+
+            function resetForm() {
+                form.reset();
+                idInput.value = "";
+                document.getElementById("note-form-heading").textContent =
+                    "Create Note";
+                status.textContent = "";
+            }
+
+            document.getElementById("add-note-btn").addEventListener("click", () => {
+                resetForm();
+                editor.hidden = false;
+                titleInput.focus();
+            });
+
+            document.getElementById("cancel-note-btn").addEventListener("click", () => {
+                editor.hidden = true;
+                resetForm();
+            });
+
+            list.addEventListener("click", event => {
+                const button = event.target.closest(".edit-note-btn");
+                if (!button) return;
+
+                const article = button.closest("[data-note-id]");
+                idInput.value = article.dataset.noteId;
+                titleInput.value = article.querySelector(".note-title").textContent;
+                textInput.value = article.querySelector(".note-text").textContent;
+
+                document.getElementById("note-form-heading").textContent =
+                    "Edit Note";
+
+                editor.hidden = false;
+                titleInput.focus();
+            });
+
+            form.addEventListener("submit", async event => {
+                event.preventDefault();
+
+                const saveButton = form.querySelector('[type="submit"]');
+                saveButton.disabled = true;
+                status.textContent = "Saving note...";
+
+                try {
+                    const response = await fetch(form.dataset.saveUrl, {
+                        method: "POST",
+                        body: new FormData(form),
+                        headers: {
+                            "X-Requested-With": "XMLHttpRequest"
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok || !data.success) {
+                        throw new Error(data.error || "Unable to save note.");
+                    }
+
+                    const note = data.note;
+                    let article = list.querySelector(
+                        `[data-note-id="${note.id}"]`
+                    );
+
+                    if (!article) {
+                        article = document.createElement("article");
+                        article.className = "card mb-3";
+                        article.dataset.noteId = note.id;
+                        article.innerHTML = `
+                            <div class="card-body">
+                                <h3 class="h5 note-title"></h3>
+
+                                <div class="note-text"
+                                    style="white-space: pre-wrap;"></div>
+
+                                <button type="button"
+                                        class="btn btn-outline-primary btn-sm mt-3 edit-note-btn">
+                                    Edit
+                                </button>
+
+                                <button type="button"
+                                        class="btn btn-outline-danger btn-sm mt-3 delete-note-btn">
+                                    Delete
+                                </button>
+                            </div>
+                        `;
+
+                        const deleteUrlTemplate =
+                            "{% url 'reader:delete_note_ajax' document.pk 999999 %}";
+
+                        article.querySelector(".delete-note-btn").dataset.deleteUrl =
+                            deleteUrlTemplate.replace("999999", note.id);
+                        list.prepend(article);
+                    }
+
+                    article.querySelector(".note-title").textContent = note.title;
+                    article.querySelector(".note-text").textContent = note.text;
+
+                    const emptyMessage = document.getElementById("no-notes-message");
+                    if (emptyMessage) emptyMessage.remove();
+
+                    editor.hidden = true;
+                    resetForm();
+                } catch (error) {
+                    status.textContent = error.message;
+                } finally {
+                    saveButton.disabled = false;
+                }
+            });
+
+
+
+
+            list.addEventListener("click", async event => {
+                const button = event.target.closest(".delete-note-btn");
+                if (!button) return;
+
+                if (!confirm("Delete this note?")) return;
+
+                button.disabled = true;
+
+                try {
+                    const csrfToken = form.querySelector(
+                        '[name="csrfmiddlewaretoken"]'
+                    ).value;
+
+                    const response = await fetch(button.dataset.deleteUrl, {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": csrfToken,
+                            "X-Requested-With": "XMLHttpRequest",
+                            "Accept": "application/json"
+                        },
+                        mode: "same-origin"
+                    });
+
+                    const contentType =
+                        response.headers.get("content-type") || "";
+
+                    if (!response.ok) {
+                        throw new Error(`Delete failed (HTTP ${response.status}).`);
+                    }
+
+                    if (!contentType.includes("application/json")) {
+                        const responseText = await response.text();
+
+                        console.error("Unexpected delete response:", {
+                            status: response.status,
+                            url: response.url,
+                            response: responseText.slice(0, 500)
+                        });
+
+                        throw new Error(
+                            "The server returned HTML instead of JSON. Check the Network tab."
+                        );
+                    }
+
+                    const data = await response.json();
+
+                    if (!data.success) {
+                        throw new Error("The server could not delete the note.");
+                    }
+
+                    // Remove the card only after the server confirms deletion.
+                    button.closest("[data-note-id]").remove();
+
+                    if (!list.querySelector("[data-note-id]")) {
+                        const emptyMessage = document.createElement("p");
+                        emptyMessage.id = "no-notes-message";
+                        emptyMessage.textContent = "No notes yet.";
+                        list.appendChild(emptyMessage);
+                    }
+
+                } catch (error) {
+                    console.error("Delete note error:", error);
+                    alert(error.message);
+                } finally {
+                    // The button may have been removed after a successful request.
+                    if (button.isConnected) {
+                        button.disabled = false;
+                    }
+                }
+            });
+
+
+
+        })();
+
+
+    </script>
 </body>
 
 </html>
-
-
-

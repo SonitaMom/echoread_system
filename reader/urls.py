@@ -49,6 +49,30 @@ urlpatterns = [
     path("new/", views.new_reader, name="new_reader"),
 
 
+    path(
+        "<int:pk>/notes/new/",
+        views.create_note,
+        name="create_note",
+    ),
+    path(
+        "<int:pk>/notes/<int:note_id>/edit/",
+        views.edit_note,
+        name="edit_note",
+    ),
+
+
+    path(
+        "<int:pk>/notes/save/",
+        views.save_note_ajax,
+        name="save_note_ajax",
+    ),
+
+    path(
+        "<int:pk>/notes/<int:note_id>/delete/",
+        views.delete_note_ajax,
+        name="delete_note_ajax",
+    ),
+
 
 
 ]

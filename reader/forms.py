@@ -1,5 +1,6 @@
 from django import forms
-from .models import ReaderDocument
+from .models import ReaderDocument, Note
+
 
 
 class PDFUploadForm(forms.ModelForm):
@@ -43,3 +44,32 @@ class PDFUploadForm(forms.ModelForm):
 
         pdf_file.seek(0)
         return pdf_file
+
+
+
+
+
+
+class NoteForm(forms.ModelForm):
+    class Meta:
+        model = Note
+        fields = ["title", "text"]
+        widgets = {
+            "title": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Note title",
+                }
+            ),
+            "text": forms.Textarea(
+                attrs={
+                    "class": "form-control",
+                    "rows": 10,
+                    "placeholder": "Write your note here...",
+                }
+            ),
+        }
+
+
+
+
