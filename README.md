@@ -53,7 +53,23 @@ is installed elsewhere, set `TESSERACT_CMD` to the full path to `tesseract.exe`
 and `TESSDATA_DIR` to the folder containing the traineddata files before
 starting the app.
 
-### 4. Start EchoRead
+### 4. Create .env
+
+```text
+GEMINI_MODEL=gemini-3.8-flash
+# AI Notes
+GEMINI_NOTE_API_KEY_1=your_existing_notes_key_1
+GEMINI_NOTE_API_KEY_2=your_existing_notes_key_2
+GEMINI_NOTE_API_KEY_3=your_existing_notes_key_3
+GEMINI_NOTE_API_KEY_4=your_existing_notes_key_4
+# AI Scan 
+GEMINI_SCAN_API_KEY_1=your_existing_notes_key_1
+GEMINI_SCAN_API_KEY_2=your_existing_notes_key_2
+GEMINI_SCAN_API_KEY_3=your_scan_key_3
+GEMINI_SCAN_API_KEY_4=your_scan_key_4
+```
+
+### 5. Start EchoRead
 
 With the virtual environment active, run the database migrations and start the
 local Django server:

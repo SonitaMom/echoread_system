@@ -43,9 +43,7 @@
 
         {% if pages %}
         <h2 class="h4">Extracted text</h2>
-        <a href="{% url 'reader:edit_reader' document.pk %}?discard_preview=1" class="btn btn-outline-primary">
-            Edit extracted text
-        </a>
+
 
 
         <section class="page-navigation" aria-label="Page navigation">
@@ -284,7 +282,9 @@
         <audio id="reader-audio" data-tts-url="{% url 'reader:text_to_speech' document.pk %}"
             data-document-name="{{ document.title }}" preload="auto"></audio>
 
-
+        <a href="{% url 'reader:edit_reader' document.pk %}?discard_preview=1" class="btn btn-outline-primary">
+            Edit extracted text
+        </a>
 
 
 

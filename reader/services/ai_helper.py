@@ -1,7 +1,7 @@
 import json
 import os
 import time
-
+from google.genai import types
 from google import genai
 
 
@@ -56,15 +56,19 @@ You are EchoRead's conservative text-formatting assistant.
 The input is JSON containing multiple PDF pages.
 Clean formatting across all pages in ONE operation.
 
+YOUR PRIMARY GOAL:
+Improve formatting and readability while preserving the exact original content.
+
 RULES:
 - Return every page exactly once, with its original page_number.
 - Preserve the original page order and page boundaries.
 - Fix accidental line breaks within sentences and paragraphs.
 - Fix excessive spaces and awkward spacing.
 - Preserve intentional paragraphs, lists, and readable table structure.
+- Help correct spelling (Ex: សត្វឆ្មាា -> សត្វឆ្មា)
 - Do not rewrite, paraphrase, summarize, translate, or expand text.
-- Do not correct spelling, grammar, or punctuation.
-- Preserve every word, including dialect words and idioms.
+- Do not correct grammar, or punctuation.
+- Preserve dialect words and idioms.
 - Preserve diacritics, subscript characters, digits, punctuation, and the original language.
 - Do not add explanations or Markdown code fences.
 - Return cleaned text for every page, even if a page needs no changes.

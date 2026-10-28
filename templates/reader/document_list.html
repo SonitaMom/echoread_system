@@ -26,29 +26,6 @@
         </div>
         {% endif %}
 
-        <!-- <section aria-labelledby="upload-heading" class="mb-5">
-            <h2 id="upload-heading">Import a PDF</h2>
-
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-
-                <div class="mb-3">
-                    {{ form.pdf_file.label_tag }}
-                    {{ form.pdf_file }}
-
-                    {% for error in form.pdf_file.errors %}
-                    <p class="text-danger" role="alert">
-                        {{ error }}
-                    </p>
-                    {% endfor %}
-                </div>
-
-                <button type="submit" class="btn btn-primary">
-                    Upload PDF
-                </button>
-            </form>
-        </section> -->
-
         <section aria-labelledby="documents-heading">
             <h2 id="documents-heading">Uploaded documents</h2>
 
@@ -62,6 +39,9 @@
                     </span>
                     <a href="{% url 'reader:document_detail' document.pk %}">
                         Read {{ document.title }}
+                    </a>
+                            <a href="{% url 'reader:edit_reader' document.pk %}?discard_preview=1" class="btn btn-outline-primary">
+                        Edit extracted text
                     </a>
                 </li>
                 {% endfor %}

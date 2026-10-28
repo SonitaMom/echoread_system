@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import PDFUploadForm
+from .forms import PDFUploadForm, NoteForm
 from .models import ReaderDocument, ReaderPage, Bookmark, Note
 from .services.pdf_extractor import extract_pdf_pages
 import logging
@@ -9,17 +9,14 @@ import asyncio
 import json
 import edge_tts
 from django.http import HttpResponse, JsonResponse
-from django.views.decorators.http import require_POST
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_POST, require_http_methods
 from django.views.decorators.csrf import ensure_csrf_cookie
 import fitz
 from django.urls import reverse
 from django.db import transaction
-from .forms import NoteForm
 from .services.ai import generate_note
 from .services.ai_scan import scan_pdf
 from .services.ai_helper import clean_editor_pages
-
 
 
 
@@ -558,7 +555,7 @@ def save_reader(request, pk):
         request.session.modified = True
 
     messages.success(request, "Your changes have been saved.")
-    return redirect("/home/")
+    return redirect("reader:document_detail", pk=document.pk)
 
 
 
@@ -940,8 +937,18 @@ def ai_helper_ajax(request, pk):
 
 
 
+@login_required
+@require_POST
+def delete_reader(request, pk):
+    document = get_object_or_404(
+        ReaderDocument,
+        pk=pk,
+        user=request.user,
+    )
 
+    document.delete()
 
+    return redirect("/reader/")
 
 
 
