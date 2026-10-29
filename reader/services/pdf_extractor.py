@@ -41,7 +41,7 @@ logger = logging.getLogger(__name__)
 
 
 OCR_LANGUAGES = os.getenv("ECHOREAD_OCR_LANGUAGES", "eng+khm")
-MIN_NATIVE_TEXT_LENGTH = 30
+MIN_NATIVE_TEXT_LENGTH = 150
 
 
 def _get_text_blocks(page):

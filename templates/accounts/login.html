@@ -16,10 +16,12 @@
         <div class="col-md-6">
             <h1 class="h3 mb-4">Login</h1>
 
-            {% if form.errors %}
-                <div class="alert alert-danger" role="alert">
-                    Invalid username or password.
-                </div>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
             {% endif %}
 
             <form method="post">

@@ -599,22 +599,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const responseText = await response.text();
 
-let data;
-try {
-    data = JSON.parse(responseText);
-} catch {
-    console.error("Delete URL:", deleteUrl);
-    console.error("HTTP status:", response.status);
-    console.error("Server response:", responseText);
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                } catch {
+                    console.error("Delete URL:", deleteUrl);
+                    console.error("HTTP status:", response.status);
+                    console.error("Server response:", responseText);
 
-    throw new Error(
-        `Server returned HTML instead of JSON (HTTP ${response.status}). Check the browser console.`
-    );
-}
+                    throw new Error(
+                        `Server returned HTML instead of JSON (HTTP ${response.status}). Check the browser console.`
+                    );
+                }
 
-if (!response.ok) {
-    throw new Error(data.error || "Could not delete bookmark.");
-}
+                if (!response.ok) {
+                    throw new Error(data.error || "Could not delete bookmark.");
+                }
 
 
 
@@ -656,9 +656,9 @@ if (!response.ok) {
                 }
 
                 const deleteUrl = deleteBookmarkUrlTemplate.replace(
-    "/0/delete/",
-    `/${bookmarkId}/delete/`
-);
+                    "/0/delete/",
+                    `/${bookmarkId}/delete/`
+                );
 
                 // const deleteUrl = deleteBookmarkUrlTemplate.replace(
                 //     /0\/?$/,

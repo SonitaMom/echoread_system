@@ -31,6 +31,38 @@
 }
 
 
+@font-face {
+    font-family: 'Kantumruy Pro';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../fonts/KantumruyPro-Regular.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Kantumruy Pro';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url('../fonts/KantumruyPro-Medium.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Kantumruy Pro';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url('../fonts/KantumruyPro-SemiBold.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Kantumruy Pro';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url('../fonts/KantumruyPro-Bold.woff2') format('woff2');
+}
+
 .extracted-text {
     white-space: pre-wrap;
     overflow-wrap: anywhere;
@@ -38,3 +70,8 @@
     font-size: 1.05rem;
     text-align: start;
 }
+
+html {
+    font-family: 'Inter', 'Kantumruy Pro', sans-serif;
+}
+
