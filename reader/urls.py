@@ -4,6 +4,7 @@ from . import views
 app_name = "reader"
 
 urlpatterns = [
+    path('', views.base_page, name='base'),
     path("", views.document_list, name="document_list"),
 
     path(
