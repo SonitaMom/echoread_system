@@ -1,21 +1,26 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import PDFUploadForm
-from .models import ReaderDocument, ReaderPage, Bookmark
+from .forms import PDFUploadForm, NoteForm
+from .models import ReaderDocument, ReaderPage, Bookmark, Note
 from .services.pdf_extractor import extract_pdf_pages
 import logging
 import asyncio
 import json
 import edge_tts
 from django.http import HttpResponse, JsonResponse
-from django.views.decorators.http import require_POST
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_POST, require_http_methods
 from django.views.decorators.csrf import ensure_csrf_cookie
 import fitz
 from django.urls import reverse
 from django.db import transaction
+
 from django.shortcuts import render
+
+from .services.ai import generate_note
+from .services.ai_scan import scan_pdf
+from .services.ai_helper import clean_editor_pages
+
 
 
 logger = logging.getLogger(__name__)
@@ -32,7 +37,6 @@ def document_list(request):
             document = form.save(commit=False)
             document.user = request.user
 
-            # Use the uploaded filename as the document title.
             document.title = document.pdf_file.name.split("/")[-1]
             document.save()
 
@@ -136,13 +140,12 @@ def document_detail(request, pk):
                 document=document,
                 user=request.user,
             ),
+            "notes": Note.objects.filter(
+                document=document,
+                user=request.user,
+            ),
         },
     )
-
-
-
-
-
 
 
 
@@ -259,9 +262,6 @@ def text_to_speech(request, pk):
 
 
 
-
-
-
 @login_required
 @require_POST
 def create_bookmark(request, pk):
@@ -371,7 +371,7 @@ def edit_reader(request, pk):
     if request.method == "POST":
         selected_mode = request.POST.get("scan_mode")
 
-        if selected_mode not in ("normal", "hard"):
+        if selected_mode not in ("normal", "hard", "ai"):
             error = "Invalid scan mode."
         else:
             try:
@@ -381,34 +381,98 @@ def edit_reader(request, pk):
                 finally:
                     document.pdf_file.close()
 
-                # Extract text only; do not save to ReaderPage.
-                preview_pages = extract_pdf_pages(
-                    pdf_bytes,
-                    mode=selected_mode,
-                )
+                if selected_mode == "ai":
+                    preview_pages = scan_pdf(pdf_bytes)
 
-                # Hold temporary results in the user's session.
+                    with fitz.open(
+                        stream=pdf_bytes,
+                        filetype="pdf",
+                    ) as pdf:
+                        expected_pages = len(pdf)
+
+                    if not isinstance(preview_pages, list):
+                        raise ValueError(
+                            "Invalid AI Scan response."
+                        )
+
+                    page_map = {}
+
+                    for item in preview_pages:
+                        if not isinstance(item, dict):
+                            raise ValueError(
+                                "Invalid page result."
+                            )
+
+                        page_number = item.get("page_number")
+                        page_text = item.get("text")
+
+                        if (
+                            not isinstance(page_number, int)
+                            or isinstance(page_number, bool)
+                            or not 1 <= page_number <= expected_pages
+                            or page_number in page_map
+                            or not isinstance(page_text, str)
+                        ):
+                            raise ValueError(
+                                "Invalid AI Scan page data."
+                            )
+
+                        page_map[page_number] = page_text
+
+                    expected_numbers = set(
+                        range(1, expected_pages + 1)
+                    )
+
+                    if set(page_map) != expected_numbers:
+                        raise ValueError(
+                            "AI Scan missed one or more pages."
+                        )
+
+                    preview_pages = [
+                        {
+                            "page_number": number,
+                            "text": page_map[number],
+                        }
+                        for number in range(
+                            1, expected_pages + 1
+                        )
+                    ]
+
+                else:
+                    preview_pages = extract_pdf_pages(
+                        pdf_bytes,
+                        mode=selected_mode,
+                    )
+
+                # Preview only; do not modify ReaderPage.
                 request.session[session_key] = preview_pages
 
-                return redirect("reader:edit_reader", pk=document.pk)
+                return redirect(
+                    "reader:edit_reader",
+                    pk=document.pk,
+                )
 
             except Exception:
                 logger.exception(
-                    "PDF scan failed: document_id=%s, mode=%s",
+                    "PDF processing failed: document_id=%s, mode=%s",
                     document.pk,
                     selected_mode,
                 )
-                error = "We couldn't process this PDF. Please try again."
+                error = (
+                    "We couldn't process this PDF. "
+                    "Please try again or check the server logs."
+                )
 
     preview_pages = request.session.get(session_key)
 
-    # A preview should only exist during the current editing visit.
-    if request.method == "GET" and request.GET.get("discard_preview") == "1":
+    if (
+        request.method == "GET"
+        and request.GET.get("discard_preview") == "1"
+    ):
         request.session.pop(session_key, None)
         preview_pages = None
 
     if preview_pages is not None:
-        # Show the newly scanned text, even though it is not saved yet.
         pages = [
             {
                 "page_number": item["page_number"],
@@ -418,7 +482,9 @@ def edit_reader(request, pk):
         ]
     else:
         pages = list(
-            ReaderPage.objects.filter(document=document)
+            ReaderPage.objects.filter(
+                document=document
+            )
         )
 
     return render(
@@ -431,13 +497,6 @@ def edit_reader(request, pk):
             "has_unsaved_scan": preview_pages is not None,
         },
     )
-
-
-
-
-
-
-
 
 
 
@@ -502,7 +561,7 @@ def save_reader(request, pk):
         request.session.modified = True
 
     messages.success(request, "Your changes have been saved.")
-    return redirect("/home/")
+    return redirect("reader:document_detail", pk=document.pk)
 
 
 
@@ -536,6 +595,373 @@ def new_reader(request):
         )
 
     return render(request, "reader/new_reader.html")
+
+
+
+
+
+
+
+
+@login_required
+def create_note(request, pk):
+    document = get_object_or_404(
+        ReaderDocument,
+        pk=pk,
+        user=request.user,
+    )
+
+    if request.method == "POST":
+        form = NoteForm(request.POST)
+
+        if form.is_valid():
+            note = form.save(commit=False)
+            note.document = document
+            note.user = request.user
+            note.save()
+
+            messages.success(request, "Note created successfully.")
+            return redirect(
+                "reader:document_detail",
+                pk=document.pk,
+            )
+    else:
+        form = NoteForm()
+
+    return render(
+        request,
+        "reader/note_form.html",
+        {
+            "document": document,
+            "form": form,
+            "page_title": "Create Note",
+        },
+    )
+
+
+@login_required
+def edit_note(request, pk, note_id):
+    document = get_object_or_404(
+        ReaderDocument,
+        pk=pk,
+        user=request.user,
+    )
+    note = get_object_or_404(
+        Note,
+        pk=note_id,
+        document=document,
+        user=request.user,
+    )
+
+    if request.method == "POST":
+        form = NoteForm(request.POST, instance=note)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Note updated successfully.")
+            return redirect(
+                "reader:document_detail",
+                pk=document.pk,
+            )
+    else:
+        form = NoteForm(instance=note)
+
+    return render(
+        request,
+        "reader/note_form.html",
+        {
+            "document": document,
+            "form": form,
+            "page_title": "Edit Note",
+        },
+    )
+
+
+@login_required
+def delete_note(request, pk, note_id):
+    document = get_object_or_404(
+        ReaderDocument,
+        pk=pk,
+        user=request.user,
+    )
+    note = get_object_or_404(
+        Note,
+        pk=note_id,
+        document=document,
+        user=request.user,
+    )
+
+    if request.method == "POST":
+        note.delete()
+        messages.success(request, "Note deleted.")
+        return redirect(
+            "reader:document_detail",
+            pk=document.pk,
+        )
+
+    return redirect(
+        "reader:document_detail",
+        pk=document.pk,
+    )
+
+
+
+
+
+
+
+
+
+@login_required
+@require_POST
+def save_note_ajax(request, pk):
+    document = get_object_or_404(
+        ReaderDocument,
+        pk=pk,
+        user=request.user,
+    )
+
+    note_id = request.POST.get("note_id")
+    title = request.POST.get("title", "").strip()
+    text = request.POST.get("text", "").strip()
+
+    if not title or not text:
+        return JsonResponse(
+            {
+                "success": False,
+                "error": "Title and text are required.",
+            },
+            status=400,
+        )
+
+    if note_id:
+        note = get_object_or_404(
+            Note,
+            pk=note_id,
+            document=document,
+            user=request.user,
+        )
+        note.title = title
+        note.text = text
+        note.save(update_fields=["title", "text", "updated_at"])
+    else:
+        note = Note.objects.create(
+            document=document,
+            user=request.user,
+            title=title,
+            text=text,
+        )
+
+    return JsonResponse({
+        "success": True,
+        "note": {
+            "id": note.pk,
+            "title": note.title,
+            "text": note.text,
+        },
+    })
+
+
+
+
+
+@login_required
+@require_POST
+def delete_note_ajax(request, pk, note_id):
+    document = get_object_or_404(
+        ReaderDocument,
+        pk=pk,
+        user=request.user,
+    )
+
+    note = get_object_or_404(
+        Note,
+        pk=note_id,
+        document=document,
+        user=request.user,
+    )
+
+    note.delete()
+
+    return JsonResponse({"success": True})
+
+
+
+
+
+
+
+
+
+
+@login_required
+@require_POST
+def ask_ai_ajax(request, pk):
+    document = get_object_or_404(
+        ReaderDocument,
+        pk=pk,
+        user=request.user,
+    )
+
+    question = request.POST.get("question", "").strip()
+
+    if not question:
+        return JsonResponse(
+            {"success": False, "error": "Please enter a question."},
+            status=400,
+        )
+
+    if len(question) > 2000:
+        return JsonResponse(
+            {"success": False, "error": "Your question is too long."},
+            status=400,
+        )
+
+    pages = ReaderPage.objects.filter(document=document).order_by(
+        "page_number"
+    )
+
+    document_text = "\n\n".join(
+        f"Page {page.page_number}:\n{page.text}"
+        for page in pages
+        if page.text.strip()
+    )
+
+    if not document_text:
+        return JsonResponse(
+            {
+                "success": False,
+                "error": (
+                    "This PDF has no saved extracted text yet. "
+                    "Scan the PDF before asking AI."
+                ),
+            },
+            status=400,
+        )
+
+    # Keep requests bounded to avoid sending an excessively large context.
+    document_text = document_text[:60000]
+
+    try:
+        result = generate_note(question, document_text)
+    except RuntimeError as exc:
+        return JsonResponse(
+            {"success": False, "error": str(exc)},
+            status=503,
+        )
+    except Exception:
+        logger.exception("Unexpected AI error for document %s", document.pk)
+        return JsonResponse(
+            {
+                "success": False,
+                "error": "AI couldn't answer right now. Please try again.",
+            },
+            status=502,
+        )
+
+    # Save automatically only after generation succeeds.
+    note = Note.objects.create(
+        document=document,
+        user=request.user,
+        title=result["title"][:200],
+        text=result["text"],
+    )
+
+    return JsonResponse({
+        "success": True,
+        "note": {
+            "id": note.pk,
+            "title": note.title,
+            "text": note.text,
+        },
+    })
+
+
+
+
+
+
+
+
+
+
+
+@login_required
+@require_POST
+def ai_helper_ajax(request, pk):
+    document = get_object_or_404(
+        ReaderDocument,
+        pk=pk,
+        user=request.user,
+    )
+
+    if len(request.body) > 500_000:
+        return JsonResponse(
+            {"error": "The editor content is too large."},
+            status=413,
+        )
+
+    try:
+        payload = json.loads(request.body)
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return JsonResponse(
+            {"error": "Invalid JSON request."},
+            status=400,
+        )
+
+    pages = payload.get("pages") if isinstance(payload, dict) else None
+
+    if not isinstance(pages, list) or not pages:
+        return JsonResponse(
+            {"error": "No editor pages were provided."},
+            status=400,
+        )
+
+    try:
+        cleaned_pages = clean_editor_pages(pages)
+    except ValueError as exc:
+        return JsonResponse(
+            {"error": str(exc)},
+            status=400,
+        )
+    except Exception:
+        logger.exception(
+            "AI Helper failed for document %s",
+            document.pk,
+        )
+        return JsonResponse(
+            {
+                "error": (
+                    "AI Helper couldn't process the pages. "
+                    "Your editor text has not been saved."
+                )
+            },
+            status=502,
+        )
+
+    return JsonResponse({"pages": cleaned_pages})
+
+
+
+@login_required
+@require_POST
+def delete_reader(request, pk):
+    document = get_object_or_404(
+        ReaderDocument,
+        pk=pk,
+        user=request.user,
+    )
+
+    document.delete()
+
+    return redirect("/reader/")
+
+
+
+
+
+
+
 
 
 
