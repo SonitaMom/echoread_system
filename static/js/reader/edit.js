@@ -42,58 +42,82 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const MAX_CHUNK_LENGTH = 9000;
     const PREFETCH_SECONDS = 8;
-    const chunks = [];
+    let chunks = [];
     const audioCache = new Map();
 
-    // Read textarea.value so unsaved edits are included.
-    pages.forEach((page, pageIndex) => {
-        const textarea = page.querySelector(".reader-page-text");
-        const text = textarea?.value.trim() || "";
-        const paragraphs = text
-            .split(/\n+/)
-            .map(part => part.trim())
-            .filter(Boolean);
+    function buildChunks() {
+        chunks = [];
 
-        let buffer = "";
+        pages.forEach((page, pageIndex) => {
+            const textarea = page.querySelector(".reader-page-text");
+            const text = textarea?.value.trim() || "";
 
-        function addChunk(value) {
-            chunks.push({
-                text: value,
-                pageIndex,
-                pageNumber: page.dataset.pageNumber,
-            });
-        }
+            const paragraphs = text
+                .split(/\n+/)
+                .map(part => part.trim())
+                .filter(Boolean);
 
-        paragraphs.forEach(paragraph => {
-            while (paragraph.length > MAX_CHUNK_LENGTH) {
-                if (buffer) {
-                    addChunk(buffer);
-                    buffer = "";
+            let buffer = "";
+
+            function addChunk(value) {
+                chunks.push({
+                    text: value,
+                    pageIndex,
+                    pageNumber: page.dataset.pageNumber,
+                });
+            }
+
+            paragraphs.forEach(paragraph => {
+                while (paragraph.length > MAX_CHUNK_LENGTH) {
+                    if (buffer) {
+                        addChunk(buffer);
+                        buffer = "";
+                    }
+
+                    addChunk(paragraph.slice(0, MAX_CHUNK_LENGTH));
+                    paragraph = paragraph.slice(MAX_CHUNK_LENGTH);
                 }
 
-                addChunk(paragraph.slice(0, MAX_CHUNK_LENGTH));
-                paragraph = paragraph.slice(MAX_CHUNK_LENGTH);
-            }
+                const combined = buffer
+                    ? `${buffer}\n${paragraph}`
+                    : paragraph;
 
-            const combined = buffer
-                ? `${buffer}\n${paragraph}`
-                : paragraph;
+                if (combined.length > MAX_CHUNK_LENGTH) {
+                    if (buffer) addChunk(buffer);
+                    buffer = paragraph;
+                } else {
+                    buffer = combined;
+                }
+            });
 
-            if (combined.length > MAX_CHUNK_LENGTH) {
-                if (buffer) addChunk(buffer);
-                buffer = paragraph;
-            } else {
-                buffer = combined;
-            }
+            if (buffer) addChunk(buffer);
         });
-
-        if (buffer) addChunk(buffer);
-    });
+    }
 
     let currentIndex = 0;
     let currentAudioUrl = null;
     let requestVersion = 0;
     let isLoading = false;
+
+    function getSelectedPageNumber() {
+        const number = Number(pageInput?.value);
+
+        if (
+            !Number.isInteger(number) ||
+            number < 1 ||
+            number > pages.length
+        ) {
+            return 1;
+        }
+
+        return number;
+    }
+
+    function getFirstChunkIndexForPage(pageNumber) {
+        return chunks.findIndex(
+            chunk => Number(chunk.pageNumber) === pageNumber
+        );
+    }
 
     function updateStatus(message) {
         if (status) status.textContent = message;
@@ -248,7 +272,17 @@ document.addEventListener("DOMContentLoaded", () => {
     playButton.addEventListener("click", async () => {
         if (isLoading) return;
 
-        if (audio.src && audio.paused && audio.currentTime > 0) {
+        const selectedPage = getSelectedPageNumber();
+        const currentChunk = chunks[currentIndex];
+
+        // Resume only if we're still on the same page.
+        if (
+            audio.src &&
+            audio.paused &&
+            audio.currentTime > 0 &&
+            currentChunk &&
+            currentChunk.pageIndex === selectedPage - 1
+        ) {
             try {
                 await audio.play();
                 updateStatus("Reading resumed.");
@@ -258,7 +292,20 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        await playChunk(currentIndex);
+        // Read the latest text from the textareas.
+        buildChunks();
+
+        // Old audio was generated from the previous text.
+        audioCache.clear();
+
+        const selectedChunk = getFirstChunkIndexForPage(selectedPage);
+
+        if (selectedChunk === -1) {
+            updateStatus("There is no text to read on this page.");
+            return;
+        }
+
+        await playChunk(selectedChunk);
     });
 
     pauseButton.addEventListener("click", () => {

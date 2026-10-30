@@ -61,7 +61,7 @@ def document_list(request):
 
 @login_required
 def document_detail(request, pk):
-    print("1. VIEW CALLED", flush=True)
+    # print("1. VIEW CALLED", flush=True)
 
     document = get_object_or_404(
         ReaderDocument,
@@ -69,7 +69,7 @@ def document_detail(request, pk):
         user=request.user,
     )
 
-    print("2. DOCUMENT FOUND:", document.pk, flush=True)
+    # print("2. DOCUMENT FOUND:", document.pk, flush=True)
     error = None
     selected_mode = "normal"
 
@@ -90,10 +90,10 @@ def document_detail(request, pk):
                     pdf_bytes,
                     mode=selected_mode,
                 )
-                print("EXTRACTED PAGES:", len(extracted_pages), flush=True)
-                print("PAGE NUMBERS:", [
-                    p["page_number"] for p in extracted_pages
-                ], flush=True)
+                # print("EXTRACTED PAGES:", len(extracted_pages), flush=True)
+                # print("PAGE NUMBERS:", [
+                #     p["page_number"] for p in extracted_pages
+                # ], flush=True)
 
                 for extracted in extracted_pages:
                     saved_page, created = ReaderPage.objects.update_or_create(
@@ -126,22 +126,22 @@ def document_detail(request, pk):
         document=document,
     ).order_by("page_number")
 
-    print(
-        "ReaderPage records in database:",
-        ReaderPage.objects.filter(document=document).count()
-    )
+    # print(
+    #     "ReaderPage records in database:",
+    #     ReaderPage.objects.filter(document=document).count()
+    # )
 
     if not pages.exists():
         return redirect("reader:edit_reader", pk=document.pk)
 
-    print("PAGES SENT TO TEMPLATE:", pages.count(), flush=True)
+    # print("PAGES SENT TO TEMPLATE:", pages.count(), flush=True)
 
-    for page in pages:
-        print(
-            f"Page number: {page.page_number}",
-            f"Text length: {len(page.text)}",
-            flush=True,
-        )
+    # for page in pages:
+    #     print(
+    #         f"Page number: {page.page_number}",
+    #         f"Text length: {len(page.text)}",
+    #         flush=True,
+    #     )
 
     return render(
         request,
@@ -477,10 +477,10 @@ def edit_reader(request, pk):
                         request,
                         "Scan complete and saved.",
                     )
-                    return redirect(
-                        "reader:document_detail",
-                        pk=document.pk,
-                    )
+                    # return redirect(
+                    #     "reader:document_detail",
+                    #     pk=document.pk,
+                    # )
 
                 request.session[session_key] = preview_pages
                 return redirect(

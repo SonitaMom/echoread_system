@@ -74,6 +74,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let currentIndex = 0;
     let currentAudioUrl = null;
+
+    function getSelectedPageNumber() {
+        const pageInput = document.getElementById("page-number-input");
+        const pageNumber = Number(pageInput?.value);
+
+        if (
+            !Number.isInteger(pageNumber) ||
+            pageNumber < 1 ||
+            pageNumber > pages.length
+        ) {
+            return 1;
+        }
+
+        return pageNumber;
+    }
+
+    function getFirstChunkIndexForPage(pageNumber) {
+        return chunks.findIndex(
+            chunk => Number(chunk.pageNumber) === pageNumber
+        );
+    }
+
     let requestVersion = 0;
     let isLoading = false;
     let downloadInProgress = false;
@@ -234,6 +256,7 @@ document.addEventListener("DOMContentLoaded", () => {
     playButton.addEventListener("click", async () => {
         if (isLoading) return;
 
+        // Resume the current audio if it was paused.
         if (audio.src && audio.paused && audio.currentTime > 0) {
             try {
                 await audio.play();
@@ -244,7 +267,16 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        await playChunk(currentIndex);
+        // Start reading from the page selected by the user.
+        const selectedPage = getSelectedPageNumber();
+        const selectedChunk = getFirstChunkIndexForPage(selectedPage);
+
+        if (selectedChunk === -1) {
+            updateStatus(`Page ${selectedPage} contains no readable text.`);
+            return;
+        }
+
+        await playChunk(selectedChunk);
     });
 
     pauseButton.addEventListener("click", () => {

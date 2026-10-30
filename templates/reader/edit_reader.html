@@ -183,12 +183,17 @@
             if (!scanForm) return;
 
             scanForm.addEventListener('submit', (event) => {
-                const hasSavedText = !!document.querySelector('#reader-pages .reader-page');
-                const message = hasSavedText
-                    ? 'Scanning will overwrite your saved edits. Continue?'
-                    : 'This will scan the PDF and save it to the reader. Continue?';
+                const hasSavedText = [...document.querySelectorAll(
+                    '#reader-pages .reader-page-text'
+                )].some(element => element.value.trim() !== "");
 
-                if (!window.confirm(message)) {
+                // No extracted text: scan immediately without confirmation.
+                if (!hasSavedText) return;
+
+                // Existing text: ask before overwriting.
+                if (!window.confirm(
+                    'Scanning will overwrite your saved edits. Continue?'
+                )) {
                     event.preventDefault();
                 }
             });
@@ -196,68 +201,6 @@
     </script>
     <script src="{% static 'js/reader/edit.js' %}" defer></script>
     <script src="{% static 'js/reader/ai_helper.js' %}" defer></script>
-    <!-- <script>
-        document.addEventListener("keydown", function (event) {
-            if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
-                event.preventDefault();
-                document.getElementById("edit-reader-form").requestSubmit();
-            }
-        });
-
-
-    </script>
-
-    <script>
-        (() => {
-            const pages = [...document.querySelectorAll("#reader-pages .reader-page")];
-            const previous = document.getElementById("previous-page");
-            const next = document.getElementById("next-page");
-            const input = document.getElementById("page-number-input");
-            const status = document.getElementById("page-navigation-status");
-
-            console.log("Editor navigation initialized:", pages.length, "pages");
-
-            if (!pages.length || !previous || !next || !input || !status) {
-                console.error("Editor navigation: required elements missing.");
-                return;
-            }
-
-            let current = 0;
-
-            function showPage(number) {
-                const index = Number(number) - 1;
-
-                if (!Number.isInteger(index) || index < 0 || index >= pages.length) {
-                    input.value = current + 1;
-                    return;
-                }
-
-                current = index;
-
-                pages.forEach((page, i) => {
-                    page.hidden = i !== current;
-                });
-
-                input.value = current + 1;
-                status.textContent = `Page ${current + 1} of ${pages.length}`;
-                previous.disabled = current === 0;
-                next.disabled = current === pages.length - 1;
-            }
-
-            previous.onclick = () => showPage(current);
-            next.onclick = () => showPage(current + 2);
-            input.onchange = () => showPage(input.value);
-
-            input.onkeydown = event => {
-                if (event.key === "Enter") {
-                    event.preventDefault();
-                    showPage(input.value);
-                }
-            };
-
-            showPage(1);
-        })();
-    </script> -->
 </body>
 
 </html>
