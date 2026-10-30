@@ -28,6 +28,7 @@ logger = logging.getLogger(__name__)
 
 def base_page(request):
     return render(request, 'templates/base.html')
+
 @login_required
 def document_list(request):
     if request.method == "POST":

@@ -33,7 +33,12 @@
     --fs-h1: 2rem;
     --fs-h2:1.6rem;
     --fs-h3:1.3rem;
-    --fs-body:1rem;
+    --fs-body:0.75rem;
+
+
+    /*Font family*/
+    --font-main: 'Inter', 'KantumruyPro', sans-serif;
+    /* --font-khmer : 'KantumruyPro', 'Inter', sans-serif; */
 }
 
 
@@ -111,10 +116,33 @@
 }
 
 
-/* Tablet Responsive */
 
-html {
+
+html,body {
     font-family: 'Inter', 'Kantumruy Pro', sans-serif;
+    font-size: var(--fs-body);
+    background-color: var(--bg);
+    line-height: 1.6;
+}
+
+/* Tablet Responsive 48rem = 768px*/
+@media(min-width: 48rem){ 
+    :root{
+        --fs-h1:2.5rem;
+        --fs-h2:2rem;
+        --fs-h3:1.5rem;
+        --fs-body: 1.0625rem;
+    }
+}
+
+/* Desktop size */
+@media(min-width:75rem){
+    :root{
+        --fs-h1:3.5rem;
+        --fs-h2:2.5rem;
+        --fs-h3:1.875rem;
+        --fs-body: 1.125rem;
+    }
 }
 
 

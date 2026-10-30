@@ -1,47 +1,47 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="EchoRead logo">
   <title>EchoRead</title>
+  <defs>
+    <!-- everything inside is cut off at the edge of the rounded box -->
+    <clipPath id="box"><rect width="512" height="512" rx="116"/></clipPath>
+  </defs>
   <style>
-    svg { cursor: pointer; }
-    .bg { transition: transform .35s cubic-bezier(.3,1.6,.5,1); transform-box: fill-box; transform-origin: center; }
-    .bar { transform-box: fill-box; transform-origin: center; transition: transform .3s ease; }
-    .arc { transform-box: fill-box; transform-origin: center; transition: opacity .3s ease; }
+    /* only the box itself reacts to the mouse, not the empty corners */
+    svg { pointer-events: none; }
+    .bg { pointer-events: fill; }
 
-    svg:hover .bg { transform: scale(1.04); }
-    svg:hover .bar { animation: pulse 0.9s ease-in-out infinite; }
-    svg:hover .b1 { animation-delay: 0s; }
-    svg:hover .b2 { animation-delay: .12s; }
-    svg:hover .b3 { animation-delay: .24s; }
-    svg:hover .b4 { animation-delay: .36s; }
-    svg:hover .b5 { animation-delay: .48s; }
-    svg:hover .arc { animation: echo 1.4s ease-out infinite; }
-    svg:hover .arc.r { animation-delay: .15s; }
+    .bar, .arc { transform-box: fill-box; transform-origin: center; }
 
-    @keyframes pulse {
-      0%, 100% { transform: scaleY(1); }
-      50%      { transform: scaleY(1.35); }
-    }
-    @keyframes echo {
-      0%   { opacity: .15; transform: scale(.94); }
-      50%  { opacity: .6;  transform: scale(1.04); }
-      100% { opacity: .15; transform: scale(.94); }
-    }
+    .bg:hover ~ .inner .bar { animation: pulse .9s ease-in-out infinite; }
+    .bg:hover ~ .inner .b1 { animation-delay: 0s; }
+    .bg:hover ~ .inner .b2 { animation-delay: .12s; }
+    .bg:hover ~ .inner .b3 { animation-delay: .24s; animation-name: pulseMid; }
+    .bg:hover ~ .inner .b4 { animation-delay: .36s; }
+    .bg:hover ~ .inner .b5 { animation-delay: .48s; }
+    .bg:hover ~ .inner .arc { animation: echo 1.4s ease-out infinite; }
+    .bg:hover ~ .inner .arc.r { animation-delay: .15s; }
+
+    @keyframes pulse    { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(1.35); } }
+    @keyframes pulseMid { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(1.2); } }
+    @keyframes echo     { 0%, 100% { opacity: .15; } 50% { opacity: .6; } }
+
     @media (prefers-reduced-motion: reduce) {
-      svg:hover .bar, svg:hover .arc, svg:hover .bg { animation: none; transform: none; }
+      .bg:hover ~ .inner .bar, .bg:hover ~ .inner .arc { animation: none; }
     }
   </style>
 
   <rect class="bg" width="512" height="512" rx="116" fill="#3b3bd6"/>
 
-  <g fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="22" stroke-linecap="round">
-    <path class="arc l" d="M86 196a190 190 0 0 0 0 120"/>
-    <path class="arc r" d="M426 196a190 190 0 0 1 0 120"/>
-  </g>
-
-  <g>
-    <rect class="bar b1" x="150" y="224" width="36" height="64" rx="18" fill="#ffffff"/>
-    <rect class="bar b2" x="194" y="188" width="36" height="136" rx="18" fill="#ffffff"/>
-    <rect class="bar b3" x="238" y="140" width="36" height="232" rx="18" fill="#ffb800"/>
-    <rect class="bar b4" x="282" y="188" width="36" height="136" rx="18" fill="#ffffff"/>
-    <rect class="bar b5" x="326" y="224" width="36" height="64" rx="18" fill="#ffffff"/>
+  <g class="inner" clip-path="url(#box)">
+    <g fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="22" stroke-linecap="round">
+      <path class="arc l" d="M86 196a190 190 0 0 0 0 120"/>
+      <path class="arc r" d="M426 196a190 190 0 0 1 0 120"/>
+    </g>
+    <g fill="#ffffff">
+      <rect class="bar b1" x="150" y="224" width="36" height="64" rx="18"/>
+      <rect class="bar b2" x="194" y="188" width="36" height="136" rx="18"/>
+      <rect class="bar b3" x="238" y="140" width="36" height="232" rx="18"/>
+      <rect class="bar b4" x="282" y="188" width="36" height="136" rx="18"/>
+      <rect class="bar b5" x="326" y="224" width="36" height="64" rx="18"/>
+    </g>
   </g>
 </svg>
