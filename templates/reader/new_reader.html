@@ -9,7 +9,7 @@
 </head>
 <body>
 <main class="container py-4">
-    <p><a href="/home/">Back to My Readers</a></p>
+    <p><a href="{% url 'reader:document_list' %}">Back to My Readers</a></p>
 
     <h1>New Reader</h1>
     <p>Select a PDF to create a new reader.</p>
@@ -41,7 +41,7 @@
         <button type="submit" class="btn btn-primary">
             Create Reader
         </button>
-        <a href="/home/" class="btn btn-outline-secondary">Cancel</a>
+        <a href="{% url 'reader:document_list' %}" class="btn btn-outline-secondary">Cancel</a>
     </form>
 </main>
 

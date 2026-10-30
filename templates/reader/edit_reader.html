@@ -12,7 +12,7 @@
 <body>
     <main class="container py-4">
         <p>
-            <a href="{% url 'reader:document_detail' document.pk %}">
+            <a href="{% url 'reader:document_list' %}">
                 Back to Reader
             </a>
         </p>
@@ -23,8 +23,7 @@
 
         <h2 class="h4 mt-4">Choose scan mode</h2>
         <p>Scanning replaces the current extracted and edited text.</p>
-        <form method="post" class="mb-4"
-            onsubmit="return confirm('Scanning will overwrite your saved edits. Continue?');">
+        <form method="post" class="mb-4" id="scan-form">
             {% csrf_token %}
 
             <button type="submit" name="scan_mode" value="normal" class="btn btn-primary">
@@ -109,6 +108,14 @@
                         <option value="female">Female</option>
                     </select>
                 </div>
+
+                <audio
+                    id="reader-audio"
+                    data-tts-url="{% url 'reader:text_to_speech' document.pk %}"
+                    preload="none"
+                ></audio>
+
+                <p id="reading-status" role="status" aria-live="polite"></p>
             </div>
 
             <p id="reading-status" role="status" aria-live="polite">Ready to read.</p>
@@ -141,7 +148,7 @@
             <p id="ai-helper-status" role="status" aria-live="polite" class="mt-2"></p>
 
             {% else %}
-            <p>No scanned pages yet. Return to the reader and scan the PDF first.</p>
+            <p>Please scan the PDF, then edit and save extracted text.</p>
             {% endif %}
         </form>
 
@@ -159,71 +166,41 @@
         </form>
     </main>
 
-    <script src="{% static 'js/reader/reader.js' %}" defer></script>
-    <script src="{% static 'js/reader/ai_helper.js' %}" defer></script>
-    <script>
-        document.addEventListener("keydown", function (event) {
-            if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
-                event.preventDefault();
-                document.getElementById("edit-reader-form").requestSubmit();
-            }
-        });
 
 
-    </script>
+
+
+
+
+
+
+
 
 
     <script>
-        (() => {
-            const pages = [...document.querySelectorAll("#reader-pages .reader-page")];
-            const previous = document.getElementById("previous-page");
-            const next = document.getElementById("next-page");
-            const input = document.getElementById("page-number-input");
-            const status = document.getElementById("page-navigation-status");
+        document.addEventListener('DOMContentLoaded', () => {
+            const scanForm = document.getElementById('scan-form');
+            if (!scanForm) return;
 
-            console.log("Editor navigation initialized:", pages.length, "pages");
+            scanForm.addEventListener('submit', (event) => {
+                const hasSavedText = [...document.querySelectorAll(
+                    '#reader-pages .reader-page-text'
+                )].some(element => element.value.trim() !== "");
 
-            if (!pages.length || !previous || !next || !input || !status) {
-                console.error("Editor navigation: required elements missing.");
-                return;
-            }
+                // No extracted text: scan immediately without confirmation.
+                if (!hasSavedText) return;
 
-            let current = 0;
-
-            function showPage(number) {
-                const index = Number(number) - 1;
-
-                if (!Number.isInteger(index) || index < 0 || index >= pages.length) {
-                    input.value = current + 1;
-                    return;
-                }
-
-                current = index;
-
-                pages.forEach((page, i) => {
-                    page.hidden = i !== current;
-                });
-
-                input.value = current + 1;
-                status.textContent = `Page ${current + 1} of ${pages.length}`;
-                previous.disabled = current === 0;
-                next.disabled = current === pages.length - 1;
-            }
-
-            previous.onclick = () => showPage(current);
-            next.onclick = () => showPage(current + 2);
-            input.onchange = () => showPage(input.value);
-
-            input.onkeydown = event => {
-                if (event.key === "Enter") {
+                // Existing text: ask before overwriting.
+                if (!window.confirm(
+                    'Scanning will overwrite your saved edits. Continue?'
+                )) {
                     event.preventDefault();
-                    showPage(input.value);
                 }
-            };
-
-            showPage(1);
-        })();
+            });
+        });
     </script>
+    <script src="{% static 'js/reader/edit.js' %}" defer></script>
+    <script src="{% static 'js/reader/ai_helper.js' %}" defer></script>
 </body>
 
 </html>

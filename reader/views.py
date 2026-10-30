@@ -61,12 +61,15 @@ def document_list(request):
 
 @login_required
 def document_detail(request, pk):
+    # print("1. VIEW CALLED", flush=True)
+
     document = get_object_or_404(
         ReaderDocument,
         pk=pk,
         user=request.user,
     )
 
+    # print("2. DOCUMENT FOUND:", document.pk, flush=True)
     error = None
     selected_mode = "normal"
 
@@ -87,24 +90,25 @@ def document_detail(request, pk):
                     pdf_bytes,
                     mode=selected_mode,
                 )
+                # print("EXTRACTED PAGES:", len(extracted_pages), flush=True)
+                # print("PAGE NUMBERS:", [
+                #     p["page_number"] for p in extracted_pages
+                # ], flush=True)
 
                 for extracted in extracted_pages:
-                    ReaderPage.objects.update_or_create(
+                    saved_page, created = ReaderPage.objects.update_or_create(
                         document=document,
                         page_number=extracted["page_number"],
                         defaults={
                             "original_text": extracted["text"],
-                            "text": extracted["text"],
                         },
                     )
 
-                    if not created:
-                        # Update the extracted original, but preserve
-                        # the user's previously edited text.
-                        saved_page.original_text = extracted["text"]
-                        saved_page.save(
-                            update_fields=["original_text"]
-                        )
+                    if created:
+                        # A new page has no previous edits to preserve.
+                        saved_page.text = extracted["text"]
+                        saved_page.save(update_fields=["text"])
+
 
             except Exception:
                 logger.exception(
@@ -120,7 +124,24 @@ def document_detail(request, pk):
 
     pages = ReaderPage.objects.filter(
         document=document,
-    )
+    ).order_by("page_number")
+
+    # print(
+    #     "ReaderPage records in database:",
+    #     ReaderPage.objects.filter(document=document).count()
+    # )
+
+    if not pages.exists():
+        return redirect("reader:edit_reader", pk=document.pk)
+
+    # print("PAGES SENT TO TEMPLATE:", pages.count(), flush=True)
+
+    # for page in pages:
+    #     print(
+    #         f"Page number: {page.page_number}",
+    #         f"Text length: {len(page.text)}",
+    #         flush=True,
+    #     )
 
     return render(
         request,
@@ -143,11 +164,9 @@ def document_detail(request, pk):
 
 
 
-
 @login_required
 @require_POST
 def text_to_speech(request, pk):
-    # Ensure users can only generate audio for their own documents.
     get_object_or_404(
         ReaderDocument,
         pk=pk,
@@ -438,9 +457,32 @@ def edit_reader(request, pk):
                         mode=selected_mode,
                     )
 
-                # Preview only; do not modify ReaderPage.
-                request.session[session_key] = preview_pages
+                has_existing_pages = ReaderPage.objects.filter(
+                    document=document,
+                ).exists()
 
+                if not has_existing_pages:
+                    for item in preview_pages:
+                        ReaderPage.objects.update_or_create(
+                            document=document,
+                            page_number=item["page_number"],
+                            defaults={
+                                "original_text": item["text"],
+                                "text": item["text"],
+                            },
+                        )
+
+                    request.session.pop(session_key, None)
+                    messages.success(
+                        request,
+                        "Scan complete and saved.",
+                    )
+                    # return redirect(
+                    #     "reader:document_detail",
+                    #     pk=document.pk,
+                    # )
+
+                request.session[session_key] = preview_pages
                 return redirect(
                     "reader:edit_reader",
                     pk=document.pk,
@@ -584,14 +626,11 @@ def new_reader(request):
         )
 
         return redirect(
-            "reader:document_detail",
+            "reader:edit_reader",
             pk=document.pk,
         )
 
     return render(request, "reader/new_reader.html")
-
-
-
 
 
 
@@ -703,9 +742,6 @@ def delete_note(request, pk, note_id):
 
 
 
-
-
-
 @login_required
 @require_POST
 def save_note_ajax(request, pk):
@@ -778,12 +814,6 @@ def delete_note_ajax(request, pk, note_id):
     note.delete()
 
     return JsonResponse({"success": True})
-
-
-
-
-
-
 
 
 
@@ -869,11 +899,6 @@ def ask_ai_ajax(request, pk):
             "text": note.text,
         },
     })
-
-
-
-
-
 
 
 

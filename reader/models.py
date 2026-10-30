@@ -1,8 +1,6 @@
 from django.conf import settings
 from django.db import models
 
-
-
 class ReaderDocument(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -15,9 +13,6 @@ class ReaderDocument(models.Model):
 
     def __str__(self):
         return self.title
-
-
-
 
 class Bookmark(models.Model):
     document = models.ForeignKey(
@@ -47,11 +42,6 @@ class Bookmark(models.Model):
     def __str__(self):
         return self.label or f"Page {self.page_number}"
 
-
-
-
-
-
 class ReaderPage(models.Model):
     document = models.ForeignKey(
         "reader.ReaderDocument",
@@ -75,14 +65,6 @@ class ReaderPage(models.Model):
     def __str__(self):
         return f"{self.document.title} - Page {self.page_number}"
 
-
-
-
-
-
-
-
-
 class Note(models.Model):
     document = models.ForeignKey(
         "reader.ReaderDocument",
@@ -104,7 +86,3 @@ class Note(models.Model):
 
     def __str__(self):
         return self.title
-
-
-
-    

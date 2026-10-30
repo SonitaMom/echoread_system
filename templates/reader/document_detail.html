@@ -13,57 +13,34 @@
     <main class="container py-4">
         <p>
             <a href="{% url 'reader:document_list' %}">
-                Back to My Documents
+                Back
             </a>
         </p>
 
         <h1>{{ document.title }}</h1>
 
-        <h2 class="h4 mt-4">Choose scan mode</h2>
-        <p>
-            Normal Scan extracts existing text first.
-            Hard Scan uses OCR on every page and may take longer.
-        </p>
-
-        <form method="post" class="mb-4">
-            {% csrf_token %}
-
-            <button type="submit" name="scan_mode" value="normal" class="btn btn-primary">
-                Normal Scan
-            </button>
-
-            <button type="submit" name="scan_mode" value="hard" class="btn btn-outline-primary">
-                Hard Scan (OCR)
-            </button>
-        </form>
-
-        {% if error %}
-        <p role="alert" class="text-danger">{{ error }}</p>
-        {% endif %}
-
+        <!-- #1 -->
         {% if pages %}
         <h2 class="h4">Extracted text</h2>
 
-
-
-        <section class="page-navigation" aria-label="Page navigation">
-            <button type="button" id="previous-page">
+    
+        <section class="page-navigation mb-3" aria-label="Page navigation">
+            <button type="button" id="previous-page" class="btn btn-outline-secondary">
                 Previous page
             </button>
-
-            <button type="button" id="next-page">
+            <button type="button" id="next-page" class="btn btn-outline-secondary">
                 Next page
             </button>
 
-            <label for="page-number-input">Page number</label>
+            <label for="page-number-input" class="form-label ms-2">Page number</label>
             <input type="number" id="page-number-input" min="1" step="1" value="1" inputmode="numeric"
+                class="form-control" style="width: 100px; display: inline-block;"
                 aria-describedby="page-navigation-status">
 
             <p id="page-navigation-status" role="status" aria-live="polite">
                 Page 1
             </p>
         </section>
-
 
 
 
@@ -167,7 +144,7 @@
 
 
 
-
+        <!-- #2 -->
         <section class="mt-5" id="ai-section">
             <h2>Ask AI about this PDF</h2>
             <p>Answers are automatically saved to your Notes.</p>
@@ -260,17 +237,7 @@
         </section>
 
 
-
-
-
-
-
-
-
-
-
-
-
+        <!-- #3 -->
         <div class="mt-4">
             <button type="button" id="download-mp3">
                 Download full document as MP3
@@ -282,12 +249,13 @@
         <audio id="reader-audio" data-tts-url="{% url 'reader:text_to_speech' document.pk %}"
             data-document-name="{{ document.title }}" preload="auto"></audio>
 
+        {% endif %}
+
         <a href="{% url 'reader:edit_reader' document.pk %}?discard_preview=1" class="btn btn-outline-primary">
             Edit extracted text
         </a>
 
-
-
+        {% if pages %}
         <section class="delete-bookmark-controls" aria-labelledby="delete-bookmark-heading"
             data-delete-url-template="{% url 'reader:delete_bookmark' document.pk 0 %}">
 
@@ -316,323 +284,21 @@
 
             <p id="delete-bookmark-status" role="status" aria-live="polite"></p>
         </section>
-
-
-
-
-
         {% endif %}
+
+
+
     </main>
 
+
+
+
+
+
+
+
     <script src="{% static 'js/reader/reader.js' %}" defer></script>
-    <script>
 
-        (() => {
-            const form = document.getElementById("note-form");
-            const editor = document.getElementById("note-editor");
-            const list = document.getElementById("notes-list");
-            const status = document.getElementById("note-status");
-
-            if (!form || !editor || !list || !status) return;
-
-            const titleInput = document.getElementById("note-title");
-            const textInput = document.getElementById("note-text");
-            const idInput = document.getElementById("note-id");
-
-            function resetForm() {
-                form.reset();
-                idInput.value = "";
-                document.getElementById("note-form-heading").textContent =
-                    "Create Note";
-                status.textContent = "";
-            }
-
-            document.getElementById("add-note-btn").addEventListener("click", () => {
-                resetForm();
-                editor.hidden = false;
-                titleInput.focus();
-            });
-
-            document.getElementById("cancel-note-btn").addEventListener("click", () => {
-                editor.hidden = true;
-                resetForm();
-            });
-
-            list.addEventListener("click", event => {
-                const button = event.target.closest(".edit-note-btn");
-                if (!button) return;
-
-                const article = button.closest("[data-note-id]");
-                idInput.value = article.dataset.noteId;
-                titleInput.value = article.querySelector(".note-title").textContent;
-                textInput.value = article.querySelector(".note-text").textContent;
-
-                document.getElementById("note-form-heading").textContent =
-                    "Edit Note";
-
-                editor.hidden = false;
-                titleInput.focus();
-            });
-
-            form.addEventListener("submit", async event => {
-                event.preventDefault();
-
-                const saveButton = form.querySelector('[type="submit"]');
-                saveButton.disabled = true;
-                status.textContent = "Saving note...";
-
-                try {
-                    const response = await fetch(form.dataset.saveUrl, {
-                        method: "POST",
-                        body: new FormData(form),
-                        headers: {
-                            "X-Requested-With": "XMLHttpRequest"
-                        }
-                    });
-
-                    const data = await response.json();
-
-                    if (!response.ok || !data.success) {
-                        throw new Error(data.error || "Unable to save note.");
-                    }
-
-                    const note = data.note;
-                    let article = list.querySelector(
-                        `[data-note-id="${note.id}"]`
-                    );
-
-                    if (!article) {
-                        article = document.createElement("article");
-                        article.className = "card mb-3";
-                        article.dataset.noteId = note.id;
-                        article.innerHTML = `
-                            <div class="card-body">
-                                <h3 class="h5 note-title"></h3>
-
-                                <div class="note-text"
-                                    style="white-space: pre-wrap;"></div>
-
-                                <button type="button"
-                                        class="btn btn-outline-primary btn-sm mt-3 edit-note-btn">
-                                    Edit
-                                </button>
-
-                                <button type="button"
-                                        class="btn btn-outline-danger btn-sm mt-3 delete-note-btn">
-                                    Delete
-                                </button>
-                            </div>
-                        `;
-
-                        const deleteUrlTemplate =
-                            "{% url 'reader:delete_note_ajax' document.pk 999999 %}";
-
-                        article.querySelector(".delete-note-btn").dataset.deleteUrl =
-                            deleteUrlTemplate.replace("999999", note.id);
-                        list.prepend(article);
-                    }
-
-                    article.querySelector(".note-title").textContent = note.title;
-                    article.querySelector(".note-text").textContent = note.text;
-
-                    const emptyMessage = document.getElementById("no-notes-message");
-                    if (emptyMessage) emptyMessage.remove();
-
-                    editor.hidden = true;
-                    resetForm();
-                } catch (error) {
-                    status.textContent = error.message;
-                } finally {
-                    saveButton.disabled = false;
-                }
-            });
-
-
-
-
-            list.addEventListener("click", async event => {
-                const button = event.target.closest(".delete-note-btn");
-                if (!button) return;
-
-                if (!confirm("Delete this note?")) return;
-
-                button.disabled = true;
-
-                try {
-                    const csrfToken = form.querySelector(
-                        '[name="csrfmiddlewaretoken"]'
-                    ).value;
-
-                    const response = await fetch(button.dataset.deleteUrl, {
-                        method: "POST",
-                        headers: {
-                            "X-CSRFToken": csrfToken,
-                            "X-Requested-With": "XMLHttpRequest",
-                            "Accept": "application/json"
-                        },
-                        mode: "same-origin"
-                    });
-
-                    const contentType =
-                        response.headers.get("content-type") || "";
-
-                    if (!response.ok) {
-                        throw new Error(`Delete failed (HTTP ${response.status}).`);
-                    }
-
-                    if (!contentType.includes("application/json")) {
-                        const responseText = await response.text();
-
-                        console.error("Unexpected delete response:", {
-                            status: response.status,
-                            url: response.url,
-                            response: responseText.slice(0, 500)
-                        });
-
-                        throw new Error(
-                            "The server returned HTML instead of JSON. Check the Network tab."
-                        );
-                    }
-
-                    const data = await response.json();
-
-                    if (!data.success) {
-                        throw new Error("The server could not delete the note.");
-                    }
-
-                    // Remove the card only after the server confirms deletion.
-                    button.closest("[data-note-id]").remove();
-
-                    if (!list.querySelector("[data-note-id]")) {
-                        const emptyMessage = document.createElement("p");
-                        emptyMessage.id = "no-notes-message";
-                        emptyMessage.textContent = "No notes yet.";
-                        list.appendChild(emptyMessage);
-                    }
-
-                } catch (error) {
-                    console.error("Delete note error:", error);
-                    alert(error.message);
-                } finally {
-                    // The button may have been removed after a successful request.
-                    if (button.isConnected) {
-                        button.disabled = false;
-                    }
-                }
-            });
-
-
-
-        })();
-
-
-
-        (() => {
-            const form = document.getElementById("ai-form");
-            const list = document.getElementById("notes-list");
-            const status = document.getElementById("ai-status");
-            const questionInput = document.getElementById("ai-question");
-            const askButton = document.getElementById("ask-ai-btn");
-
-            if (!form || !list || !status || !questionInput || !askButton) {
-                return;
-            }
-
-            function addNoteToList(note) {
-                let article = list.querySelector(
-                    `[data-note-id="${note.id}"]`
-                );
-
-                if (!article) {
-                    article = document.createElement("article");
-                    article.className = "card mb-3";
-                    article.dataset.noteId = note.id;
-
-                    article.innerHTML = `
-                <div class="card-body">
-                    <h3 class="h5 note-title"></h3>
-                    <div class="note-text"
-                         style="white-space: pre-wrap;"></div>
-
-                    <button type="button"
-                            class="btn btn-outline-primary btn-sm mt-3 edit-note-btn">
-                        Edit
-                    </button>
-
-                    <button type="button"
-                            class="btn btn-outline-danger btn-sm mt-3 delete-note-btn">
-                        Delete
-                    </button>
-                </div>
-            `;
-
-                    const deleteUrlTemplate =
-                        "{% url 'reader:delete_note_ajax' document.pk 999999 %}";
-
-                    article.querySelector(".delete-note-btn").dataset.deleteUrl =
-                        deleteUrlTemplate.replace("999999", note.id);
-
-                    list.prepend(article);
-                }
-
-                article.querySelector(".note-title").textContent = note.title;
-                article.querySelector(".note-text").textContent = note.text;
-
-                const emptyMessage = document.getElementById("no-notes-message");
-                if (emptyMessage) emptyMessage.remove();
-            }
-
-            form.addEventListener("submit", async event => {
-                event.preventDefault();
-
-                askButton.disabled = true;
-                status.textContent = "Generating your answer...";
-
-                try {
-                    const response = await fetch(form.dataset.aiUrl, {
-                        method: "POST",
-                        body: new FormData(form),
-                        headers: {
-                            "X-Requested-With": "XMLHttpRequest",
-                            "Accept": "application/json"
-                        },
-                        mode: "same-origin"
-                    });
-
-                    const contentType =
-                        response.headers.get("content-type") || "";
-
-                    if (!contentType.includes("application/json")) {
-                        throw new Error(
-                            "The server returned an unexpected response. Check the Network tab."
-                        );
-                    }
-
-                    const data = await response.json();
-
-                    if (!response.ok || !data.success) {
-                        throw new Error(data.error || "Unable to generate an answer.");
-                    }
-
-                    addNoteToList(data.note);
-
-                    questionInput.value = "";
-                    status.textContent = "Answer generated and saved to Notes.";
-                } catch (error) {
-                    status.textContent = error.message;
-                } finally {
-                    askButton.disabled = false;
-                }
-            });
-        })();
-
-
-
-
-
-
-
-    </script>
 </body>
 
 </html>
