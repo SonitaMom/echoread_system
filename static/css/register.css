@@ -1,0 +1,133 @@
+:root{
+  --card-pad:1.5rem;
+  --logo-size:2.5rem;
+  --fs-h1:1rem;
+  --fs-size:1.1rem;
+  --fs-brand:1.5rem;
+  --input-h:2rem;
+}
+
+@media (min-width:767.98px){
+  :root{
+    --fs-h1:1.25rem;
+    --fs-size:1.2rem;
+    --fs-brand:1.75rem;
+    --logo-size:3rem;
+    --card-pad:2.5rem;
+    --input-h:2.4rem;
+  }
+}
+
+@media (min-width : 75rem){
+  :root{
+    --fs-h1: 1.5rem;
+    --fs-size: 1.2rem;
+    --fs-brand: 2rem;
+    --logo-size: 3.5rem;
+    --card-pad: 3rem;
+    --input-h:2.7rem;
+  }
+}
+
+body{
+  background: var(--gradient-hero);
+}
+
+.h1{
+  font-size: 2rem;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+
+
+.card{
+  padding: var(--card-pad);
+  border-radius: 2rem;
+  box-shadow: var(--shadow-card);
+}
+
+.register-card{
+  padding: 0;
+  overflow: hidden;
+}
+
+.regis-left-side{
+  padding: var(--card-pad) var(--card-pad) 0;
+}
+.register-form{
+  padding: var(--card-pad);
+}
+
+.brand{
+  width: var(--logo-size);
+  height: var(--logo-size);
+  flex-shrink: 0;
+}
+
+.title{
+  font-size: var(--fs-brand);
+  font-weight: 700;
+}
+
+#register input{
+  width: 100%;
+  height: var(--input-h);
+  padding: 0 14px;
+  border: 2px solid #d9dcec;
+  font:inherit;
+}
+
+.form-label, p{
+  font-size: var(--fs-size);
+}
+
+.btn-primary{
+  /* min-height: 54px; */
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+:focus-visible{
+  outline: 4px solid #ff5a00;
+  outline-offset: 2px;
+}
+
+
+/* Login */
+.h4{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-main);
+  font-size: var(--fs-h2);
+  font-weight: 900;
+
+}
+
+@media (min-width: 48.01rem){
+  .regis-left-side{
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: var(--card-pad);
+    background: linear-gradient(150deg, #b5b5e4 0%, #d5dbf5 55%, #dccea9 100%);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    /* color: #fff; */
+  }
+
+  .register-form{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .btn-primary{
+    border-radius: 12px;
+  }
+/* 
+  #register input{
+    height: 30px;
+  } */
+}

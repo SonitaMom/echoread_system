@@ -96,6 +96,9 @@ app_name = "reader"
 
 
 urlpatterns = [
+
+    path('', views.base_page, name='base'),
+
     # Document list and creation
     path("", views.document_list, name="document_list"),
     path("new/", views.new_reader, name="new_reader"),

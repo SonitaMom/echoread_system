@@ -2,6 +2,16 @@ from django import forms
 from .models import ReaderDocument, Note
 
 
+def __init__(self, * args, **kwargs):
+    super().__init__(*args, **kwargs)
+    for name, field in self.fields.items():
+        css = "form-control"
+        if self.errors.get(name):
+            css += "is-invalid"
+        field.widget.attrs.update({
+            "class": css,
+            "placeholder": field.label,
+        })
 
 class PDFUploadForm(forms.ModelForm):
     class Meta:

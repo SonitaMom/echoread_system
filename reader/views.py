@@ -14,6 +14,9 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 import fitz
 from django.urls import reverse
 from django.db import transaction
+
+from django.shortcuts import render
+
 from .services.ai import generate_note
 from .services.ai_scan import scan_pdf
 from .services.ai_helper import clean_editor_pages
@@ -21,6 +24,10 @@ from .services.ai_helper import clean_editor_pages
 
 
 logger = logging.getLogger(__name__)
+
+
+def base_page(request):
+    return render(request, 'templates/base.html')
 
 @login_required
 def document_list(request):
