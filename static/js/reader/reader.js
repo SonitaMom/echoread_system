@@ -86,13 +86,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function showCurrentPage() {
-        const chunk = chunks[currentIndex];
-        if (!chunk) return;
+    const chunk = chunks[currentIndex];
+    if (!chunk) return;
 
-        pages.forEach((page, index) => {
-            page.hidden = index !== chunk.pageIndex;
-        });
-    }
+    const pageNumber = Number(chunk.pageNumber);
+
+    if (!Number.isInteger(pageNumber) || pageNumber < 1) return;
+
+    pages.forEach((page, index) => {
+        page.hidden = index !== pageNumber - 1;
+    });
+}
 
     function requestAudio(index) {
         if (audioCache.has(index)) {
@@ -392,12 +396,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-
-
     /* =====================================
        Page Navigation and Bookmarks
     ===================================== */
-
     (() => {
         const pages = Array.from(
             document.querySelectorAll(".reader-page")
@@ -445,6 +446,11 @@ document.addEventListener("DOMContentLoaded", () => {
         let currentPage = 1;
         let pageInputTimer = null;
 
+        pageInput.min = 1;
+        pageInput.max = totalPages;
+        pageInput.value = currentPage;
+        pageStatus.textContent = `Page ${currentPage} of ${totalPages}`;
+
         function showPage(pageNumber) {
             if (
                 !Number.isInteger(pageNumber) ||
@@ -477,29 +483,72 @@ document.addEventListener("DOMContentLoaded", () => {
             showPage(currentPage + 1);
         });
 
+        function resetPageInput() {
+            pageInput.value = currentPage;
+            pageStatus.textContent = `Page ${currentPage} of ${totalPages}`;
+        }
+
         pageInput.addEventListener("keydown", event => {
             if (event.key === "Enter") {
                 event.preventDefault();
                 clearTimeout(pageInputTimer);
 
-                const pageNumber = Number(pageInput.value);
+                const rawValue = pageInput.value.trim();
+                const pageNumber = Number(rawValue);
+
+                if (
+                    rawValue === "" ||
+                    !Number.isInteger(pageNumber) ||
+                    pageNumber < 1 ||
+                    pageNumber > totalPages
+                ) {
+                    resetPageInput();
+                    return;
+                }
+
                 if (showPage(pageNumber)) {
                     pageInput.blur();
                 }
             }
         });
 
+        pageInput.addEventListener("blur", () => {
+            clearTimeout(pageInputTimer);
+            const rawValue = pageInput.value.trim();
+            const pageNumber = Number(rawValue);
+
+            if (
+                rawValue === "" ||
+                !Number.isInteger(pageNumber) ||
+                pageNumber < 1 ||
+                pageNumber > totalPages
+            ) {
+                resetPageInput();
+                return;
+            }
+
+            showPage(pageNumber);
+        });
+
         pageInput.addEventListener("input", () => {
+            const rawValue = pageInput.value.trim();
+            if (rawValue === "") return;
+
+            const pageNumber = Number(rawValue);
+            if (!Number.isInteger(pageNumber)) {
+                return;
+            }
+
             clearTimeout(pageInputTimer);
 
             pageInputTimer = setTimeout(() => {
-                if (pageInput.value.trim() === "") return;
-
-                const pageNumber = Number(pageInput.value);
-                if (Number.isInteger(pageNumber)) {
-                    showPage(pageNumber);
+                if (pageNumber < 1 || pageNumber > totalPages) {
+                    resetPageInput();
+                    return;
                 }
-            }, 700);
+
+                showPage(pageNumber);
+            }, 500);
         });
 
         // Read the CSRF token used by Django.
@@ -660,11 +709,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     `/${bookmarkId}/delete/`
                 );
 
-                // const deleteUrl = deleteBookmarkUrlTemplate.replace(
-                //     /0\/?$/,
-                //     `${bookmarkId}/`
-                // );
-
                 const response = await fetch(deleteUrl, {
                     method: "POST",
                     credentials: "same-origin",
@@ -696,18 +740,304 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-
-
-
-
-
-
-
-
-
-
 });
 
+(() => {
+    const form = document.getElementById("note-form");
+    const editor = document.getElementById("note-editor");
+    const list = document.getElementById("notes-list");
+    const status = document.getElementById("note-status");
+
+    if (!form || !editor || !list || !status) return;
+
+    const titleInput = document.getElementById("note-title");
+    const textInput = document.getElementById("note-text");
+    const idInput = document.getElementById("note-id");
+
+    function resetForm() {
+        form.reset();
+        idInput.value = "";
+        document.getElementById("note-form-heading").textContent =
+            "Create Note";
+        status.textContent = "";
+    }
+
+    document.getElementById("add-note-btn").addEventListener("click", () => {
+        resetForm();
+        editor.hidden = false;
+        titleInput.focus();
+    });
+
+    document.getElementById("cancel-note-btn").addEventListener("click", () => {
+        editor.hidden = true;
+        resetForm();
+    });
+
+    list.addEventListener("click", event => {
+        const button = event.target.closest(".edit-note-btn");
+        if (!button) return;
+
+        const article = button.closest("[data-note-id]");
+        idInput.value = article.dataset.noteId;
+        titleInput.value = article.querySelector(".note-title").textContent;
+        textInput.value = article.querySelector(".note-text").textContent;
+
+        document.getElementById("note-form-heading").textContent =
+            "Edit Note";
+
+        editor.hidden = false;
+        titleInput.focus();
+    });
+
+    form.addEventListener("submit", async event => {
+        event.preventDefault();
+
+        const saveButton = form.querySelector('[type="submit"]');
+        saveButton.disabled = true;
+        status.textContent = "Saving note...";
+
+        try {
+            const response = await fetch(form.dataset.saveUrl, {
+                method: "POST",
+                body: new FormData(form),
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(data.error || "Unable to save note.");
+            }
+
+            const note = data.note;
+            let article = list.querySelector(
+                `[data-note-id="${note.id}"]`
+            );
+
+            if (!article) {
+                article = document.createElement("article");
+                article.className = "card mb-3";
+                article.dataset.noteId = note.id;
+                article.innerHTML = `
+                            <div class="card-body">
+                                <h3 class="h5 note-title"></h3>
+
+                                <div class="note-text"
+                                    style="white-space: pre-wrap;"></div>
+
+                                <button type="button"
+                                        class="btn btn-outline-primary btn-sm mt-3 edit-note-btn">
+                                    Edit
+                                </button>
+
+                                <button type="button"
+                                        class="btn btn-outline-danger btn-sm mt-3 delete-note-btn">
+                                    Delete
+                                </button>
+                            </div>
+                        `;
+
+                const deleteUrlTemplate =
+                    "{% url 'reader:delete_note_ajax' document.pk 999999 %}";
+
+                article.querySelector(".delete-note-btn").dataset.deleteUrl =
+                    deleteUrlTemplate.replace("999999", note.id);
+                list.prepend(article);
+            }
+
+            article.querySelector(".note-title").textContent = note.title;
+            article.querySelector(".note-text").textContent = note.text;
+
+            const emptyMessage = document.getElementById("no-notes-message");
+            if (emptyMessage) emptyMessage.remove();
+
+            editor.hidden = true;
+            resetForm();
+        } catch (error) {
+            status.textContent = error.message;
+        } finally {
+            saveButton.disabled = false;
+        }
+    });
+
+
+
+
+    list.addEventListener("click", async event => {
+        const button = event.target.closest(".delete-note-btn");
+        if (!button) return;
+
+        if (!confirm("Delete this note?")) return;
+
+        button.disabled = true;
+
+        try {
+            const csrfToken = form.querySelector(
+                '[name="csrfmiddlewaretoken"]'
+            ).value;
+
+            const response = await fetch(button.dataset.deleteUrl, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                    "X-Requested-With": "XMLHttpRequest",
+                    "Accept": "application/json"
+                },
+                mode: "same-origin"
+            });
+
+            const contentType =
+                response.headers.get("content-type") || "";
+
+            if (!response.ok) {
+                throw new Error(`Delete failed (HTTP ${response.status}).`);
+            }
+
+            if (!contentType.includes("application/json")) {
+                const responseText = await response.text();
+
+                console.error("Unexpected delete response:", {
+                    status: response.status,
+                    url: response.url,
+                    response: responseText.slice(0, 500)
+                });
+
+                throw new Error(
+                    "The server returned HTML instead of JSON. Check the Network tab."
+                );
+            }
+
+            const data = await response.json();
+
+            if (!data.success) {
+                throw new Error("The server could not delete the note.");
+            }
+
+            // Remove the card only after the server confirms deletion.
+            button.closest("[data-note-id]").remove();
+
+            if (!list.querySelector("[data-note-id]")) {
+                const emptyMessage = document.createElement("p");
+                emptyMessage.id = "no-notes-message";
+                emptyMessage.textContent = "No notes yet.";
+                list.appendChild(emptyMessage);
+            }
+
+        } catch (error) {
+            console.error("Delete note error:", error);
+            alert(error.message);
+        } finally {
+            // The button may have been removed after a successful request.
+            if (button.isConnected) {
+                button.disabled = false;
+            }
+        }
+    });
+
+})();
+
+
+
+(() => {
+    const form = document.getElementById("ai-form");
+    const list = document.getElementById("notes-list");
+    const status = document.getElementById("ai-status");
+    const questionInput = document.getElementById("ai-question");
+    const askButton = document.getElementById("ask-ai-btn");
+
+    if (!form || !list || !status || !questionInput || !askButton) {
+        return;
+    }
+
+    function addNoteToList(note) {
+        let article = list.querySelector(
+            `[data-note-id="${note.id}"]`
+        );
+
+        if (!article) {
+            article = document.createElement("article");
+            article.className = "card mb-3";
+            article.dataset.noteId = note.id;
+
+            article.innerHTML = `
+                <div class="card-body">
+                    <h3 class="h5 note-title"></h3>
+                    <div class="note-text"
+                         style="white-space: pre-wrap;"></div>
+
+                    <button type="button"
+                            class="btn btn-outline-primary btn-sm mt-3 edit-note-btn">
+                        Edit
+                    </button>
+
+                    <button type="button"
+                            class="btn btn-outline-danger btn-sm mt-3 delete-note-btn">
+                        Delete
+                    </button>
+                </div>
+            `;
+
+            const deleteUrlTemplate =
+                "{% url 'reader:delete_note_ajax' document.pk 999999 %}";
+
+            article.querySelector(".delete-note-btn").dataset.deleteUrl =
+                deleteUrlTemplate.replace("999999", note.id);
+
+            list.prepend(article);
+        }
+
+        article.querySelector(".note-title").textContent = note.title;
+        article.querySelector(".note-text").textContent = note.text;
+
+        const emptyMessage = document.getElementById("no-notes-message");
+        if (emptyMessage) emptyMessage.remove();
+    }
+
+    form.addEventListener("submit", async event => {
+        event.preventDefault();
+
+        askButton.disabled = true;
+        status.textContent = "Generating your answer...";
+
+        try {
+            const response = await fetch(form.dataset.aiUrl, {
+                method: "POST",
+                body: new FormData(form),
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "Accept": "application/json"
+                },
+                mode: "same-origin"
+            });
+
+            const contentType =
+                response.headers.get("content-type") || "";
+
+            if (!contentType.includes("application/json")) {
+                throw new Error(
+                    "The server returned an unexpected response. Check the Network tab."
+                );
+            }
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(data.error || "Unable to generate an answer.");
+            }
+
+            addNoteToList(data.note);
+
+            questionInput.value = "";
+            status.textContent = "Answer generated and saved to Notes.";
+        } catch (error) {
+            status.textContent = error.message;
+        } finally {
+            askButton.disabled = false;
+        }
+    });
+})();
 
 
 

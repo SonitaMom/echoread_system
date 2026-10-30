@@ -12,7 +12,7 @@
 <body>
     <main class="container py-4">
         <p>
-            <a href="{% url 'reader:document_detail' document.pk %}">
+            <a href="{% url 'reader:document_list' %}">
                 Back to Reader
             </a>
         </p>
@@ -23,8 +23,7 @@
 
         <h2 class="h4 mt-4">Choose scan mode</h2>
         <p>Scanning replaces the current extracted and edited text.</p>
-        <form method="post" class="mb-4"
-            onsubmit="return confirm('Scanning will overwrite your saved edits. Continue?');">
+        <form method="post" class="mb-4" id="scan-form">
             {% csrf_token %}
 
             <button type="submit" name="scan_mode" value="normal" class="btn btn-primary">
@@ -109,6 +108,14 @@
                         <option value="female">Female</option>
                     </select>
                 </div>
+
+                <audio
+                    id="reader-audio"
+                    data-tts-url="{% url 'reader:text_to_speech' document.pk %}"
+                    preload="none"
+                ></audio>
+
+                <p id="reading-status" role="status" aria-live="polite"></p>
             </div>
 
             <p id="reading-status" role="status" aria-live="polite">Ready to read.</p>
@@ -141,7 +148,7 @@
             <p id="ai-helper-status" role="status" aria-live="polite" class="mt-2"></p>
 
             {% else %}
-            <p>No scanned pages yet. Return to the reader and scan the PDF first.</p>
+            <p>Please scan the PDF, then edit and save extracted text.</p>
             {% endif %}
         </form>
 
@@ -159,9 +166,37 @@
         </form>
     </main>
 
-    <script src="{% static 'js/reader/reader.js' %}" defer></script>
-    <script src="{% static 'js/reader/ai_helper.js' %}" defer></script>
+
+
+
+
+
+
+
+
+
+
+
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const scanForm = document.getElementById('scan-form');
+            if (!scanForm) return;
+
+            scanForm.addEventListener('submit', (event) => {
+                const hasSavedText = !!document.querySelector('#reader-pages .reader-page');
+                const message = hasSavedText
+                    ? 'Scanning will overwrite your saved edits. Continue?'
+                    : 'This will scan the PDF and save it to the reader. Continue?';
+
+                if (!window.confirm(message)) {
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
+    <script src="{% static 'js/reader/edit.js' %}" defer></script>
+    <script src="{% static 'js/reader/ai_helper.js' %}" defer></script>
+    <!-- <script>
         document.addEventListener("keydown", function (event) {
             if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
                 event.preventDefault();
@@ -171,7 +206,6 @@
 
 
     </script>
-
 
     <script>
         (() => {
@@ -223,7 +257,7 @@
 
             showPage(1);
         })();
-    </script>
+    </script> -->
 </body>
 
 </html>
