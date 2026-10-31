@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.contrib.auth import views as auth_views
+
 
 app_name = "reader"
 
@@ -97,7 +99,7 @@ app_name = "reader"
 
 urlpatterns = [
 
-    path('', views.base_page, name='base'),
+
 
     # Document list and creation
     path("", views.document_list, name="document_list"),

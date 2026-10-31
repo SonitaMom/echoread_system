@@ -1,0 +1,52 @@
+
+
+h1{
+    font-family: var(--font-main);
+    font-weight: 900;
+}
+
+.upload-file i{
+    font-size: 1.2rem;
+}
+.upload-file{
+    font-family: var(--font-main);
+    font-size: 1rem;
+}
+/* h2{
+    font-family: var(--font-main);
+    font-weight: 900;
+    font-size: 2.5rem;
+    margin: 1rem 0;
+} */
+
+.list-group-item{
+    border: 1px solid var(--text-muted);
+    background-color: var(--bg);
+}
+
+.items{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+}
+
+.pdf-title{
+    /* font-family: var(--font-main); */
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+
+.pdf-upload-date{
+    font-size: 1rem;
+}
+
+@media (max-width:470px){
+    .items{
+        flex-direction: column;
+        align-items: start;
+    }
+}
+
+
+
