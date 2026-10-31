@@ -8,10 +8,11 @@
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    {% block extra_css %}{% endblock %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     {% block js %}
-    {% endblock js %}
+    {% endblock  %}
     <title>EchoReadr - System </title>
 </head>
 <body>
@@ -63,6 +64,8 @@
           </div>
     </div>
   </nav>
+
+  {% block content %}{% endblock %}
 
   <script src="{% static 'js/login_signup.js' %}"></script>
 </body>

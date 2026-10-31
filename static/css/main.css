@@ -115,14 +115,18 @@
     text-align: start;
 }
 
+html{
+    min-height: 100%;
+}
 
 
-
-html,body {
+body {
     font-family: 'Inter', 'Kantumruy Pro', sans-serif;
     font-size: var(--fs-body);
-    background-color: var(--bg);
+    background: var(--gradient-hero);
     line-height: 1.6;
+    min-height: 100vh;
+    background-attachment: fixed;
 }
 
 /* Tablet Responsive 48rem = 768px*/
