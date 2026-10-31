@@ -1,0 +1,90 @@
+.navbar-custom{
+    background-color: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0.3rem 0;
+}
+
+.brand{
+    width: 3rem;
+    height: 3rem;
+    object-fit: cover;
+}
+
+.nav-title{
+    font-family: var(--font-main);
+    font-weight: 700;
+    font-size: 1.4rem;
+}
+
+
+
+.user-menu { position: relative; }
+
+.user-menu > .user-avatar {
+  width: 43px;
+  height: 43px;
+  border: 1px solid var(--primary);
+  padding: 0;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--track);
+  color: var(--text-muted);
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.user-menu > .user-menu-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: max-content;
+  min-width: 120px;
+  max-width: 220px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, .15);
+  border-radius: .5rem;
+  padding: .6rem .75rem;
+  box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15);
+  z-index: 1050;
+}
+
+.user-menu-panel[hidden] { display: none !important; }
+
+@media (max-width:470px){
+    .nav-title{
+        font-size: 1.2rem;
+    }
+
+    .btn-start-reading{
+        font-size: 0.75rem;
+    }
+
+    .brand{
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+
+    .btn-text{
+        display: none;
+    }
+
+    .user-menu > .user-avatar{
+        width: 25px;
+        height: 25px;
+    }
+}
+
+@media (min-width : 490px) and (max-width:767.98px){
+
+    .btn-start-reading{
+        width: 8.5rem;
+    }
+
+    .user-menu >.user-avatar{
+        width: 36px;
+        height: 36px;
+    }
+}

@@ -1,18 +1,18 @@
+{% extends 'base.html' %}
 {% load static %}
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>New Reader - EchoRead</title>
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-</head>
-<body>
-<main class="container py-4">
-    <p><a href="{% url 'reader:document_list' %}">Back to My Readers</a></p>
 
-    <h1>New Reader</h1>
-    <p>Select a PDF to create a new reader.</p>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/reader/new_reader.css' %}">
+{% endblock %}
+
+{% block title %}New Reader - EchoRead{% endblock %}
+
+{% block content %}
+    <main class="container py-4">
+    <p class="d-flex align-items-center gap-2"><i class="fa-solid fa-arrow-left-long"></i><a href="{% url 'reader:document_list' %}">Back to My Readers</a></p>
+
+    <h1 class="my-4">New Reader</h1>
+    <p>Choose a PDF from your device. EchoRead will read it aloud to you.</p>
 
     {% for message in messages %}
     <div class="alert alert-{{ message.tags }}" role="alert">
@@ -24,16 +24,16 @@
         {% csrf_token %}
 
         <div id="drop-zone"
-             class="border border-2 rounded p-5 text-center mb-3"
+             class="border border-2 rounded p-5 text-center mb-3 drop-pdf-box mt-5"
              tabindex="0"
              role="group"
              aria-label="PDF upload area">
-            <p id="file-label">Drop a PDF here or choose a file.</p>
+            <p id="file-label" class="dropfile-title mb-3">Drop a PDF here or choose a file.</p>
 
             <input type="file"
                    name="pdf_file"
                    id="pdf-file"
-                   class="form-control"
+                   class="form-control "
                    accept=".pdf,application/pdf"
                    required>
         </div>
@@ -44,37 +44,9 @@
         <a href="{% url 'reader:document_list' %}" class="btn btn-outline-secondary">Cancel</a>
     </form>
 </main>
+{% endblock %}
 
-<script>
-const fileInput = document.getElementById("pdf-file");
-const dropZone = document.getElementById("drop-zone");
-const fileLabel = document.getElementById("file-label");
 
-fileInput.addEventListener("change", () => {
-    if (fileInput.files.length) {
-        fileLabel.textContent = "Selected: " + fileInput.files[0].name;
-    }
-});
-
-dropZone.addEventListener("dragover", event => {
-    event.preventDefault();
-    dropZone.classList.add("bg-light");
-});
-
-dropZone.addEventListener("dragleave", () => {
-    dropZone.classList.remove("bg-light");
-});
-
-dropZone.addEventListener("drop", event => {
-    event.preventDefault();
-    dropZone.classList.remove("bg-light");
-
-    const files = event.dataTransfer.files;
-    if (files.length) {
-        fileInput.files = files;
-        fileInput.dispatchEvent(new Event("change"));
-    }
-});
-</script>
-</body>
-</html>
+{% block js %}
+<script src="{% static 'js/reader/new_reader.js'}"></script>
+{% endblock %}

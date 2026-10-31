@@ -1,3 +1,47 @@
+:root {
+    --primary: #3b3bd6; /*button, logo, links, active nav*/
+    --primary-soft: #ebebfd;     /* active nav pill, selected tab background */
+    --accent: #ffb800;           /* progress bars, step numbers, chapter badges */
+
+    /* Text */
+    --text: #11142d;             /* headings, button labels */
+    --text-muted: #4a5073;       /* body copy, captions */
+    --text-on-primary: #ffffff;
+
+    /* Surfaces */
+    --bg: #f5f6fb;               /* page background */
+    --surface: #ffffff;          /* cards, header, panels */
+    --border: #dcdff0;           /* card and input borders */
+    --track: #d9dcee;            /* progress and slider track */
+
+    /* Highlight (sentence being read) */
+    --highlight: #fdefb8;
+
+    /* Gradients (hero, "continue listening", screen reader banner) */
+    --gradient-hero: linear-gradient(135deg, #e8e8fd 0%, #f5f6fb 50%, #fdf0cf 100%);
+
+    /* Shape */
+    --radius-sm: 12px;
+    --radius-md: 20px;
+    --radius-lg: 28px;
+    --radius-pill: 999px;
+
+    --shadow-card: 0 12px 32px rgba(59, 59, 214, 0.10);
+
+
+    /*Font width*/
+    --fs-h1: 2rem;
+    --fs-h2:1.6rem;
+    --fs-h3:1.3rem;
+    --fs-body:0.75rem;
+
+
+    /*Font family*/
+    --font-main: 'Inter', 'KantumruyPro', sans-serif;
+    /* --font-khmer : 'KantumruyPro', 'Inter', sans-serif; */
+}
+
+
 @font-face {
     font-family: 'Inter';
     font-style: normal;
@@ -71,7 +115,38 @@
     text-align: start;
 }
 
-html {
-    font-family: 'Inter', 'Kantumruy Pro', sans-serif;
+html{
+    min-height: 100%;
 }
+
+
+body {
+    font-family: 'Inter', 'Kantumruy Pro', sans-serif;
+    font-size: var(--fs-body);
+    background: var(--gradient-hero);
+    line-height: 1.6;
+    min-height: 100vh;
+    background-attachment: fixed;
+}
+
+/* Tablet Responsive 48rem = 768px*/
+@media(min-width: 48rem){ 
+    :root{
+        --fs-h1:2.5rem;
+        --fs-h2:2rem;
+        --fs-h3:1.5rem;
+        --fs-body: 1.0625rem;
+    }
+}
+
+/* Desktop size */
+@media(min-width:75rem){
+    :root{
+        --fs-h1:3.5rem;
+        --fs-h2:2.5rem;
+        --fs-h3:1.875rem;
+        --fs-body: 1.125rem;
+    }
+}
+
 

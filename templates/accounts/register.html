@@ -1,55 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Create Account</title>
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-        rel="stylesheet"
+ {% extends 'accounts/base_auth.html' %} 
+{% block title %}Sign up{%endblock %}
+
+{% block content %}
+<h2 class="h4 mb-4">Sign Up</h2>
+
+<form method="post" id="register" novalidate>
+  {% csrf_token %} {% for field in form %}
+  <div class="mb-2">
+    <label for="{{ field.id_for_label }}" class="form-label"
+      >{{ field.label }}</label
     >
-</head>
-<body>
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <h1 class="h3 mb-4">Create Account</h1>
+    {{ field }} {% for error in field.errors %}
+    <div class="text-danger small">{{ error }}</div>
+    {% endfor %}
+  </div>
+  {% endfor %} {% if form.non_field_errors %}
+  <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+  {% endif %}
 
-            <form method="post">
-                {% csrf_token %}
+  <button type="submit" class="btn btn-primary w-100 mt-2">
+    Create Account
+  </button>
+</form>
 
-                {% for field in form %}
-                    <div class="mb-3">
-                        <label for="{{ field.id_for_label }}"
-                               class="form-label">
-                            {{ field.label }}
-                        </label>
+<p class="mt-3 mb-3 mb-md-3 md-lg-0 text-center">
+  Already have an account?<a href="{% url 'login' %}" data-show="login-view"
+    >Login</a
+  >
+</p>
+{% endblock %}
 
-                        {{ field }}
-
-                        {% for error in field.errors %}
-                            <div class="text-danger">{{ error }}</div>
-                        {% endfor %}
-                    </div>
-                {% endfor %}
-
-                {% if form.non_field_errors %}
-                    <div class="alert alert-danger">
-                        {{ form.non_field_errors }}
-                    </div>
-                {% endif %}
-
-                <button type="submit" class="btn btn-primary">
-                    Create Account
-                </button>
-            </form>
-
-            <p class="mt-3">
-                Already have an account?
-                <a href="{% url 'login' %}">Login</a>
-            </p>
-        </div>
-    </div>
-</div>
-</body>
-</html>

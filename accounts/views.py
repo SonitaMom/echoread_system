@@ -4,6 +4,9 @@ from .forms import RegisterForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
+import re
+from django import template
+
 def home_view(request):
     return render(request, "accounts/home.html")
 
@@ -50,4 +53,11 @@ def login_view(request):
     return render(request, "accounts/login.html")
 
 
+register = template.Library()
 
+@register.filter
+def initials(username):
+    parts = [p for p in re.split(r'[._\-\s]+', username) if p]
+    if len(parts)>=2:
+        return (parts[0][0] + parts[1][0]).upper()
+    return username[:2].upper()

@@ -1,0 +1,25 @@
+.fa-arrow-left-long{
+    font-size: 1rem;
+    color: var(--primary);
+}
+
+h1{
+    font-family: var(--font-main);
+    font-weight: 900;
+}
+
+.border{
+    border-style: dashed !important;
+    border-color: var(--text-muted) !important;
+}
+
+.dropfile-title{
+    font-family: var(--font-main);
+    font-size: 1.7rem;
+    font-weight: 900;
+}
+
+.form-control{
+    border: 1px solid black;
+    /* padding: 1rem 0; */
+}

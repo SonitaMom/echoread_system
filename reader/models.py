@@ -7,6 +7,7 @@ class ReaderDocument(models.Model):
         on_delete=models.CASCADE,
         related_name="reader_documents",
     )
+    
     title = models.CharField(max_length=255)
     pdf_file = models.FileField(upload_to="pdfs/%Y/%m/")
     uploaded_at = models.DateTimeField(auto_now_add=True)
