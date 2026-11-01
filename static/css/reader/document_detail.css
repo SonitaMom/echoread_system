@@ -1,0 +1,128 @@
+.title{
+    font-family: var(--font-main);
+}
+
+.fa-arrow-left-long{
+        font-size: 1rem;
+    color: var(--primary);
+}
+
+.border{
+    background-color: var(--surface);
+    border-radius: 2rem !important;
+}
+
+.vc-wave{
+    height: 64px;
+    margin: 8px 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(4px, 1.5vw, 8px);
+}
+
+.vc-wave span{
+    /* width: 14px */
+    flex: 0 1 12px;
+    min-width: 4px;
+    height: var(--h);
+    border-radius: 999px;
+    background: blue;
+    transform-origin: center;
+    animation: vc-bounce 0.9s ease-in-out infinite alternate;
+    animation-play-state: paused;
+}
+
+.vc-wave span:nth-child(3n){
+    animation-duration: 0.7s;
+    animation-delay: -0.2s;
+}
+.vc-wave span:nth-child(3n+1){
+    animation-duration: 1.05s;
+    animation-delay: -0.5s;
+}
+.vc-wave span:nth-child(3n+2){
+    animation-duration: 0.85s;
+    animation-delay: -0.1s;
+}
+.vc-wave span:nth-child(5n){
+    animation-duration: 0.6s;
+    animation-delay: -0.35s;
+}
+
+.vc-wave span{
+    animation-play-state: running;
+}
+
+@keyframes vc-bounce{
+    from{
+        transform: scaleY(0.45);
+    }
+    to{
+        transform: scaleY(1.1);
+    }
+}
+
+/* Progress */
+
+.vc-progress{
+    height: 6px;
+    border-radius: 999px;
+    background: var(--track);
+    cursor: pointer;
+    position: relative;
+}
+
+.vc-progress::before{
+    content: "";
+    position: absolute;
+    inset: -12px 0;
+}
+
+.vc-progress:focus-visible{
+    outline: 3px solid var(--accent);
+    outline-offset: 4px;
+}
+
+.vc-fill{
+    width: 0%;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--accent);
+    transition: width 0.25s linear;
+}
+
+/* buttons */
+.audio-btn{
+   /* background-color: var(--primary1); */
+   /* border: none; */
+   /* border-radius: 10px; */
+   width: 40px;
+   height: 40px;
+}
+
+/* .audio-btn i{
+    color: white;
+} */
+
+
+/* Ready to Read  */
+h2{
+    font-family: var(--font-main);
+    /* font-size: 1.5rem; */
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+select{
+    border: 1px solid var(--text-muted);
+    border-radius: 8px;
+    color: var(--text-muted);
+    padding: 3px;
+}
+
+textarea{
+    resize:unset;
+    height: 9rem;
+}
+
