@@ -1,18 +1,17 @@
+{% extends 'base.html' %}
 {% load static %}
-<!doctype html>
-<html lang="en">
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ document.title }} - EchoRead</title>
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-</head>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/reader/document_detail.css' %}">
+{% endblock %}
 
-<body>
-    <main class="container py-4">
+{% block title %}{{ document.title }} - EchoRead {% endblock %}
+
+{% block content %}
+
+ <main class="container py-4">
         <p>
-            <a href="{% url 'reader:document_list' %}">
+            <i class="fa-solid fa-arrow-left-long"></i><a href="{% url 'reader:document_list' %}">
                 Back
             </a>
         </p>
@@ -23,81 +22,84 @@
         {% if pages %}
         <h2 class="h4">Extracted text</h2>
 
-    
-        <section class="page-navigation mb-3" aria-label="Page navigation">
-            <button type="button" id="previous-page" class="btn btn-outline-secondary">
-                Previous page
-            </button>
-            <button type="button" id="next-page" class="btn btn-outline-secondary">
-                Next page
-            </button>
-
-            <label for="page-number-input" class="form-label ms-2">Page number</label>
-            <input type="number" id="page-number-input" min="1" step="1" value="1" inputmode="numeric"
-                class="form-control" style="width: 100px; display: inline-block;"
-                aria-describedby="page-navigation-status">
-
-            <p id="page-navigation-status" role="status" aria-live="polite">
-                Page 1
-            </p>
-        </section>
-
-
-
-        <div class="reader-controls" aria-label="Reading controls">
-
-            <button type="button" id="play-reading">
-                Play
-            </button>
-
-            <button type="button" id="pause-reading">
-                Pause
-            </button>
-
-            <button type="button" id="back-10-seconds">
-                Back 10 seconds
-            </button>
-
-            <button type="button" id="forward-10-seconds">
-                Forward 10 seconds
-            </button>
-
-            <button type="button" id="stop-reading">
-                Stop
-            </button>
-
-            <label for="reading-speed">Speed</label>
-            <select id="reading-speed">
-                <option value="0.5">0.5×</option>
-                <option value="0.75">0.75×</option>
-                <option value="1" selected>1×</option>
-                <option value="1.25">1.25×</option>
-                <option value="1.5">1.5×</option>
-                <option value="1.75">1.75×</option>
-                <option value="2">2×</option>
-            </select>
-
-            <label for="reading-language">Language</label>
-            <select id="reading-language">
-                <option value="auto" selected>Auto-detect</option>
-                <option value="en">English</option>
-                <option value="km">Khmer</option>
-            </select>
-
-            <label for="reading-voice">Voice</label>
-            <select id="reading-voice">
-                <option value="male" selected>Male</option>
-                <option value="female">Female</option>
-            </select>
-        </div>
-
-        <p id="reading-status" role="status" aria-live="polite">
+        <div class="row">
+            <div class="col-12 col-lg-6">
+                <p id="reading-status" role="status" aria-live="polite">
             Ready to read.
         </p>
+                <section class="page-navigation mb-3" aria-label="Page navigation">
+                <button type="button" id="previous-page" class="btn btn-outline-secondary">
+                    Previous page
+                </button>
+                <button type="button" id="next-page" class="btn btn-outline-secondary">
+                    Next page
+                </button>
+
+                <label for="page-number-input" class="form-label ms-2">Page number</label>
+                <input type="number" id="page-number-input" min="1" step="1" value="1" inputmode="numeric"
+                    class="form-control" style="width: 100px; display: inline-block;"
+                    aria-describedby="page-navigation-status">
+
+                <p id="page-navigation-status" role="status" aria-live="polite">
+                Page 1
+                    </p>
+                </section>
 
 
+                <div class="reader-controls" aria-label="Reading controls">
 
+                        <button type="button" id="play-reading">
+                            <i class="fa-solid fa-play"></i> <!--Play-->
+                        </button>
 
+                        <button type="button" id="pause-reading">
+                            <i class="fa-solid fa-pause"></i><!--Pause-->
+                        </button>
+
+                        <button type="button" id="back-10-seconds">
+                            <i class="fa-solid fa-rotate-left"></i><!--Back 10 seconds-->
+                        </button>
+
+                        <button type="button" id="forward-10-seconds">
+                            <i class="fa-solid fa-rotate-right"></i><!--Forward 10 seconds-->
+                        </button>
+
+                        <button type="button" id="stop-reading">
+                            <i class="fa-solid fa-pause"></i><!--Stop-->
+                        </button>
+
+                        <label for="reading-speed"><i class="fa-solid fa-forward-fast"></i><!--Speed--></label>
+                        <select id="reading-speed">
+                            <option value="0.5">0.5x</option>
+                            <option value="0.75">0.75x</option>
+                            <option value="1" selected>1x</option>
+                            <option value="1.25">1.25x</option>
+                            <option value="1.5">1.5x</option>
+                            <option value="1.75">1.75x</option>
+                            <option value="2">2x</option>
+                        </select>
+
+                        <label for="reading-language"><i class="fa-solid fa-language"></i><!--Language--></label>
+                        <select id="reading-language">
+                            <option value="auto" selected>Auto-detect</option>
+                            <option value="en">English</option>
+                            <option value="km">Khmer</option>
+                        </select>
+
+                        <label for="reading-voice"><i class="fa-solid fa-microphone"></i><!--Voice--></label>
+                        <select id="reading-voice">
+                            <option value="male" selected>Male</option>
+                            <option value="female">Female</option>
+                        </select>
+        </div>
+
+                    </div>
+
+                    
+        
+
+        <div class="col-12 col-lg-6 col-md-6">
+            
         <section class="bookmark-controls" aria-labelledby="bookmark-heading"
             data-create-url="{% url 'reader:create_bookmark' document.pk %}">
 
@@ -126,6 +128,18 @@
 
             <p id="bookmark-status" role="status" aria-live="polite"></p>
         </section>
+        </div>
+
+
+        </div>
+    
+        
+
+
+        
+
+
+
 
 
 
@@ -289,6 +303,23 @@
 
 
     </main>
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/reader/reader.js' %}" defer></script>
+{% endblock %}
+<!-- <!doctype html>
+<html lang="en"> -->
+
+<!-- <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ document.title }} - EchoRead</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+</head>
+
+<body> -->
+   
 
 
 
@@ -297,8 +328,8 @@
 
 
 
-    <script src="{% static 'js/reader/reader.js' %}" defer></script>
+    
 
-</body>
+<!-- </body>
 
-</html>
+</html> -->
