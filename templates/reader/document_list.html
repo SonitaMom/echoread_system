@@ -39,11 +39,11 @@
                         </div>
 
                         <div class="d-flex  gap-3">
-                            <a href="{% url 'reader:document_detail' document.pk %}" class="btn btn-outline-secondary">
-                                Read {{ document.title }}
+                            <a href="{% url 'reader:document_detail' document.pk %}" class="btn btn-outline-secondary" aria-label="Read document">
+                                Read
                             </a>
-                                    <a href="{% url 'reader:edit_reader' document.pk %}?discard_preview=1" class="btn btn-outline-primary">
-                                Edit extracted text
+                            <a href="{% url 'reader:edit_reader' document.pk %}?discard_preview=1" class="btn btn-outline-primary" aria-label="Edit document">
+                                Edit
                             </a>
                         </div>
                     </div>
