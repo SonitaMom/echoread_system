@@ -1,16 +1,13 @@
+{% extends 'base.html' %}
 {% load static %}
-<!doctype html>
-<html lang="en">
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Edit {{ document.title }} - EchoRead</title>
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-</head>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/reader/document_detail.css' %}" />
+{% endblock %}
+{% block title %} Edit {{ document.title }} - EchoRead {% endblock %}
 
-<body>
-    <main class="container py-4">
+{% block content %}
+<main class="container py-4">
         <p>
             <a href="{% url 'reader:document_list' %}">
                 Back to Reader
@@ -166,17 +163,9 @@
         </form>
     </main>
 
+{% endblock %}
 
-
-
-
-
-
-
-
-
-
-
+{% block js %}
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const scanForm = document.getElementById('scan-form');
@@ -201,6 +190,4 @@
     </script>
     <script src="{% static 'js/reader/edit.js' %}" defer></script>
     <script src="{% static 'js/reader/ai_helper.js' %}" defer></script>
-</body>
-
-</html>
+{% endblock %}

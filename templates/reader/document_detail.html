@@ -1,307 +1,450 @@
-{% load static %}
-<!doctype html>
-<html lang="en">
+{% extends 'base.html' %} {% load static %} {% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/reader/document_detail.css' %}" />
+{% endblock %}
 
 <head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ document.title }} - EchoRead</title>
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,100..700;1,100..700&display=swap"
+    rel="stylesheet"
+  />
+</head>
+
+{% block title %}{{ document.title }} - EchoRead {% endblock %} 
+{% block content%}
+
+<main class="container py-4">
+  <p class="d-flex gap-2 align-items-center">
+    <i class="fa-solid fa-arrow-left-long"></i
+    ><a href="{% url 'reader:document_list' %}"> Back </a>
+  </p>
+
+  <h1 class="title">{{ document.title }}</h1>
+
+  <!-- #1 -->
+  {% if pages %}
+  <h2 class="h4">Extracted text</h2>
+
+  <div class="row my-2 g-3">
+    <!-- Ready to read -->
+    <div class="col-12 col-lg-6">
+      <div class="border p-3 p-md-5 ready-to-read">
+        <h2 id="reading-status" role="status" aria-live="polite" class="ready-to-read-title">
+          Ready to read.
+        </h2>
+
+        <!-- Page number -->
+        <section class="page-navigation mb-3" aria-label="Page navigation">
+            <div class="d-flex flex-wrap justify-content-between gap-2 align-items-center">
+                    <button
+            type="button"
+            id="previous-page"
+            class="btn btn-outline-secondary"
+          ><i class="fa-solid fa-arrow-left"></i>
+            Previous page
+          </button>
+          <button
+            type="button"
+            id="next-page"
+            class="btn btn-outline-secondary  "
+          >
+            <span>Next page</span> <span><i class="fa-solid fa-arrow-right"></i></span>
+          </button>
+
+          <div>
+            <label for="page-number-input" class="form-label ms-2"
+            >Page number</label
+          >
+          <input
+            type="number"
+            id="page-number-input"
+            min="1"
+            step="1"
+            value="1"
+            inputmode="numeric"
+            class="form-control"
+            style="width: 100px; display: inline-block"
+            aria-describedby="page-navigation-status"
+          />
+          </div>
+          
+
+          <p id="page-navigation-status" role="status" aria-live="polite">
+            Page 1
+          </p>
+            </div>
+          
+        </section>
+
+        <!-- display buttons -->
+        <div class="vc-audio my-5 border p-3">
+          <div class="vc-audio-wave my-3">
+                <div class="vc-wave" aria-hidden="true">
+                    <span style="--h: 22px"></span>
+                    <span style="--h: 42px"></span>
+                    <span style="--h: 62px"></span>
+                    <span style="--h: 44px"></span>
+                    <span style="--h: 70px"></span>
+                    <span style="--h: 48px"></span>
+                    <span style="--h: 76px"></span>
+                    <span style="--h: 54px"></span>
+                    <span style="--h: 30px"></span>
+                    <span style="--h: 64px"></span>
+                    <span style="--h: 46px"></span>
+                    <span style="--h: 60px"></span>
+                    <span style="--h: 26px"></span>
+                    <span style="--h: 38px"></span>
+                </div>
+
+                <div
+                    class="vc-progress"
+                    id="vc-progress"
+                    role="slider"
+                    tabindex="0"
+                    aria-label="Reading position"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    aria-valuenow="0">
+                    <div class="vc-fill" id="vc-fill"></div>
+                </div>
+          </div>
+
+          <div class="reader-controls" aria-label="Reading controls">
+            <div
+              class="display-btns d-flex align-items-center justify-content-center gap-3 flex-wrap"
+            >
+              <button type="button" id="back-10-seconds" class="audio-btn btn btn-outline-primary">
+                <i class="fa-solid fa-rotate-left"></i
+                ><!--Back 10 seconds-->
+              </button>
+
+              <button type="button" id="play-reading" class="audio-btn btn btn-outline-primary">
+                <i class="fa-solid fa-play"></i>
+                <!--Play-->
+              </button>
+              <!-- 
+                    <button type="button" id="pause-reading">
+                        <i class="fa-solid fa-pause"></i
+                        >Pause
+                    </button> -->
+
+              <button type="button" id="forward-10-seconds" class="audio-btn btn btn-outline-primary">
+                <i class="fa-solid fa-rotate-right"></i
+                ><!--Forward 10 seconds-->
+              </button>
+
+              <button
+                type="button"
+                id="stop-reading"
+                class="audio-btn  btn btn-outline-primary"
+              >
+                <i class="fa-solid fa-pause"></i
+                ><!--Stop-->
+              </button>
+            </div>
+
+            <div class="display-info mt-3 d-flex justify-content-between gap-3 flex-wrap">
+              <div class="d-flex gap-2 align-items-center">
+                <label for="reading-speed">Speed</label>
+                <select id="reading-speed">
+                  <option value="0.5">0.5x</option>
+                  <option value="0.75">0.75x</option>
+                  <option value="1" selected>1x</option>
+                  <option value="1.25">1.25x</option>
+                  <option value="1.5">1.5x</option>
+                  <option value="1.75">1.75x</option>
+                  <option value="2">2x</option>
+                </select>
+              </div>
+
+              <div class="d-flex gap-2 align-items-center">
+                <label for="reading-language">Language</label>
+                <select id="reading-language">
+                  <option value="auto" selected>Auto-detect</option>
+                  <option value="en">English</option>
+                  <option value="km">Khmer</option>
+                </select>
+              </div>
+
+              <div class="d-flex gap-2 align-items-center">
+                <label for="reading-voice">Voice</label>
+                <select id="reading-voice">
+                  <option value="male" selected>Male</option>
+                  <option value="female">Female</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr>
+        <section
+          class="bookmark-controls"
+          aria-labelledby="bookmark-heading"
+          data-create-url="{% url 'reader:create_bookmark' document.pk %}"
+        >
+          <h2 id="bookmark-heading" class="mt-3">Bookmarks</h2>
+
+          <div class="border p-3 my-3">
+            <div class="mb-2">
+                <label for="bookmark-select">Go to saved bookmark</label>
+                <select id="bookmark-select">
+                    <option value="">Select a bookmark</option>
+                    {% for bookmark in bookmarks %}
+                    <option
+                    value="{{ bookmark.page_number }}"
+                    data-bookmark-id="{{ bookmark.id }}"
+                    >
+                    {% if bookmark.label %} {{ bookmark.label }} — Page {{
+                    bookmark.page_number }} {% else %} Page {{ bookmark.page_number }}
+                    {% endif %}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-2">
+                    <label for="bookmark-label">Bookmark Title</label>
+                <input
+                    type="text"
+                    id="bookmark-label"
+                    maxlength="150"
+                    placeholder="e.g. History of LLM"
+                />
+            </div>
+          <button type="button" id="add-bookmark" class="mt-2 btn btn-primary">
+            Add bookmark for current page
+          </button>
+
+           <p id="bookmark-status" role="status" aria-live="polite"></p>
+          </div>
+        </section>
+        <hr>
+
+
+        <div id="reader-pages">
+          {% for page in pages %}
+          <section
+            class="reader-page"
+            data-page-number="{{ page.page_number }}"
+          >
+            <h2>Page {{ page.page_number }}</h2>
+            <div class="reader-page-text border p-3" style="white-space: pre-wrap">
+              {{ page.text }}
+            </div>
+          </section>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Bookmark -->
+    <div class="col-12 col-lg-6 ">
+      <div class="border rounded p-3 p-md-5">
+        <section class="mt-2" id="ai-section">
+          <h2 class="ai-title">Ask AI about this PDF</h2>
+          <p>Answers are automatically saved to your Notes.</p>
+
+          <form
+            id="ai-form"
+            data-ai-url="{% url 'reader:ask_ai_ajax' document.pk %}"
+          >
+            {% csrf_token %}
+
+            <div class="mb-3">
+              <label for="ai-question" class="form-label">
+                Your question
+              </label>
+              <textarea
+                id="ai-question"
+                name="question"
+                class="form-control"
+                rows="3"
+                maxlength="2000"
+                required
+                placeholder="Ask a question about this document..."
+              ></textarea>
+            </div>
+
+            <button type="submit" id="ask-ai-btn" class="btn btn-primary">
+              <i class="fa-solid fa-cloud-arrow-up"></i> Ask AI
+            </button>
+
+            <hr>
+            <p id="ai-status" role="status" aria-live="polite" class="mt-2"></p>
+          </form>
+        </section>
+
+        <section class="mt-5" id="notes-section">
+          <h2 class="my-3">Notes </h2>
+
+          <button type="button" id="add-note-btn" class="btn btn-primary mb-3">
+            Add Note  <i class="fa-solid fa-note-sticky"></i>
+          </button>
+
+          <div id="note-editor" class="card mb-4" hidden>
+            <div class="card-body">
+              <h3 class="h5" id="note-form-heading">Create Note</h3>
+
+              <form
+                id="note-form"
+                data-save-url="{% url 'reader:save_note_ajax' document.pk %}"
+              >
+                {% csrf_token %}
+
+                <input type="hidden" id="note-id" name="note_id" />
+
+                <div class="mb-3">
+                  <label for="note-title" class="form-label">Title</label>
+                  <input
+                    id="note-title"
+                    name="title"
+                    class="form-control"
+                    maxlength="200"
+                    required
+                  />
+                </div>
+
+                <div class="mb-3">
+                  <label for="note-text" class="form-label">Text</label>
+                  <textarea
+                    id="note-text"
+                    name="text"
+                    class="form-control"
+                    rows="6"
+                    required
+                  ></textarea>
+                </div>
+
+                <p id="note-status" role="status" aria-live="polite"></p>
+
+                <button type="submit" class="btn btn-primary">Save Note</button>
+                <button
+                  type="button"
+                  id="cancel-note-btn"
+                  class="btn btn-outline-secondary"
+                >
+                  Cancel
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div id="notes-list">
+            {% for note in notes %}
+            <article class="card mb-3" data-note-id="{{ note.pk }}">
+              <div class="card-body">
+                <h3 class="h5 note-title">{{ note.title }}</h3>
+                <div class="note-text" style="white-space: pre-wrap">
+                  {{ note.text }}
+                </div>
+
+                <button
+                  type="button"
+                  class="btn btn-outline-primary btn-sm mt-3 edit-note-btn"
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline-danger btn-sm mt-3 delete-note-btn"
+                  data-delete-url="{% url 'reader:delete_note_ajax' document.pk note.pk %}"
+                >
+                  Delete
+                </button>
+              </div>
+            </article>
+            {% empty %}
+            <p id="no-notes-message">No notes yet.</p>
+            {% endfor %}
+          </div>
+        </section>
+
+        <!-- #3 -->
+        <div class="mt-4">
+          <button type="button" id="download-mp3" class="btn btn-primary">
+            Download full document as MP3
+          </button>
+
+          <p id="download-status" role="status" aria-live="polite"></p>
+        </div>
+
+        <audio
+          id="reader-audio"
+          data-tts-url="{% url 'reader:text_to_speech' document.pk %}"
+          data-document-name="{{ document.title }}"
+          preload="auto"
+        ></audio>
+
+        {% endif %}
+
+        <a
+          href="{% url 'reader:edit_reader' document.pk %}?discard_preview=1"
+          class="btn btn-outline-primary"
+        >
+          Edit extracted text
+        </a>
+
+        <hr>
+        {% if pages %}
+        <section
+          class="delete-bookmark-controls"
+          aria-labelledby="delete-bookmark-heading"
+          data-delete-url-template="{% url 'reader:delete_bookmark' document.pk 0 %}"
+        >
+          <h2 id="delete-bookmark-heading" class="my-3">Manage bookmarks</h2>
+
+          <div>
+                <label for="delete-bookmark-select">
+                    Select a bookmark to delete
+                </label>
+
+                <select id="delete-bookmark-select" >
+                    <option value="">Select a bookmark</option>
+                    {% for bookmark in bookmarks %}
+                    <option value="{{ bookmark.id }}">
+                    {% if bookmark.label %} {{ bookmark.label }} — Page {{
+                    bookmark.page_number }} {% else %} Page {{ bookmark.page_number }}
+                    {% endif %}
+                    </option>
+                    {% endfor %}
+                </select>
+          </div>
+          
+
+          <button type="button" id="delete-bookmark" class="btn btn-primary mt-3">
+            Delete selected bookmark
+          </button>
+
+          <p id="delete-bookmark-status" role="status" aria-live="polite"></p>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- #2 -->
+
+  {% endif %}
+</main>
+{% endblock %} {% block js %}
+<script src="{% static 'js/reader/reader.js' %}" defer></script>
+{% endblock %}
+<!-- <!doctype html>
+<html lang="en"> -->
+
+<!-- <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ document.title }} - EchoRead</title>
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
 </head>
 
-<body>
-    <main class="container py-4">
-        <p>
-            <a href="{% url 'reader:document_list' %}">
-                Back
-            </a>
-        </p>
+<body> -->
 
-        <h1>{{ document.title }}</h1>
+<!-- </body>
 
-        <!-- #1 -->
-        {% if pages %}
-        <h2 class="h4">Extracted text កខគឃ</h2>
-
-    
-        <section class="page-navigation mb-3" aria-label="Page navigation">
-            <button type="button" id="previous-page" class="btn btn-outline-secondary">
-                Previous page
-            </button>
-            <button type="button" id="next-page" class="btn btn-outline-secondary">
-                Next page
-            </button>
-
-            <label for="page-number-input" class="form-label ms-2">Page number</label>
-            <input type="number" id="page-number-input" min="1" step="1" value="1" inputmode="numeric"
-                class="form-control" style="width: 100px; display: inline-block;"
-                aria-describedby="page-navigation-status">
-
-            <p id="page-navigation-status" role="status" aria-live="polite">
-                Page 1
-            </p>
-        </section>
-
-
-
-        <div class="reader-controls" aria-label="Reading controls">
-
-            <button type="button" id="play-reading">
-                Play
-            </button>
-
-            <button type="button" id="pause-reading">
-                Pause
-            </button>
-
-            <button type="button" id="back-10-seconds">
-                Back 10 seconds
-            </button>
-
-            <button type="button" id="forward-10-seconds">
-                Forward 10 seconds
-            </button>
-
-            <button type="button" id="stop-reading">
-                Stop
-            </button>
-
-            <label for="reading-speed">Speed</label>
-            <select id="reading-speed">
-                <option value="0.5">0.5×</option>
-                <option value="0.75">0.75×</option>
-                <option value="1" selected>1×</option>
-                <option value="1.25">1.25×</option>
-                <option value="1.5">1.5×</option>
-                <option value="1.75">1.75×</option>
-                <option value="2">2×</option>
-            </select>
-
-            <label for="reading-language">Language</label>
-            <select id="reading-language">
-                <option value="auto" selected>Auto-detect</option>
-                <option value="en">English</option>
-                <option value="km">Khmer</option>
-            </select>
-
-            <label for="reading-voice">Voice</label>
-            <select id="reading-voice">
-                <option value="male" selected>Male</option>
-                <option value="female">Female</option>
-            </select>
-        </div>
-
-        <p id="reading-status" role="status" aria-live="polite">
-            Ready to read.
-        </p>
-
-
-
-
-        <section class="bookmark-controls" aria-labelledby="bookmark-heading"
-            data-create-url="{% url 'reader:create_bookmark' document.pk %}">
-
-            <h2 id="bookmark-heading">Bookmarks</h2>
-
-            <label for="bookmark-select">Go to saved bookmark</label>
-            <select id="bookmark-select">
-                <option value="">Select a bookmark</option>
-                {% for bookmark in bookmarks %}
-                <option value="{{ bookmark.page_number }}" data-bookmark-id="{{ bookmark.id }}">
-                    {% if bookmark.label %}
-                    {{ bookmark.label }} — Page {{ bookmark.page_number }}
-                    {% else %}
-                    Page {{ bookmark.page_number }}
-                    {% endif %}
-                </option>
-                {% endfor %}
-            </select>
-
-            <label for="bookmark-label">Bookmark Title</label>
-            <input type="text" id="bookmark-label" maxlength="150" placeholder="e.g. History of LLM">
-
-            <button type="button" id="add-bookmark">
-                Add bookmark for current page
-            </button>
-
-            <p id="bookmark-status" role="status" aria-live="polite"></p>
-        </section>
-
-
-
-
-
-
-        <div id="reader-pages">
-            {% for page in pages %}
-            <section class="reader-page" data-page-number="{{ page.page_number }}">
-                <h2>Page {{ page.page_number }}</h2>
-                <div class="reader-page-text" style="white-space: pre-wrap;">{{ page.text }}</div>
-            </section>
-            {% endfor %}
-        </div>
-
-
-
-
-        <!-- #2 -->
-        <section class="mt-5" id="ai-section">
-            <h2>Ask AI about this PDF</h2>
-            <p>Answers are automatically saved to your Notes.</p>
-
-            <form id="ai-form" data-ai-url="{% url 'reader:ask_ai_ajax' document.pk %}">
-                {% csrf_token %}
-
-                <div class="mb-3">
-                    <label for="ai-question" class="form-label">
-                        Your question
-                    </label>
-                    <textarea id="ai-question" name="question" class="form-control" rows="3" maxlength="2000" required
-                        placeholder="Ask a question about this document..."></textarea>
-                </div>
-
-                <button type="submit" id="ask-ai-btn" class="btn btn-primary">
-                    Ask AI
-                </button>
-
-                <p id="ai-status" role="status" aria-live="polite" class="mt-2"></p>
-            </form>
-        </section>
-
-
-
-
-
-
-
-
-
-        <section class="mt-5" id="notes-section">
-            <h2>Notes</h2>
-
-            <button type="button" id="add-note-btn" class="btn btn-primary mb-3">
-                Add Note
-            </button>
-
-            <div id="note-editor" class="card mb-4" hidden>
-                <div class="card-body">
-                    <h3 class="h5" id="note-form-heading">Create Note</h3>
-
-                    <form id="note-form" data-save-url="{% url 'reader:save_note_ajax' document.pk %}">
-                        {% csrf_token %}
-
-                        <input type="hidden" id="note-id" name="note_id">
-
-                        <div class="mb-3">
-                            <label for="note-title" class="form-label">Title</label>
-                            <input id="note-title" name="title" class="form-control" maxlength="200" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="note-text" class="form-label">Text</label>
-                            <textarea id="note-text" name="text" class="form-control" rows="6" required></textarea>
-                        </div>
-
-                        <p id="note-status" role="status" aria-live="polite"></p>
-
-                        <button type="submit" class="btn btn-primary">
-                            Save Note
-                        </button>
-                        <button type="button" id="cancel-note-btn" class="btn btn-outline-secondary">
-                            Cancel
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-            <div id="notes-list">
-                {% for note in notes %}
-                <article class="card mb-3" data-note-id="{{ note.pk }}">
-                    <div class="card-body">
-                        <h3 class="h5 note-title">{{ note.title }}</h3>
-                        <div class="note-text" style="white-space: pre-wrap;">{{ note.text }}</div>
-
-                        <button type="button" class="btn btn-outline-primary btn-sm mt-3 edit-note-btn">
-                            Edit
-                        </button>
-                        <button type="button" class="btn btn-outline-danger btn-sm mt-3 delete-note-btn"
-                            data-delete-url="{% url 'reader:delete_note_ajax' document.pk note.pk %}">
-                            Delete
-                        </button>
-                    </div>
-                </article>
-                {% empty %}
-                <p id="no-notes-message">No notes yet.</p>
-                {% endfor %}
-            </div>
-        </section>
-
-
-        <!-- #3 -->
-        <div class="mt-4">
-            <button type="button" id="download-mp3">
-                Download full document as MP3
-            </button>
-
-            <p id="download-status" role="status" aria-live="polite"></p>
-        </div>
-
-        <audio id="reader-audio" data-tts-url="{% url 'reader:text_to_speech' document.pk %}"
-            data-document-name="{{ document.title }}" preload="auto"></audio>
-
-        {% endif %}
-
-        <a href="{% url 'reader:edit_reader' document.pk %}?discard_preview=1" class="btn btn-outline-primary">
-            Edit extracted text
-        </a>
-
-        {% if pages %}
-        <section class="delete-bookmark-controls" aria-labelledby="delete-bookmark-heading"
-            data-delete-url-template="{% url 'reader:delete_bookmark' document.pk 0 %}">
-
-            <h2 id="delete-bookmark-heading">Manage bookmarks</h2>
-
-            <label for="delete-bookmark-select">
-                Select a bookmark to delete
-            </label>
-
-            <select id="delete-bookmark-select">
-                <option value="">Select a bookmark</option>
-                {% for bookmark in bookmarks %}
-                <option value="{{ bookmark.id }}">
-                    {% if bookmark.label %}
-                    {{ bookmark.label }} — Page {{ bookmark.page_number }}
-                    {% else %}
-                    Page {{ bookmark.page_number }}
-                    {% endif %}
-                </option>
-                {% endfor %}
-            </select>
-
-            <button type="button" id="delete-bookmark">
-                Delete selected bookmark
-            </button>
-
-            <p id="delete-bookmark-status" role="status" aria-live="polite"></p>
-        </section>
-        {% endif %}
-
-
-
-    </main>
-
-
-
-
-
-
-
-
-    <script src="{% static 'js/reader/reader.js' %}" defer></script>
-
-</body>
-
-</html>
+</html> -->

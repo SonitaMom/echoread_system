@@ -1,7 +1,8 @@
 :root {
     --primary: #3b3bd6; /*button, logo, links, active nav*/
     --primary-soft: #ebebfd;     /* active nav pill, selected tab background */
-    --accent: #ffb800;           /* progress bars, step numbers, chapter badges */
+    --accent: #ffb800;
+    --primary1: #0d6efd;           /* progress bars, step numbers, chapter badges */
 
     /* Text */
     --text: #11142d;             /* headings, button labels */
