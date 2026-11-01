@@ -74,6 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let currentIndex = 0;
     let currentAudioUrl = null;
+    let resumePoint = null; 
 
     function getSelectedPageNumber() {
         const pageInput = document.getElementById("page-number-input");
@@ -100,6 +101,91 @@ document.addEventListener("DOMContentLoaded", () => {
     let isLoading = false;
     let downloadInProgress = false;
 
+
+    // One play/ Pause buttons + waveform
+
+    const playIcon = playButton.querySelector("i");
+    const waveBars = document.querySelectorAll(".vc-wave span");
+    const waveFill = document.getElementById("vc-fill");
+    const waveProgress = document.getElementById("vc-progress");
+
+    // Total characters of the whole document, used for the progress bar 
+
+    const totalChars = chunks.reduce((sum, chunk) => sum + chunk.text.length, 0);
+
+    function setLoading(value){
+        isLoading = value;
+        updatePlayButton();
+    }
+
+    // Pause icon while preparing or playing, play icon otherwise
+
+    function updatePlayButton(){
+        const active = isLoading || !audio.paused;
+
+        if (playIcon){
+            playIcon.className = active ? "fa-solid fa-pause" : "fa-solid fa-play";
+        }
+
+        playButton.setAttribute(
+            "aria-label", active ? "Pause reading":"Play reading"
+        );
+
+        // the waveform moves only while the voice is playing
+
+        waveBars.forEach(bar =>{
+            bar.style.animationPlayState = audio.paused? "paused":"running"
+        });
+    }
+
+    // Remember where reading stopped so play can continue from there
+    function rememberPlace(){
+        if(audio.ended){
+            resumePoint= null;
+        }
+        else if(audio.src){
+            resumePoint={
+                index: currentIndex,
+                time:audio.currentTime ||0,
+                fraction: Number.isFinite(audio.duration) && audio.duration>0? audio.currentTime / audio.duration:0,
+
+            };
+
+        }else if(isLoading && !resumePoint){
+            resumePoint = {index:currentIndex, time:0, fraction:0};
+        }
+    }
+
+    function updateProgress(){
+        if(!waveFill || !totalChars) return;
+
+        let before = 0;
+        for (let i=0; i<currentIndex; i++){
+            before += chunks[i].text.length;
+        }
+
+        const chunkLength = chunks[currentIndex] ? chunks[currentIndex].text.length:0;
+
+        let fraction=0;
+        if(Number.isFinite(audio.duration) && audio.duration >0){
+            fraction = audio.currentTime / audio.duration;
+        } else if(resumePoint && resumePoint.index === currentIndex){
+            fraction = resumePoint.fraction;
+        }
+
+        const percent = Math.min(
+            100,
+            ((before + chunkLength * fraction) / totalChars) *100
+        );
+
+        waveFill.style.width = percent + "%";
+        if(waveProgress){
+            waveProgress.setAttribute("aria-valuenow", Math.round(percent));
+        }
+    }
+
+
+
     // Cache generated audio blobs so prefetching and downloading can reuse them.
     const audioCache = new Map();
 
@@ -118,7 +204,15 @@ document.addEventListener("DOMContentLoaded", () => {
     pages.forEach((page, index) => {
         page.hidden = index !== pageNumber - 1;
     });
+
+     // Keep the page number box and the page navigation in step with the audio.
+    const pageInput = document.getElementById("page-number-input");
+    if (pageInput && Number(pageInput.value) !== pageNumber) {
+        pageInput.value = pageNumber;
+        pageInput.dispatchEvent(new Event("blur"));
+    }
 }
+
 
     function requestAudio(index) {
         if (audioCache.has(index)) {
@@ -199,7 +293,7 @@ document.addEventListener("DOMContentLoaded", () => {
         releaseCurrentUrl();
     }
 
-    async function playChunk(index = currentIndex) {
+    async function playChunk(index = currentIndex, startTime =0) {
         if (index < 0 || index >= chunks.length) {
             updateStatus("Finished reading the document.");
             return;
@@ -207,7 +301,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         currentIndex = index;
         const version = ++requestVersion;
-        isLoading = true;
+        setLoading(true);
 
         audio.pause();
         audio.removeAttribute("src");
@@ -229,6 +323,23 @@ document.addEventListener("DOMContentLoaded", () => {
             if (version !== requestVersion) return;
 
             currentAudioUrl = URL.createObjectURL(blob);
+
+             // Continue from the place where reading was stopped.
+            if (startTime > 0) {
+                audio.addEventListener(
+                    "loadedmetadata",
+                    () => {
+                        if (Number.isFinite(audio.duration)) {
+                            audio.currentTime = Math.min(
+                                startTime,
+                                Math.max(0, audio.duration - 0.1)
+                            );
+                        }
+                    },
+                    { once: true }
+                );
+            }
+
             audio.src = currentAudioUrl;
             audio.playbackRate = Number(speedSelect.value);
 
@@ -236,7 +347,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (version !== requestVersion) return;
 
-            isLoading = false;
+            resumePoint=null;
+            setLoading(false);
 
             updateStatus(
                 `Reading page ${chunk.pageNumber}, ` +
@@ -248,16 +360,28 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
             if (version !== requestVersion) return;
 
-            isLoading = false;
+            setLoading(false);
             updateStatus(error.message || "Unable to play this audio.");
         }
     }
 
     playButton.addEventListener("click", async () => {
-        if (isLoading) return;
+
+        if(isLoading){
+            rememberPlace();
+            cancelPlayback();
+            updateStatus("Reading stopped");
+            return;
+        }
+
+        if(audio.src && !audio.paused){
+            audio.pause();
+            updateStatus("Reading paused");
+            return;
+        }
 
         // Resume the current audio if it was paused.
-        if (audio.src && audio.paused && audio.currentTime > 0) {
+        if (audio.src && audio.paused && audio.currentTime > 0 && chunks[currentIndex] && Number(chunks[currentIndex].pageNumber) === getSelectedPageNumber()) {
             try {
                 await audio.play();
                 updateStatus("Reading resumed.");
@@ -267,8 +391,19 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        
+
         // Start reading from the page selected by the user.
         const selectedPage = getSelectedPageNumber();
+
+        if(resumePoint && chunks[resumePoint.index] && Number(chunks[resumePoint.index].pageNumber) == selectedPage){
+            await playChunk(resumePoint.index, resumePoint.time);
+            return;
+        }
+
+        resumePoint = null;
+
+
         const selectedChunk = getFirstChunkIndexForPage(selectedPage);
 
         if (selectedChunk === -1) {
@@ -279,16 +414,18 @@ document.addEventListener("DOMContentLoaded", () => {
         await playChunk(selectedChunk);
     });
 
-    pauseButton.addEventListener("click", () => {
-        if (!audio.paused) {
-            audio.pause();
-            updateStatus("Reading paused.");
-        }
-    });
+    // pauseButton.addEventListener("click", () => {
+    //     if (!audio.paused) {
+    //         audio.pause();
+    //         updateStatus("Reading paused.");
+    //     }
+    // });
 
     stopButton.addEventListener("click", () => {
+        rememberPlace();
         cancelPlayback();
-        currentIndex = 0;
+        // currentIndex = 0;
+        updateProgress();
         updateStatus("Reading stopped.");
     });
 
@@ -327,7 +464,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     speedSelect.addEventListener("change", () => {
         audio.playbackRate = Number(speedSelect.value);
-        updateStatus(`Reading speed set to ${speedSelect.value}×.`);
+        updateStatus(`Reading speed set to ${speedSelect.value}x.`);
     });
 
     function changeVoiceSetting() {
@@ -346,6 +483,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Start generating the next chunk before the current one ends.
     audio.addEventListener("timeupdate", () => {
+
+        updateProgress();
         if (
             Number.isFinite(audio.duration) &&
             audio.duration - audio.currentTime <= PREFETCH_SECONDS
@@ -361,6 +500,26 @@ document.addEventListener("DOMContentLoaded", () => {
             updateStatus("Finished reading the document.");
         }
     });
+
+    // Keep the play / pause icon and the waveform in sync with audio 
+    ["play", "pause", "ended", "emptied"].forEach(name =>{
+        audio.addEventListener(name, updatePlayButton);
+    });
+
+    // left and right arrow keys on the progress bar move 10 seconds 
+
+    if(waveProgress){
+        waveProgress.addEventListener("keydown", event =>{
+            if(event.key == "ArrowLeft"){
+                event.preventDefault();
+                backButton.click();
+            }
+            else if(event.key === "ArrowRight"){
+                event.preventDefault();
+                forwardButton.click();
+            }
+        });
+    }
 
     // Generate every chunk and combine them into a downloadable MP3.
     downloadButton.addEventListener("click", async () => {
