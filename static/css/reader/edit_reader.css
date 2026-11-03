@@ -1,0 +1,46 @@
+.h4, h2{
+    font-family: var(--font-main);
+    font-weight: 900 !important;
+}
+
+.reading-title{
+    font-family: var(--font-main);
+    font-weight: 900;
+}
+
+.fa-arrow-right, .fa-arrow-left{
+    font-size: 0.75rem;
+}
+
+.h5{
+    font-weight: 900;
+}
+
+.border{
+    background: var(--bg);
+}
+
+.play-btn{
+    width: 22rem;
+}
+
+.btns{
+    justify-content: start;
+}
+
+textarea{
+    resize: none;
+}
+
+@media (max-width :470px){
+    .play-btn{
+        width: 100%;
+    }
+
+    .btns{
+        display: flex;
+        justify-content: space-between;
+    }
+}
+
+
