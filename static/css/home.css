@@ -17,7 +17,7 @@
 .vc-wave-card{
     border-radius: 2rem;
     background:var(--surface);
-    width: 30rem;
+    width: fit-content;
     margin: 0 auto;
     box-shadow: 2px 2px 2px var(--primary);
 }
@@ -107,6 +107,36 @@
     border-radius: 999px;
 }
 
+/* second content  */
+.second-content{
+    margin: 10rem 0;
+}
+
+.content2-title{
+    font-family:var(--font-main);
+    font-weight: bolder;
+}
+
+.tool-btns{
+    background: var(--surface);
+    height: 17rem;
+    border-radius: 2rem;
+    padding: 1rem !important;
+}
+
+.icon{
+    background: var(--primary);
+    padding: 0.75rem;
+    width: fit-content;
+    border-radius: 15px;
+}
+
+.icon i{
+    font-size: 1.5rem;
+    color: var(--surface);
+}
+
+
 @media (max-width:470px){
     .home-title{
         font-size: 2rem;
@@ -116,10 +146,28 @@
     .vc-wave-card{
         width: 23rem;
     }
+    
+    .tool-card{
+        display: flex;
+        flex-direction: column;
+    }
 }
 
 @media (max-width: 380px){
     .vc-wave-card{
         width: 18rem;
+    }
+}
+
+@media (max-width:770px){
+    .second-content{
+        margin: 6rem 0;
+    }
+
+    .tool-card{
+        display: flex;
+        align-items: start;
+        justify-content: start;
+        gap: 1rem;
     }
 }
