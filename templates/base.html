@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     {% block extra_css %}{% endblock %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
@@ -24,14 +25,14 @@
     <div class="container">
 
         <!-- Brand -->
-         <a href="#" class="navbar-brand d-flex align-items-center justify-content-start gap-2">
+         <a href="{% url 'home' %}" class="navbar-brand d-flex align-items-center justify-content-start gap-2">
             <object type="image/svg+xml" data="{% static 'image/echoread-logo-animated.svg' %}"  class="brand"></object>
             <span class="text-black nav-title">Echo<span class="text-primary">Read</span></span>
          </a>
 
          <!-- right-side:start reading, En->kh, account -->
           <div class="d-flex align-items-center justify-content-end gap-2 ">
-            <button class="btn btn-primary text-white btn-start-reading">Help?</button>
+            <a class="btn btn-primary text-white btn-start-reading" href="{% url 'reader:help' %}">Help?</a>
 
             {% if user.is_authenticated %}
               <div class="user-menu">
@@ -45,14 +46,14 @@
 
                   <form action="{% url 'logout' %}" method="post" class="m-0 mt-2 d-md-none">
                     {% csrf_token %}
-                    <button class="btn btn-outline-secondary w-100" type="submit">Log out</button>
+                    <button class="btn btn-outline-secondary w-100" type="submit">Log out </button>
                   </form>
                 </div>
               </div>
 
               <form action="{% url 'logout' %}" method="post" class="m-0 d-none d-md-block">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-outline-secondary">Log out</button>
+                <button type="submit" class="btn btn-outline-secondary">Log out <i class="fa-solid fa-right-from-bracket"></i></button>
               </form>
 
             {% else %}

@@ -123,15 +123,18 @@
 html{
     min-height: 100%;
     font-family: var(--font-main);
+    background: var(--gradient-hero);
+    background-attachment: fixed;
 }
 
 
 body {
     font-family: var(--font-main);
     font-size: var(--fs-body);
-    background: var(--gradient-hero);
+    
     line-height: 1.6;
     min-height: 100vh;
+    background: var(--gradient-hero);
     background-attachment: fixed;
 }
 

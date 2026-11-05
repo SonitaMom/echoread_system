@@ -7,6 +7,10 @@ from django.contrib import messages
 import re
 from django import template
 
+
+def help_view(request):
+    return render(request, "helps.html")
+
 def home_view(request):
     return render(request, "accounts/home.html")
 

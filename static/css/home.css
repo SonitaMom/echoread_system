@@ -1,0 +1,173 @@
+.home-sub-head{
+    background: var(--surface);
+    width: fit-content;
+    padding: 5px 8px;
+    border-radius: 30px;
+    font-size: 0.75rem;
+}
+
+.home-title{
+    font-family: var(--font-main);
+    font-size: 3rem;
+    font-weight: bolder;
+    /* line-height: 4rem; */
+    padding-right: 10rem;
+}
+
+.vc-wave-card{
+    border-radius: 2rem;
+    background:var(--surface);
+    width: fit-content;
+    margin: 0 auto;
+    box-shadow: 2px 2px 2px var(--primary);
+}
+
+.document-icon{
+    width: auto;
+    height: auto;
+    background: var(--primary);
+    padding: 1rem;
+    border-radius: 1rem;
+}
+
+.fa-file{
+    color: white;
+    font-size: 2rem;
+}
+
+.lesson-title{
+    font-weight:900;
+}
+/* WaveForm  */
+.vc-wave{
+    height: 64px;
+    margin: 8px 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(4px, 1.5vw, 8px);
+}
+
+.vc-wave span{
+    /* width: 14px */
+    flex: 0 1 12px;
+    min-width: 4px;
+    height: var(--h);
+    border-radius: 999px;
+    background: blue;
+    transform-origin: center;
+    animation: vc-bounce 0.9s ease-in-out infinite alternate;
+    animation-play-state: paused;
+}
+
+.vc-wave span:nth-child(3n){
+    animation-duration: 0.7s;
+    animation-delay: -0.2s;
+}
+.vc-wave span:nth-child(3n+1){
+    animation-duration: 1.05s;
+    animation-delay: -0.5s;
+}
+.vc-wave span:nth-child(3n+2){
+    animation-duration: 0.85s;
+    animation-delay: -0.1s;
+}
+.vc-wave span:nth-child(5n){
+    animation-duration: 0.6s;
+    animation-delay: -0.35s;
+}
+
+.vc-wave span{
+    animation-play-state: running;
+}
+
+@keyframes vc-bounce{
+    from{
+        transform: scaleY(0.45);
+    }
+    to{
+        transform: scaleY(1.1);
+    }
+}
+
+/* progress */
+.vc-progress{
+    height: 6px;
+    border-radius: 999px;
+    background: var(--track);
+    cursor: pointer;
+    position: relative;
+}
+
+.vc-fill{
+    display: block;
+    width: 32%;
+    height: 100%;
+    background: var(--accent);
+    border-radius: 999px;
+}
+
+/* second content  */
+.second-content{
+    margin: 10rem 0;
+}
+
+.content2-title{
+    font-family:var(--font-main);
+    font-weight: bolder;
+}
+
+.tool-btns{
+    background: var(--surface);
+    height: 17rem;
+    border-radius: 2rem;
+    padding: 1rem !important;
+}
+
+.icon{
+    background: var(--primary);
+    padding: 0.75rem;
+    width: fit-content;
+    border-radius: 15px;
+}
+
+.icon i{
+    font-size: 1.5rem;
+    color: var(--surface);
+}
+
+
+@media (max-width:470px){
+    .home-title{
+        font-size: 2rem;
+        padding-right: 3rem;
+    }
+
+    .vc-wave-card{
+        width: 23rem;
+    }
+    
+    .tool-card{
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 380px){
+    .vc-wave-card{
+        width: 18rem;
+    }
+}
+
+@media (max-width:770px){
+    .second-content{
+        margin: 6rem 0;
+    }
+
+    .tool-card{
+        display: flex;
+        align-items: start;
+        justify-content: start;
+        gap: 1rem;
+    }
+}
