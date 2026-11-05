@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
+from django.views.generic import TemplateView
 
 
 app_name = "reader"
@@ -141,6 +142,10 @@ urlpatterns = [
         views.delete_note_ajax,
         name="delete_note_ajax",
     ),
+
+
+    # Help url
+    path('help/', TemplateView.as_view(template_name = 'helps.html'), name= 'help'),
 ]
 
 

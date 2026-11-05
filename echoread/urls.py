@@ -22,7 +22,7 @@ from django.views.generic import RedirectView
 from django.views.generic import TemplateView
 
 urlpatterns = [
-    path("", TemplateView.as_view(template_name="base.html") ,name="base"),
+    # path("", TemplateView.as_view(template_name="base.html") ,name="base"),
     path("admin/", admin.site.urls),
     path("", include("accounts.urls")),
     path("reader/", include("reader.urls")),
