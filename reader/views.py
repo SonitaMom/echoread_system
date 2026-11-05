@@ -50,9 +50,13 @@ def document_list(request):
     else:
         form = PDFUploadForm()
 
+    query = request.GET.get("q", "").strip()
     documents = ReaderDocument.objects.filter(
         user=request.user
-    ).order_by("-uploaded_at")
+    )
+    if query:
+        documents = documents.filter(title__icontains=query)
+    documents = documents.order_by("-uploaded_at")
 
     return render(
         request,
@@ -60,6 +64,7 @@ def document_list(request):
         {
             "form": form,
             "documents": documents,
+            "query": query,
         },
     )
 
