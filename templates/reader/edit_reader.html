@@ -228,6 +228,116 @@
                 }
             });
         });
+
+        // Keyboard shortcuts
+        document.addEventListener("keydown", (event) => {
+            if (event.defaultPrevented) return;
+
+            const target = event.target;
+
+            // Don't trigger shortcuts while typing or editing (except Escape to stop audio).
+            const isTyping =
+                target.tagName === "INPUT" ||
+                target.tagName === "TEXTAREA" ||
+                target.tagName === "SELECT" ||
+                target.isContentEditable;
+
+            if (isTyping) {
+                if (event.key === "Escape") {
+                    const stopButton = document.getElementById("stop-reading");
+                    stopButton?.click();
+                }
+                return;
+            }
+
+            const isCtrlOrCmd = event.ctrlKey || event.metaKey;
+
+            // Ctrl + Right: Next page
+            if (isCtrlOrCmd && event.key === "ArrowRight") {
+                event.preventDefault();
+                const nextButton = document.getElementById("next-page");
+                nextButton?.click();
+            }
+
+            // Ctrl + Left: Previous page
+            else if (isCtrlOrCmd && event.key === "ArrowLeft") {
+                event.preventDefault();
+                const previousButton = document.getElementById("previous-page");
+                previousButton?.click();
+            }
+
+            // Escape or Ctrl + Shift + Space: Stop reading
+            else if (
+                event.key === "Escape" ||
+                (isCtrlOrCmd && event.shiftKey && (event.code === "Space" || event.key === " " || event.key === "Spacebar"))
+            ) {
+                event.preventDefault();
+                const stopButton = document.getElementById("stop-reading");
+                stopButton?.click();
+            }
+
+            // Ctrl + Space: Play / Pause
+            else if (isCtrlOrCmd && !event.shiftKey && (event.code === "Space" || event.key === " " || event.key === "Spacebar")) {
+                event.preventDefault();
+                const audio = document.getElementById("reader-audio");
+                const playButton = document.getElementById("play-reading");
+                const pauseButton = document.getElementById("pause-reading");
+
+                if (pauseButton && audio && !audio.paused) {
+                    pauseButton.click();
+                } else {
+                    playButton?.click();
+                }
+            }
+
+            // Left: Rewind 10 seconds
+            else if (!isCtrlOrCmd && !event.altKey && !event.shiftKey && event.key === "ArrowLeft") {
+                event.preventDefault();
+                const backButton = document.getElementById("back-10-seconds");
+                backButton?.click();
+            }
+
+            // Right: Forward 10 seconds
+            else if (!isCtrlOrCmd && !event.altKey && !event.shiftKey && event.key === "ArrowRight") {
+                event.preventDefault();
+                const forwardButton = document.getElementById("forward-10-seconds");
+                forwardButton?.click();
+            }
+
+            // Ctrl + Up: Increase speed
+            else if (isCtrlOrCmd && event.key === "ArrowUp") {
+                event.preventDefault();
+                const speedSelect = document.getElementById("reading-speed");
+                if (speedSelect) {
+                    const options = [...speedSelect.options];
+                    const index = options.findIndex(
+                        option => option.value === speedSelect.value
+                    );
+
+                    if (index !== -1 && index < options.length - 1) {
+                        speedSelect.selectedIndex = index + 1;
+                        speedSelect.dispatchEvent(new Event("change", { bubbles: true }));
+                    }
+                }
+            }
+
+            // Ctrl + Down: Decrease speed
+            else if (isCtrlOrCmd && event.key === "ArrowDown") {
+                event.preventDefault();
+                const speedSelect = document.getElementById("reading-speed");
+                if (speedSelect) {
+                    const options = [...speedSelect.options];
+                    const index = options.findIndex(
+                        option => option.value === speedSelect.value
+                    );
+
+                    if (index > 0) {
+                        speedSelect.selectedIndex = index - 1;
+                        speedSelect.dispatchEvent(new Event("change", { bubbles: true }));
+                    }
+                }
+            }
+        });
     </script>
     <script src="{% static 'js/reader/edit.js' %}" defer></script>
     <script src="{% static 'js/reader/ai_helper.js' %}" defer></script>
