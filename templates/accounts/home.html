@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block page_num %}home{% endblock %}
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/home.css' %}" />
 {% endblock %}
@@ -12,20 +13,24 @@
     <p>Welcome, {{ request.user.username }}!</p>
 
     <p>You're logged in successfully.</p> -->
-    <p class="text-muted home-sub-head border border-muted"><i class="fa-solid fa-eye-slash"></i> Built for blind and low-vision readers</p>
+    <p class="text-muted home-sub-head border border-muted"><i class="fa-solid fa-eye-slash"></i> <span data-i18n="home.sub-head">Built for blind and low-vision readers</span></p>
 
     <div class="row g-3 my-auto ">
         <div class="col-12 col-md-6">
-            <h1 class="home-title">Every document, <span class="text-primary">read lound</span> in seconds.</h1>
+            <h1 class="home-title">
+                <span data-i18n="home.title-start">Every document,</span>
+                <span class="text-primary" data-i18n="home.primary-title">read alound</span> 
+                <span data-i18n="home.title-end">in seconds.</span>
+            </h1>
             
-            <p class="mt-3 mt-md-5 text-muted">
+            <p class="mt-3 mt-md-5 text-muted" data-i18n="home.intro">
                 Paste text or upload a file. EchoRead speaks it in a clear
                 voice, and its AI helper summarizes, simplifies and explains anythings you can't easily follow.
             </p>
 
             <div class="d-flex align-items-center justify-content-start gap-2 flex-wrap">
-                <a href="{% url 'reader:document_list' %}" class="btn btn-primary">Start Reading</a>
-                <a href="{% url 'reader:help' %}" class="btn btn-outline-secondary">See how it works</a>
+                <a href="{% url 'reader:document_list' %}" class="btn btn-primary" data-i18n="home.start">Start Reading</a>
+                <a href="{% url 'reader:help' %}" class="btn btn-outline-secondary" data-i18n="home.how">See how it works</a>
             </div>
             <!-- <form method="post" action="{% url 'logout' %}">
                 {% csrf_token %}
@@ -104,54 +109,54 @@
 
 
     <div class="second-content">
-        <h1 class="content2-title">Everything you need to read independently</h1>
-        <p class="my-3 text-muted">Simple tools, big buttons, and no clutter.</p>
+        <h1 class="content2-title" data-i18n="home.feature-title">Everything you need to read independently</h1>
+        <p class="my-3 text-muted" data-i18n="home.feature-sub">Simple tools, big buttons, and no clutter.</p>
 
-        <div class="row g-3 mt-4">
-            <div class="col-12 col-lg-3">
+        <div class="d-flex align-items-center justify-content-center gap-1 flex-wrap mt-4 all-cards">
+            <div class="col-12 cards">
                 <div class="border border-muted tool-btns p-3">
                     <div class="tool-card">
                         <div class="icon mb-3"><i class="fa-solid fa-volume-high"></i></div>
                             <div>
-                                <h4>Voice reader</h4>
-                                <p class="mt-2 text-align-justify">Natural voices with adjustable speed. The sentence being read is highlighted for low-vision users.</p>
+                                <h4 data-i18n="home.voice-title">Voice reader</h4>
+                                <p class="mt-2 text-align-justify" data-i18n="home.voice-text">Natural voices with adjustable speed. The sentence being read is highlighted for low-vision users.</p>
                             </div>
                     
                     </div>
                     
                 </div>
             </div>
-            <div class="col-12 col-lg-3">
+            <div class="col-12 cards">
                 <div class="border border-muted tool-btns p-3">
                     <div class="tool-card">
                         <div class="icon mb-3"><i class="fa-solid fa-robot"></i></div>
                         <div>
-                            <h4>AI Helper</h4>
-                            <p class="mt-2">Summarize long documents, simplify hard words, or pull out the key points in one tap.</p>
+                            <h4 data-i18n="home.ai-title">AI Helper</h4>
+                            <p class="mt-2" data-i18n="home.ai-text">Summarize long documents, simplify hard words, or pull out the key points in one tap.</p>
                         </div>
                     
                     </div>
                     
                 </div>
             </div>
-            <div class="col-12 col-lg-3">
+            <div class="col-12 cards">
                 <div class="border border-muted tool-btns p-3">
                     <div class="tool-card">
                         <div class="icon mb-3"><i class="fa-solid fa-arrow-up-from-bracket"></i></div>
                         <div>
-                            <h4>Upload anything</h4>
-                            <p class="mt-2 text-align-justify">Drop in a text file or paste from your clipboard. PDF, Word and photo scanning are coming soon.</p>
+                            <h4 data-i18n="home.upload-title">Upload anything</h4>
+                            <p class="mt-2 text-align-justify" data-i18n="home.upload-text">Drop in a text file or paste from your clipboard. PDF, Word and photo scanning are coming soon.</p>
                         </div>
                     </div> 
                 </div>
             </div>
-            <div class="col-12 col-lg-3">
+            <div class="col-12 cards">
                 <div class="border border-muted tool-btns p-3">
                     <div class="tool-card ">
                         <div class="icon mb-3"><i class="fa-solid fa-universal-access"></i></div>
                         <div>
-                            <h4>Made accessible</h4>
-                            <p class="mt-2 text-align-justify">High-contrast themes, adjustable text size, full keyboard control and screen-reader labels.</p>
+                            <h4 data-i18n="home.access-title">Made accessible</h4>
+                            <p class="mt-2 text-align-justify" data-i18n="home.access-text">High-contrast themes, adjustable text size, full keyboard control and screen-reader labels.</p>
                         </div>
                     </div>
                 </div>
@@ -159,29 +164,29 @@
         </div>
     </div>
 
-    <div>
-        <h2>Three steps. That's it.</h2>
+    <div class="mb-5">
+        <h1 class="mb-5 content3-title" data-i18n="home.step-title">Three steps. That's it.</h1>
 
         <div class="d-flex align-items-center justify-content-between flex-wrap">
             <div class="d-flex align-items-start justify-content-start gap-3">
-                <p class="border bg-warning p-3">1</p>
+                <p class="border bg-warning st-num">1</p>
                 <div class="">
-                    <h4>Add you document</h4>
-                    <p class="text-muted">Paste text or upload a file.</p>
+                    <h4 class="st-title" data-i18n="home.step1-title">Add you document</h4>
+                    <p class="text-muted" data-i18n="home.step1-text">Paste text or upload a file.</p>
                 </div>
             </div>
             <div class="d-flex align-items-start justify-content-start gap-3">
-                <p class="border bg-warning p-3">2</p>
+                <p class="border bg-warning st-num">2</p>
                 <div>
-                    <h4>Let Ai help</h4>
-                    <p class="text-muted">Summarize or simplify if it's long or complex.</p>
+                    <h4 class="st-title" data-i18n="home.step2-title">Let Ai help</h4>
+                    <p class="text-muted" data-i18n="home.step2-text">Summarize or simplify if it's long or complex.</p>
                 </div>
             </div>
             <div class="d-flex align-items-start justify-content-start gap-3">
-                <p class="border p-3 bg-warning">3</p>
+                <p class="border st-num bg-warning">3</p>
                 <div>
-                    <h4>Listen</h4>
-                    <p class="text-muted">Press play and EchoRead reads it to you.</p>
+                    <h4 class="st-title" data-i18n="home.step3-title">Listen</h4>
+                    <p class="text-muted" data-i18n="home.step3-text">Press play and EchoRead reads it to you.</p>
                 </div>
             </div>
         </div>

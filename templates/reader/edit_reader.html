@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block page_num %}document{% endblock %}
+
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/reader/edit_reader.css' %}" />
 {% endblock %}
@@ -10,48 +12,48 @@
 <main class="container py-4">
         <p>
             <a href="{% url 'reader:document_list' %}">
-                <i class="fa-solid fa-arrow-left"></i> Back to Reader
+                <i class="fa-solid fa-arrow-left"></i><span data-i18n="edit.back">Back to Reader</span>
             </a>
         </p>
 
         <h1>{{ document.title }}</h1>
-        <h2 class="h4 mt-4 text-primary">Edit extracted text</h2>
-        <p>Correct the extracted text below. Press Ctrl + S or use Save changes to save your edits.</p>
+        <h2 class="h4 mt-4 text-primary" data-i18n="edit.edit-extracted">Edit extracted text</h2>
+        <p data-i18n="edit.subtitle">Correct the extracted text below. Press Ctrl + S or use Save changes to save your edits.</p>
 
-        <h2 class="h4 mt-4">Choose scan mode</h2>
-        <p>Scanning replaces the current extracted and edited text.</p>
+        <h2 class="h4 mt-4" data-i18n="edit.scan-mode">Choose scan mode</h2>
+        <p data-i18n="edit.scan-note">Scanning replaces the current extracted and edited text.</p>
         <form method="post" class="mb-4 d-flex justify-content-start align-items-center gap-2 flex-wrap" id="scan-form">
             {% csrf_token %}
 
-            <button type="submit" name="scan_mode" value="normal" class="btn btn-primary scan-btn">
+            <button type="submit" name="scan_mode" value="normal" class="btn btn-primary scan-btn" data-i18n="edit.normal-scan">
                 Normal Scan
             </button>
 
-            <button type="submit" name="scan_mode" value="hard" class="btn btn-outline-primary scan-btn">
+            <button type="submit" name="scan_mode" value="hard" class="btn btn-outline-primary scan-btn" data-i18n="edit.hard-scan">
                 Hard Scan (OCR)
             </button>
-            <button type="submit" name="scan_mode" value="ai" class="btn btn-primary scan-btn">
+            <button type="submit" name="scan_mode" value="ai" class="btn btn-primary scan-btn" data-i18n="edit.ai-scan">
                 AI Scan
             </button>
         </form>
 
         <div class="border border-secondary p-3 p-md-5 mb-3 rounded">
-            <h2 class="reading-title">Reading Text <i class="fa-solid fa-book-open-reader"></i></h2>
+            <h2 class="reading-title"><span data-i18n="edit.reading-text">Reading Text</span> <i class="fa-solid fa-book-open-reader"></i></h2>
             <section class="page-navigation mb-3 d-flex align-items-center justify-content-start  gap-3 flex-wrap" aria-label="Page navigation">
                 <button type="button" id="previous-page" class="btn btn-outline-secondary">
-                    <i class="fa-solid fa-arrow-left"></i> Previous page
+                    <i class="fa-solid fa-arrow-left"></i> <span data-i18n="edit.prev-page">Previous page</span>
                 </button>
                 <button type="button" id="next-page" class="btn btn-outline-secondary">
-                    Next page <i class="fa-solid fa-arrow-right"></i>
+                   <span data-i18n="edit.next-page">Next page</span>  <i class="fa-solid fa-arrow-right"></i>
                 </button>
 
-                <label for="page-number-input" class="form-label ms-2">Page number</label>
+                <label for="page-number-input" class="form-label ms-2" data-i18n="edit.page-num">Page number</label>
                 <input type="number" id="page-number-input" min="1" step="1" value="1" inputmode="numeric"
                     class="form-control" style="width: 80px; display: inline-block;"
                     aria-describedby="page-navigation-status">
 
                 <p id="page-navigation-status" role="status" aria-live="polite">
-                    Page 1
+                    <span data-i18n="edit.page-number">Page</span> 1
                 </p>
             </section>
 
@@ -59,8 +61,8 @@
             <div id="reader-pages">
                 {% for page in pages %}
                 <section class="reader-page mb-4" data-page-number="{{ page.page_number }}" {% if not forloop.first %}hidden{% endif %}>
-                    <h2 class="h5">Page {{ page.page_number }}</h2>
-                    <label for="page-{{ page.page_number }}" class="form-label text-primary">
+                    <h2 class="h5"><span data-i18n="edit.page-title">Page</span> {{ page.page_number }}</h2>
+                    <label for="page-{{ page.page_number }}" class="form-label text-primary" data-i18n="edit.editable">
                         Editable text
                     </label>
                     <textarea id="page-{{ page.page_number }}" name="page_{{ page.page_number }}"
@@ -71,11 +73,11 @@
 
                 <div class="mt-3 d-flex flex-wrap gap-2">
                     <button type="button" id="ai-helper-btn" data-url="{% url 'reader:ai_helper_ajax' document.pk %}"
-                        class="btn btn-outline-primary">
+                        class="btn btn-outline-primary" data-i18n="edit.ai-format">
                         AI Helper — Clean Formatting
                     </button>
 
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary" data-i18n="edit.save">
                         Save changes
                     </button>
                 </div>
@@ -87,7 +89,7 @@
                     onsubmit="return confirm('Permanently delete this PDF and all its saved pages and notes? This cannot be undone.');"
                 >
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-outline-danger">
+                    <button type="submit" class="btn btn-outline-danger" data-i18n="edit.delete">
                         Delete Reader
                     </button>
                 </form>
@@ -96,8 +98,9 @@
 
              {% if has_unsaved_scan %}
         <p role="status" class="alert alert-warning">
-            New scan preview — this text is not saved yet.
-            Review it and click Save changes to keep it.
+            <span data-i18n="edit.warning">New scan preview — this text is not saved yet.
+            Review it and click Save changes to keep it.</span>
+            
         </p>
 
         
@@ -113,7 +116,7 @@
         {% endfor %}
 
         <hr class="my-2 my-md-4">
-        <h2 class="my-3">Listening to check <i class="fa-solid fa-headphones"></i></h2>
+        <h2 class="my-3"><span data-i18n="edit.listening">Listening to check</span> <i class="fa-solid fa-headphones"></i></h2>
 
         <form method="post" action="{% url 'reader:save_reader' document.pk %}" id="edit-reader-form">
             {% csrf_token %}
@@ -123,20 +126,20 @@
 
             <div class="reader-controls mb-3" aria-label="Reading controls">
                 <div class="mb-3 mt-4">
-                    <button type="button" id="play-reading" class="btn btn-primary play-btn" >Play <i class="fa-solid fa-play"></i></button>
+                    <button type="button" id="play-reading" class="btn btn-primary play-btn" ><span data-i18n="edit.play">Play</span> <i class="fa-solid fa-play"></i></button>
                     <!-- <button type="button" id="pause-reading" class="btn btn-outline-primary">Pause</button> -->
                 </div>
                 
                 <div class="d-flex align-items-center btns gap-md-3 flex-wrap" >
-                    <button type="button" id="back-10-seconds" class="btn btn-outline-secondary"><i class="fa-solid fa-rotate-left"></i> Back 10s</button>
-                    <button type="button" id="forward-10-seconds" class="btn btn-outline-secondary">Forward 10s <i class="fa-solid fa-arrow-rotate-right"></i></button>
-                    <button type="button" id="stop-reading" class="btn btn-outline-danger">Stop</button>
+                    <button type="button" id="back-10-seconds" class="btn btn-outline-secondary"><i class="fa-solid fa-rotate-left"></i> <span data-i18n="edit.back-10">Back 10s</span></button>
+                    <button type="button" id="forward-10-seconds" class="btn btn-outline-secondary"><span data-i18n="edit.forward-10">Forward 10s</span> <i class="fa-solid fa-arrow-rotate-right"></i></button>
+                    <button type="button" id="stop-reading" class="btn btn-outline-danger"><span data-i18n="edit.stop">Stop</span></button>
                 </div>
                 
 
                 <div class="mt-3 d-flex justify-content-start align-items-center gap-3">
                     <div>
-                        <label for="reading-speed" class="form-label">Speed</label>
+                        <label for="reading-speed" class="form-label" data-i18n="edit.speed">Speed</label>
                         <select id="reading-speed" class="form-select">
                             <option value="0.5">0.5x</option>
                             <option value="0.75">0.75x</option>
@@ -149,7 +152,7 @@
                     </div>
                     
                     <div>
-                        <label for="reading-language" class="form-label mt-2">Language</label>
+                        <label for="reading-language" class="form-label mt-2" data-i18n="edit.language">Language</label>
                         <select id="reading-language" class="form-select">
                             <option value="auto" selected>Auto-detect</option>
                             <option value="en">English</option>
@@ -159,10 +162,10 @@
                     </div>
 
                     <div>
-                        <label for="reading-voice" class="form-label mt-2">Voice</label>
+                        <label for="reading-voice" class="form-label mt-2" data-i18n="edit.voice">Voice</label>
                         <select id="reading-voice" class="form-select">
-                            <option value="male" selected>Male</option>
-                            <option value="female">Female</option>
+                            <option value="male" selected data-i18n="edit.male">Male</option>
+                            <option value="female" data-i18n="edit.female">Female</option>
                         </select>
                     </div>
                     
@@ -179,7 +182,7 @@
                 
             </div>
 
-            <p id="reading-status" role="status" aria-live="polite">Ready to read.</p>
+            <p id="reading-status" role="status" aria-live="polite" data-i18n="edit.ready">Ready to read.</p>
 
             
 

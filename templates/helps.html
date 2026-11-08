@@ -1,8 +1,169 @@
 {% extends 'base.html' %}
+
+{% load static %}
+
+{% block page_num %}help{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/helps.css' %}">
+{% endblock %}
+
 {% block content %}
-<main class="container">
-    <h1>Help</h1>
-    <p>Help content goes here.</p>
+<main class="container py-4">
+
+    <p>
+            <a href="{% url 'reader:document_list' %}">
+                <i class="fa-solid fa-arrow-left"></i><span data-i18n="edit.back"> Back to Reader</span>
+            </a>
+    </p>
+
+    <h1 data-i18n="help.title">Help</h1>
+    <p data-i18n="help.subtitle">Learn how to use EchoRead. You can read this page.</p>
+
+    <div class="row g-3">
+        <div class="col-12 col-md-6">
+            <div class="help-cards">
+                <div class="content">
+                    <h2 data-i18n="help.jump-title">Jump to a topic</h2>
+                    <ul>
+                        <li><a href="#quick-start" data-i18n="help.jump-quick">Quick start</a></li>
+                        <li><a href="#listening" data-i18n="help.jump-listening">Listening to a document</a></li>
+                        <li><a href="" data-i18n="help.jump-bookmarks">Bookmarks</a></li>
+                        <li><a href="" data-i18n="help.jump-ask">Ask AI</a></li>
+                        <li><a href="" data-i18n="help.jump-notes">Notes</a></li>
+                        <li><a href="" data-i18n="help.jump-fix">Fix the text</a></li>
+                        <li> <a href="" data-i18n="help.jump-language">Language</a></li>
+                        <li><a href="" data-i18n="help.jump-keyboard">Keyboard shortcuts</a></li>
+                    </ul>  
+                </div>
+            </div>
+            <div class="help-cards">
+                <div class="content" id="quick-start">
+                    <h2 data-i18n="help.jump-quick" class="mb-3">Quick start</h2>
+                    <ol>
+                        <li data-i18n="help.quick-1">Open the document from your library.</li>
+                        <li><span data-i18n="help.quick-press">Press</span> <strong>Play</strong> <span data-i18n="help.quick-2-end">to listen to the page.</span></li>
+                        <li><span data-i18n="help.quick-press">Press</span> <b>Back 10 seconds</b> <span data-i18n="help.quick-3-middle">or</span> <b>Forward 10 seconds</b> <span data-i18n="help.quick-3-end">to move around.</span></li>
+                        <li><span data-i18n="help.quick-press">Press</span> <b>Next page</b> <span data-i18n="help.quick-4">to go to the next page.</span></li>
+                        <li><span data-i18n="help.quick-5">Have a questions? Use</span> <b>Ask AI</b>.</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="help-cards">
+                <div class="content" id="listening">
+                    <h2 class="mb-3" data-i18n="help.jump-listening">Listening to a document</h2>
+                    <ul>
+                        <li><b>Play</b> <span data-i18n="help.lis-1">starts reading. It becomes</span> <b>Pause</b> <span data-i18n="help.lis-1-end">while reading.</span></li>
+                        <li><b>Stop</b> <span data-i18n="help.lis-2">ends reading and goes back to the start of the page.</span></li>
+                        <li><b>Back 10 seconds</b> <span data-i18n="help.lis-3-and">and</span> <b>Forward 10 seconds</b> <span data-i18n="help.lis-3-end">move inside the page.</span></li>
+                        <li>Open <b>Voice settings</b> to change speed, language, and voice.</li>
+                        <li><b>Download fulll document as MP3</b> saves the whole document as audio.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="help-cards">
+                <div class="content">
+                    <h2>Bookmarks</h2>
+                    <p>A bookmark saves your place so you can come back later.</p>
+
+                    <ol>
+                        <li>Type a name for the page, for example "History of LLM". </li>
+                        <li>Press <b>Add Bookmark</b>.</li>
+                        <li>Later, choose it from <b>Go to a saved bookmark.</b></li>
+                        <li>To remove one, open <b>Delete a bookmark</b> and confirm.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="help-cards">
+                <div class="content">
+                    <h2>Ask AI</h2>
+                    <p>Ask a question about document, and the Ai answers using its text.</p>
+
+                    <ol>
+                        <li>Tpye your question.</li>
+                        <li>Press <b>Ask AI</b>.</li>
+                        <li>The answer is read to you and saved in your Notes.</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="help-cards">
+                <div class="content">
+                    <h2>Notes</h2>
+                    <p>Press <b>Add note</b> to write your own note. AI answers are added here automatically.</p>
+                </div>
+            </div>
+            <div class="help-cards">
+                <div class="content">
+                    <h2>Fix the text</h2>
+                    <p>If the voice reads something wrong, the text may have mistakes. Press <b>Edit extreacted text</b> to fix it.</p>
+
+                    <ul>
+                        <li><b>Save changes</b> keeps your edits.</li>
+                        <li><b>Clean formatting with Ai</b> fixes messy spacing and line breaks.</li>
+                        <li><b>Normal Scan</b> is fast and best for typed PDF files.</li>
+                        <li><b>Hard Scan (OCR)</b> is for photos or scanned pages.</li>
+                        <li><b>Ai Sacn</b> is best for difficult pages and Khmer text.</li>
+                        <li>Scanning again replaces your current text, including edits.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="help-cards">
+                <div class="content">
+                    <h2>Language</h2>
+                    <p>Use to <b>EN</b> and <b>ខ្មែរ</b> button at the top of every pages to change the language of EchoRead. To change the language of the voice, open <b>Voice settings</b> on the reader page.</p>
+                </div>
+            </div>
+            <div class="help-cards">
+                <div class="content">
+                    <h2>Keyboard shortcuts</h2>
+                    <p>Use these keys while reading, writing a mouse.</p>
+
+                    <table>
+                        <tr>
+                            <th>Action</th>
+                            <th>Shortcut</th>
+                        </tr>
+                        <tr>
+                            <td>Play / Pause</td>
+                            <td>
+                                <b>Ctrl + Space</b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Stop reading</td>
+                            <td><b>Escape</b> or <b>Ctrl + Shift + Space</b></td>
+                        </tr>
+                        <tr>
+                            <td>Next page</td>
+                            <td><b>Ctrl + ArrowRight</b></td>
+                        </tr>
+                        <tr>
+                            <td>Previous page</td>
+                            <td><b>Ctrl + ArrowLeft</b></td>
+                        </tr>
+                        <tr>
+                            <td>Rewind 10s</td>
+                            <td><b>ArrowLeft</b></td>
+                        </tr>
+                        <tr>
+                            <td>Forward 10s</td>
+                            <td><b>ArrowRight</b></td>
+                        </tr>
+                        <tr>
+                            <td>Increased speed</td>
+                            <td><b>Ctrl + ArrowUp</b></td>
+                        </tr>
+                        <tr>
+                            <td>Descreased speed</td>
+                            <td><b>Ctrl + ArrowDown</b></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
 
 {% endblock %}
