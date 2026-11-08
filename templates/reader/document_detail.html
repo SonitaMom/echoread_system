@@ -1,4 +1,9 @@
-{% extends 'base.html' %} {% load static %} {% block extra_css %}
+{% extends 'base.html' %} 
+{% load static %} 
+
+{% block page_num %}document{% endblock %}
+
+{% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/reader/document_detail.css' %}" />
 {% endblock %}
 
@@ -21,20 +26,20 @@
 <main class="container py-4">
   <p class="d-flex gap-2 align-items-center">
     <i class="fa-solid fa-arrow-left-long"></i
-    ><a href="{% url 'reader:document_list' %}"> Back </a>
+    ><a href="{% url 'reader:document_list' %}"><span data-i18n="detail.back">Back</span>  </a>
   </p>
 
   <h1 class="title">{{ document.title }}</h1>
 
   <!-- #1 -->
   {% if pages %}
-  <h2 class="h4">Extracted text</h2>
+  <h2 class="h4" data-i18n="detail.extracted">Extracted text</h2>
 
   <div class="row my-2 g-3">
     <!-- Ready to read -->
     <div class="col-12 col-lg-6">
       <div class="border p-3 p-md-5 ready-to-read">
-        <h2 id="reading-status" role="status" aria-live="polite" class="ready-to-read-title">
+        <h2 id="reading-status" role="status" aria-live="polite" class="ready-to-read-title" data-i18n="detail.ready">
           Ready to read.
         </h2>
 
@@ -46,18 +51,18 @@
             id="previous-page"
             class="btn btn-outline-secondary"
           ><i class="fa-solid fa-arrow-left"></i>
-            Previous page
+            <span data-i18n="detail.prev-page">Previous page</span>
           </button>
           <button
             type="button"
             id="next-page"
             class="btn btn-outline-secondary  "
           >
-            <span>Next page</span> <span><i class="fa-solid fa-arrow-right"></i></span>
+            <span data-i18n="detail.next-page">Next page</span> <span><i class="fa-solid fa-arrow-right"></i></span>
           </button>
 
           <div>
-            <label for="page-number-input" class="form-label ms-2"
+            <label for="page-number-input" class="form-label ms-2" data-i18n="detail.page-num"
             >Page number</label
           >
           <input
@@ -74,8 +79,8 @@
           </div>
           
 
-          <p id="page-navigation-status" role="status" aria-live="polite">
-            Page 1
+          <p id="page-navigation-status" role="status" aria-live="polite" data-i18n="detail.page-of">
+            Page 1 <span data-i18n="detail.of"></span>
           </p>
             </div>
           
@@ -150,7 +155,7 @@
 
             <div class="display-info mt-3 d-flex justify-content-between gap-3 flex-wrap">
               <div class="d-flex gap-2 align-items-center">
-                <label for="reading-speed">Speed</label>
+                <label for="reading-speed" data-i18n="detail.speed">Speed</label>
                 <select id="reading-speed">
                   <option value="0.5">0.5x</option>
                   <option value="0.75">0.75x</option>
@@ -163,7 +168,7 @@
               </div>
 
               <div class="d-flex gap-2 align-items-center">
-                <label for="reading-language">Language</label>
+                <label for="reading-language" data-i18n="detail.language">Language</label>
                 <select id="reading-language">
                   <option value="auto" selected>Auto-detect</option>
                   <option value="en">English</option>
@@ -172,10 +177,10 @@
               </div>
 
               <div class="d-flex gap-2 align-items-center">
-                <label for="reading-voice">Voice</label>
+                <label for="reading-voice" data-i18n="detail.voice">Voice</label>
                 <select id="reading-voice">
-                  <option value="male" selected>Male</option>
-                  <option value="female">Female</option>
+                  <option value="male" selected data-i18n="detail.male">Male</option>
+                  <option value="female" data-i18n="detail.female">Female</option>
                 </select>
               </div>
             </div>
@@ -187,13 +192,13 @@
           aria-labelledby="bookmark-heading"
           data-create-url="{% url 'reader:create_bookmark' document.pk %}"
         >
-          <h2 id="bookmark-heading" class="mt-3">Bookmarks</h2>
+          <h2 id="bookmark-heading" class="mt-3" data-i18n="detail.bookmark">Bookmarks</h2>
 
           <div class="border p-3 my-3">
             <div class="mb-2">
-                <label for="bookmark-select">Go to saved bookmark</label>
+                <label for="bookmark-select" data-i18n="detail.go-bookmark">Go to saved bookmark</label>
                 <select id="bookmark-select">
-                    <option value="">Select a bookmark</option>
+                    <option value="" data-i18n="detail.select-bookmark">Select a bookmark</option>
                     {% for bookmark in bookmarks %}
                     <option
                     value="{{ bookmark.page_number }}"
@@ -208,15 +213,16 @@
             </div>
 
             <div class="mb-2">
-                    <label for="bookmark-label">Bookmark Title</label>
+                    <label for="bookmark-label" data-i18n="detail.bookmark-title">Bookmark Title</label>
                 <input
                     type="text"
                     id="bookmark-label"
                     maxlength="150"
                     placeholder="e.g. History of LLM"
+                    data-i18n-attr="placeholder:detail.placeholder"
                 />
             </div>
-          <button type="button" id="add-bookmark" class="mt-2 btn btn-primary">
+          <button type="button" id="add-bookmark" class="mt-2 btn btn-primary" data-i18n="detail.add-bookmark">
             Add bookmark for current page
           </button>
 
@@ -232,7 +238,7 @@
             class="reader-page"
             data-page-number="{{ page.page_number }}"
           >
-            <h2>Page {{ page.page_number }}</h2>
+            <h2 ><span data-i18n="detail.page">Page </span>{{ page.page_number }}</h2>
             <div class="reader-page-text border p-3" style="white-space: pre-wrap">
               {{ page.text }}
             </div>
@@ -246,8 +252,8 @@
     <div class="col-12 col-lg-6 ">
       <div class="border rounded p-3 p-md-5">
         <section class="mt-2" id="ai-section">
-          <h2 class="ai-title">Ask AI about this PDF</h2>
-          <p>Answers are automatically saved to your Notes.</p>
+          <h2 class="ai-title" data-i18n="detail.ask-title">Ask AI about this PDF</h2>
+          <p data-i18n="detail.ask-note">Answers are automatically saved to your Notes.</p>
 
           <form
             id="ai-form"
@@ -256,7 +262,7 @@
             {% csrf_token %}
 
             <div class="mb-3">
-              <label for="ai-question" class="form-label">
+              <label for="ai-question" class="form-label" data-i18n="detail.your-question">
                 Your question
               </label>
               <textarea
@@ -267,11 +273,12 @@
                 maxlength="2000"
                 required
                 placeholder="Ask a question about this document..."
+                data-i18n-attr="placeholder:detail.question-placeholder"
               ></textarea>
             </div>
 
             <button type="submit" id="ask-ai-btn" class="btn btn-primary">
-              <i class="fa-solid fa-cloud-arrow-up"></i> Ask AI
+              <i class="fa-solid fa-cloud-arrow-up"></i> <span data-i18n="detail.ask-ai">Ask AI</span>
             </button>
 
             <hr>
@@ -280,15 +287,15 @@
         </section>
 
         <section class="mt-5" id="notes-section">
-          <h2 class="my-3">Notes </h2>
+          <h2 class="my-3" data-i18n="detail.note">Notes </h2>
 
           <button type="button" id="add-note-btn" class="btn btn-primary mb-3">
-            Add Note  <i class="fa-solid fa-note-sticky"></i>
+            <span data-i18n="detail.add-note">Add Note</span>  <i class="fa-solid fa-note-sticky"></i>
           </button>
 
           <div id="note-editor" class="card mb-4" hidden>
             <div class="card-body">
-              <h3 class="h5" id="note-form-heading">Create Note</h3>
+              <h3 class="h5" id="note-form-heading" > <span data-i18n="detail.create-note">Create Note</span></h3>
 
               <form
                 id="note-form"
@@ -299,7 +306,7 @@
                 <input type="hidden" id="note-id" name="note_id" />
 
                 <div class="mb-3">
-                  <label for="note-title" class="form-label">Title</label>
+                  <label for="note-title" class="form-label" data-i18n="detail.note-title">Title</label>
                   <input
                     id="note-title"
                     name="title"
@@ -310,7 +317,7 @@
                 </div>
 
                 <div class="mb-3">
-                  <label for="note-text" class="form-label">Text</label>
+                  <label for="note-text" class="form-label" data-i18n="detail.note-text">Text</label>
                   <textarea
                     id="note-text"
                     name="text"
@@ -322,11 +329,12 @@
 
                 <p id="note-status" role="status" aria-live="polite"></p>
 
-                <button type="submit" class="btn btn-primary">Save Note</button>
+                <button type="submit" class="btn btn-primary" data-i18n="detail.save-note">Save Note</button>
                 <button
                   type="button"
                   id="cancel-note-btn"
                   class="btn btn-outline-secondary"
+                  data-i18n="detail.cancel-note"
                 >
                   Cancel
                 </button>
@@ -346,12 +354,14 @@
                 <button
                   type="button"
                   class="btn btn-outline-primary btn-sm mt-3 edit-note-btn"
+                  data-i18n="detail.note-edit"
                 >
                   Edit
                 </button>
                 <button
                   type="button"
                   class="btn btn-outline-danger btn-sm mt-3 delete-note-btn"
+                  data-i18n="detail.note-delete"
                   data-delete-url="{% url 'reader:delete_note_ajax' document.pk note.pk %}"
                 >
                   Delete
@@ -359,14 +369,14 @@
               </div>
             </article>
             {% empty %}
-            <p id="no-notes-message">No notes yet.</p>
+            <p id="no-notes-message" data-i18n="detail.no-note">No notes yet.</p>
             {% endfor %}
           </div>
         </section>
 
         <!-- #3 -->
         <div class="mt-4">
-          <button type="button" id="download-mp3" class="btn btn-primary">
+          <button type="button" id="download-mp3" class="btn btn-primary" data-i18n="detail.download-mp3">
             Download full document as MP3
           </button>
 
@@ -385,6 +395,7 @@
         <a
           href="{% url 'reader:edit_reader' document.pk %}?discard_preview=1"
           class="btn btn-outline-primary"
+          data-i18n="detail.edit-text"
         >
           Edit extracted text
         </a>
@@ -396,15 +407,15 @@
           aria-labelledby="delete-bookmark-heading"
           data-delete-url-template="{% url 'reader:delete_bookmark' document.pk 0 %}"
         >
-          <h2 id="delete-bookmark-heading" class="my-3">Manage bookmarks</h2>
+          <h2 id="delete-bookmark-heading" class="my-3" data-i18n="detail.manage-bookmark">Manage bookmarks</h2>
 
           <div>
-                <label for="delete-bookmark-select">
+                <label for="delete-bookmark-select" data-i18n="detail.select-delete">
                     Select a bookmark to delete
                 </label>
 
                 <select id="delete-bookmark-select" >
-                    <option value="">Select a bookmark</option>
+                    <option value="" data-i18n="detail.select-bookmark-to-delete">Select a bookmark</option>
                     {% for bookmark in bookmarks %}
                     <option value="{{ bookmark.id }}">
                     {% if bookmark.label %} {{ bookmark.label }} — Page {{
@@ -416,7 +427,7 @@
           </div>
           
 
-          <button type="button" id="delete-bookmark" class="btn btn-primary mt-3">
+          <button type="button" id="delete-bookmark" class="btn btn-primary mt-3" data-i18n="detail.delete-bookmark">
             Delete selected bookmark
           </button>
 

@@ -148,6 +148,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    color: var(--primary);
+    font-size: 1.5rem;
+    font-weight: bolder;
 }
 
 .st-title{
@@ -181,10 +184,11 @@
         display: flex;
         justify-content: start !important;
     }
-    /* .tool-card{
-        display: flex;
-        flex-direction: column;
-    } */
+    .st-num{
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 1rem;
+    }
 }
 
 @media (max-width: 380px){

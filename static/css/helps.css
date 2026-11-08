@@ -1,0 +1,15 @@
+.content{
+    background: var(--surface);
+    width: auto;
+    height: auto;
+    padding: 30px;
+    margin: 20px 0;
+    border: 1px solid var(--track);
+    border-radius: 20px;
+}
+
+@media (max-width : 470px){
+    .content{
+        padding: 18px;
+    }
+}

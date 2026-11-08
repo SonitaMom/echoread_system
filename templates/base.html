@@ -15,11 +15,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    
     {% block js %}
     {% endblock  %}
     <title>EchoReadr - System </title>
 </head>
-<body>
+<body data-page="{% block page_num %}{% endblock %}">
 
   <nav class="navbar nav-expand-lg sticky-top navbar-custom">
     <div class="container">
@@ -33,8 +34,18 @@
          <!-- right-side:start reading, En->kh, account -->
           <div class="d-flex align-items-center justify-content-end gap-2 ">
 
-            <div class="gtn-group btn-group-sm" role="group" aria-label="Language / ភាសា"></div>
-            <a class="btn btn-primary text-white btn-start-reading" href="{% url 'reader:help' %}">Help?</a>
+              <!-- switch language -->
+            <div id="langAnnounce" class="visually-hidden" aria-live="polite"></div>
+            <div class="d-flex align-items-center gap-2">
+              <span class="small fw-semibold" lang="en" id="labelEn">EN</span>
+              <button class="lang-switch" type="button" id="langToggle" role="switch" aria-checked="false" aria-label="Khmer language / ភាសាខ្មែរ">
+                <span class="knob"></span>
+              </button>
+
+              <span class="small fw-semibold" id="labelKm" lang="km">ខ្មែរ</span>
+            </div>
+
+            <a class="btn btn-primary text-white btn-start-reading" href="{% url 'reader:help' %}" data-i18n="common.help">Help?</a>
 
             {% if user.is_authenticated %}
               <div class="user-menu">
@@ -48,14 +59,14 @@
 
                   <form action="{% url 'logout' %}" method="post" class="m-0 mt-2 d-md-none">
                     {% csrf_token %}
-                    <button class="btn btn-outline-secondary w-100" type="submit">Log out </button>
+                    <button class="btn btn-outline-secondary w-100" type="submit" ><span data-i18n="common.logout">Log out</span> </button>
                   </form>
                 </div>
               </div>
 
               <form action="{% url 'logout' %}" method="post" class="m-0 d-none d-md-block">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-outline-secondary">Log out <i class="fa-solid fa-right-from-bracket"></i></button>
+                <button type="submit" class="btn btn-outline-secondary"> <span  data-i18n="common.logout">Log out</span> <i class="fa-solid fa-right-from-bracket"></i></button>
               </form>
 
             {% else %}
@@ -73,6 +84,8 @@
 
   {% block content %}{% endblock %}
 
+  <script>window.LANG_URL = "{% static 'lang/' %}";</script>
+  <script src="{% static 'js/i18n.js' %}"></script>
   <script src="{% static 'js/login_signup.js' %}"></script>
   <script>
   document.addEventListener("keydown", (event) => {

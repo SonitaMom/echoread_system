@@ -53,6 +53,50 @@
 
 .user-menu-panel[hidden] { display: none !important; }
 
+
+/* Swicth language */
+.lang-switch{
+    position: relative;
+    width: 46px;
+    height: 26px;
+    border: 0;
+    border-radius: 999px;
+    background: #9aa5b1;
+    cursor: pointer;
+    padding: 0;
+    transition: background .2s;
+}
+
+.lang-switch .knob{
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #1b3a66;
+    transition: transform .2s;
+}
+
+.lang-switch.on{
+    background: #0d6efd;
+}
+.lang-switch.on .knob{
+    transform: translateX(20px);
+}
+.lang-switch:focus-visible{
+    outline: 3px solid #ffbf47;
+    outline-offset: 2px;
+}
+
+#labelEn, #labelKm {
+    opacity: .55;
+    transition: opacity .2s;
+}
+#labelEn.active, #labelKm.active{
+    opacity: 1;
+}
+
 @media (max-width:470px){
     .nav-title{
         font-size: 1.2rem;
