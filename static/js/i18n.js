@@ -60,12 +60,13 @@ async function setLanguage(lang) {
 
   // for attribute
   document.querySelectorAll("[data-i18n-attr]").forEach((el) => {
-    const [attr, key] = el.dataset.i18nAttr.split(":");
-    if (el.dataset["en_" + attr] === undefined) {
-      el.dataset["en_" + attr] = el.getAttribute(attr);
-    }
-    el.setAttribute(attr, t(key) ?? el.dataset["en_" + attr]);
-  });
+  const [attr, key] = el.dataset.i18nAttr.split(":");
+  const saved = `data-en-${attr}`;               // e.g. data-en-aria-label
+  if (!el.hasAttribute(saved)) {
+    el.setAttribute(saved, el.getAttribute(attr) ?? "");
+  }
+  el.setAttribute(attr, t(key) ?? el.getAttribute(saved));
+});
 
   document.querySelectorAll("[data-i18n]").forEach(el => {
     const isHtml = el.hasAttribute("data-i18n-html");
