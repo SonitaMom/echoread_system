@@ -9,7 +9,7 @@
 {% block title %} Edit {{ document.title }} - EchoRead {% endblock %}
 
 {% block content %}
-<main class="container py-4">
+<main class="container py-4" id="main-content" tabindex="-1">
         <p>
             <a href="{% url 'reader:document_list' %}">
                 <i class="fa-solid fa-arrow-left"></i><span data-i18n="edit.back">Back to Reader</span>

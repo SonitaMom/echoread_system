@@ -23,13 +23,27 @@
 {% block title %}{{ document.title }} - EchoRead {% endblock %} 
 {% block content%}
 
-<main class="container py-4">
+<main class="container py-4" id="main-content" tabindex="-1">
   <p class="d-flex gap-2 align-items-center">
-    <i class="fa-solid fa-arrow-left-long"></i
-    ><a href="{% url 'reader:document_list' %}"><span data-i18n="detail.back">Back</span>  </a>
+    <i class="fa-solid fa-arrow-left-long" aria-hidden="true"></i
+    ><a href="{% url 'reader:document_list' %}"><span data-i18n="detail.back">Back to My Documents</span></a>
   </p>
 
   <h1 class="title">{{ document.title }}</h1>
+
+  <!-- Accessible status and shortcuts helper bar -->
+  <div class="reader-a11y-bar d-flex justify-content-between align-items-center p-2 px-3 mb-3 rounded bg-light border" role="region" aria-label="Reader status and shortcuts">
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+      <i class="fa-solid fa-universal-access text-primary" aria-hidden="true"></i>
+      <span class="small fw-bold">Accessible Reader Active</span>
+      {% if pages %}
+      <span class="badge bg-primary text-white" id="current-page-badge" aria-live="polite">Page 1 of {{ pages|length }}</span>
+      {% endif %}
+    </div>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#shortcutsModal" aria-label="Keyboard Shortcuts (Press ?)">
+      <i class="fa-solid fa-keyboard me-1" aria-hidden="true"></i> Shortcuts (?)
+    </button>
+  </div>
 
   <!-- #1 -->
   {% if pages %}
@@ -38,7 +52,7 @@
   <div class="row my-2 g-3">
     <!-- Ready to read -->
     <div class="col-12 col-lg-6">
-      <div class="border p-3 p-md-5 ready-to-read">
+      <div class="border p-3 p-md-5 ready-to-read" id="reader-controls" role="region" aria-label="Reading controls and playback">
         <h2 id="reading-status" role="status" aria-live="polite" class="ready-to-read-title" data-i18n="detail.ready">
           Ready to read.
         </h2>
@@ -51,15 +65,19 @@
               type="button"
               id="previous-page"
               class="btn btn-outline-secondary"
-            ><i class="fa-solid fa-arrow-left"></i>
+              aria-label="Previous page (Ctrl+Left Arrow)"
+              title="Previous page (Ctrl+Left Arrow)"
+            ><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
               <span data-i18n="detail.prev-page">Previous page</span>
             </button>
             <button
               type="button"
               id="next-page"
-              class="btn btn-outline-secondary  "
+              class="btn btn-outline-secondary"
+              aria-label="Next page (Ctrl+Right Arrow)"
+              title="Next page (Ctrl+Right Arrow)"
             >
-              <span data-i18n="detail.next-page">Next page</span> <span><i class="fa-solid fa-arrow-right"></i></span>
+              <span data-i18n="detail.next-page">Next page</span> <span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
             </button>
               </div>
               
@@ -78,6 +96,7 @@
             class="form-control"
             style="width: 100px; display: inline-block"
             aria-describedby="page-navigation-status"
+            aria-label="Jump to page number"
           />
           </div>
           
@@ -118,52 +137,48 @@
                     id="vc-progress"
                     role="slider"
                     tabindex="0"
-                    aria-label="Reading position"
+                    aria-label="Audio progress slider. Use Arrow keys to seek."
                     aria-valuemin="0"
                     aria-valuemax="100"
-                    aria-valuenow="0">
+                    aria-valuenow="0"
+                    aria-valuetext="0 percent">
                     <div class="vc-fill" id="vc-fill"></div>
                 </div>
           </div>
 
-          <div class="reader-controls" aria-label="Reading controls">
+          <div class="reader-controls" aria-label="Audio playback controls">
             <div
               class="display-btns d-flex align-items-center justify-content-center gap-3 flex-wrap"
             >
-              <button type="button" id="back-10-seconds" class="audio-btn btn btn-outline-primary" aria-label="Back 10 seconds">
-                <i class="fa-solid fa-rotate-left"></i
-                ><!--Back 10 seconds-->
+              <button type="button" id="back-10-seconds" class="audio-btn btn btn-outline-primary" aria-label="Rewind 10 seconds (Left Arrow)" title="Rewind 10 seconds (Left Arrow)">
+                <i class="fa-solid fa-rotate-left" aria-hidden="true"></i
+                >
               </button>
 
-              <button type="button" id="play-reading" class="audio-btn btn btn-outline-primary" aria-label="Play">
-                <i class="fa-solid fa-play"></i>
-                <!--Play-->
+              <button type="button" id="play-reading" class="audio-btn btn btn-outline-primary" aria-label="Play reading (Ctrl+Space)" aria-pressed="false" title="Play reading (Ctrl+Space)">
+                <i class="fa-solid fa-play" aria-hidden="true"></i>
               </button>
-              <!-- 
-                    <button type="button" id="pause-reading">
-                        <i class="fa-solid fa-pause"></i
-                        >Pause
-                    </button> -->
 
-              <button type="button" id="forward-10-seconds" class="audio-btn btn btn-outline-primary" aria-label="Forward 10 seconds">
-                <i class="fa-solid fa-rotate-right"></i
-                ><!--Forward 10 seconds-->
+              <button type="button" id="forward-10-seconds" class="audio-btn btn btn-outline-primary" aria-label="Forward 10 seconds (Right Arrow)" title="Forward 10 seconds (Right Arrow)">
+                <i class="fa-solid fa-rotate-right" aria-hidden="true"></i
+                >
               </button>
 
               <button
                 type="button"
                 id="stop-reading"
-                class="audio-btn  btn btn-outline-primary"
-                aria-label="Stop"
+                class="audio-btn btn btn-outline-primary"
+                aria-label="Stop reading (Escape)"
+                title="Stop reading (Escape)"
               >
-                <i class="fa-solid fa-hand"></i>
+                <i class="fa-solid fa-hand" aria-hidden="true"></i>
               </button>
             </div>
 
             <div class="display-info mt-3 d-flex justify-content-between gap-3 flex-wrap">
               <div class="d-flex gap-2 align-items-center">
                 <label for="reading-speed" data-i18n="detail.speed">Speed</label>
-                <select id="reading-speed">
+                <select id="reading-speed" aria-label="Reading speed (Ctrl+Up/Down to change)">
                   <option value="0.5">0.5x</option>
                   <option value="0.75">0.75x</option>
                   <option value="1" selected>1x</option>
@@ -176,7 +191,7 @@
 
               <div class="d-flex gap-2 align-items-center">
                 <label for="reading-language" data-i18n="detail.language">Language</label>
-                <select id="reading-language">
+                <select id="reading-language" aria-label="Voice language">
                   <option value="auto" selected>Auto-detect</option>
                   <option value="en">English</option>
                   <option value="km">Khmer</option>
@@ -185,7 +200,7 @@
 
               <div class="d-flex gap-2 align-items-center">
                 <label for="reading-voice" data-i18n="detail.voice">Voice</label>
-                <select id="reading-voice">
+                <select id="reading-voice" aria-label="Voice gender">
                   <option value="male" selected data-i18n="detail.male">Male</option>
                   <option value="female" data-i18n="detail.female">Female</option>
                 </select>
@@ -204,7 +219,7 @@
           <div class="border p-3 my-3">
             <div class="mb-2">
                 <label for="bookmark-select" data-i18n="detail.go-bookmark">Go to saved bookmark</label>
-                <select id="bookmark-select">
+                <select id="bookmark-select" aria-label="Go to saved bookmark">
                     <option value="" data-i18n="detail.select-bookmark">Select a bookmark</option>
                     {% for bookmark in bookmarks %}
                     <option
@@ -229,6 +244,7 @@
                     maxlength="150"
                     placeholder="e.g. History of LLM"
                     data-i18n-attr="placeholder:detail.placeholder"
+                    aria-label="Bookmark title"
                 />
             </div>
           <button type="button" id="add-bookmark" class="mt-2 btn btn-primary" data-i18n="detail.add-bookmark">
@@ -241,14 +257,15 @@
         <hr>
 
 
-        <div id="reader-pages">
+        <div id="reader-pages" role="region" aria-label="Document text pages">
           {% for page in pages %}
           <section
             class="reader-page"
             data-page-number="{{ page.page_number }}"
+            aria-label="Page {{ page.page_number }}"
           >
-            <h2 ><span data-i18n="detail.page">Page </span>{{ page.page_number }}</h2>
-            <div class="reader-page-text border p-3" style="white-space: pre-wrap">
+            <h2><span data-i18n="detail.page">Page </span>{{ page.page_number }}</h2>
+            <div class="reader-page-text border p-3" style="white-space: pre-wrap" tabindex="0" role="region" aria-label="Extracted text for Page {{ page.page_number }}">
               {{ page.text }}
             </div>
           </section>
@@ -356,7 +373,7 @@
             data-delete-url-template="{% url 'reader:delete_note_ajax' document.pk 0 %}"
           >
             {% for note in notes %}
-            <article class="card mb-3" data-note-id="{{ note.pk }}">
+            <article class="card mb-3" data-note-id="{{ note.pk }}" role="article" aria-label="Note: {{ note.title }}">
               <div class="card-body">
                 <h3 class="h5 note-title">{{ note.title }}</h3>
                 <div class="note-text" style="white-space: pre-wrap">
@@ -367,6 +384,7 @@
                   type="button"
                   class="btn btn-outline-primary btn-sm mt-3 edit-note-btn"
                   data-i18n="detail.note-edit"
+                  aria-label="Edit note: {{ note.title }}"
                 >
                   Edit
                 </button>
@@ -374,6 +392,7 @@
                   type="button"
                   class="btn btn-outline-danger btn-sm mt-3 delete-note-btn"
                   data-i18n="detail.note-delete"
+                  aria-label="Delete note: {{ note.title }}"
                   data-delete-url="{% url 'reader:delete_note_ajax' document.pk note.pk %}"
                 >
                   Delete

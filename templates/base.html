@@ -24,19 +24,46 @@
 </head>
 <body data-page="{% block page_num %}{% endblock %}">
 
-  <nav class="navbar nav-expand-lg fixed-top navbar-custom">
+  <!-- Accessible Skip Links for Keyboard & Screen Reader Users -->
+  <nav aria-label="Skip links">
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <a href="#reader-controls" class="skip-link">Skip to audio controls</a>
+    <a href="#reader-pages" class="skip-link">Skip to document reading text</a>
+  </nav>
+
+  <!-- Live screen reader assertive announcement region -->
+  <div id="sr-announcements" class="visually-hidden" aria-live="assertive" aria-atomic="true"></div>
+
+  <nav class="navbar nav-expand-lg fixed-top navbar-custom" aria-label="Main navigation">
     <div class="container">
 
         <!-- Brand -->
          <a href="{% url 'home' %}" class="navbar-brand d-flex align-items-center justify-content-start gap-2">
-            <object type="image/svg+xml" data="{% static 'image/echoread-logo-animated.svg' %}"  class="brand"></object>
+            <object type="image/svg+xml" data="{% static 'image/echoread-logo-animated.svg' %}"  class="brand" aria-label="EchoRead Logo"></object>
             <span class="text-black nav-title">Echo<span class="text-primary">Read</span></span>
          </a>
 
-         <!-- right-side:start reading, En->kh, account -->
-          <div class="d-flex align-items-center justify-content-end gap-2 ">
+         <!-- right-side: A11y controls, start reading, En->kh, account -->
+          <div class="d-flex align-items-center justify-content-end gap-2 flex-wrap">
 
-              <!-- switch language -->
+            <!-- Accessibility quick controls toolbar -->
+            <div class="d-flex align-items-center gap-1 a11y-toolbar" role="toolbar" aria-label="Accessibility options">
+              <button class="btn btn-sm btn-outline-secondary a11y-tool-btn" type="button" id="toggleContrastBtn" aria-label="Toggle high contrast mode" title="High Contrast Mode">
+                <i class="fa-solid fa-circle-half-stroke" aria-hidden="true"></i>
+              </button>
+
+              <div class="btn-group btn-group-sm" role="group" aria-label="Text size adjustments">
+                <button type="button" class="btn btn-outline-secondary a11y-tool-btn" id="decreaseFontBtn" aria-label="Decrease text size" title="Smaller text">A-</button>
+                <button type="button" class="btn btn-outline-secondary a11y-tool-btn" id="resetFontBtn" aria-label="Reset text size" title="Default text size">A</button>
+                <button type="button" class="btn btn-outline-secondary a11y-tool-btn" id="increaseFontBtn" aria-label="Increase text size" title="Larger text">A+</button>
+              </div>
+
+              <button class="btn btn-sm btn-outline-primary a11y-tool-btn" type="button" id="openShortcutsBtn" data-bs-toggle="modal" data-bs-target="#shortcutsModal" aria-label="Keyboard Shortcuts (Press ?)" title="Keyboard shortcuts (Press ?)">
+                <i class="fa-solid fa-keyboard" aria-hidden="true"></i> <span class="d-none d-lg-inline">Shortcuts</span>
+              </button>
+            </div>
+
+            <!-- switch language -->
             <div id="langAnnounce" class="visually-hidden" aria-live="polite"></div>
             <div class="d-flex align-items-center gap-2">
               <span class="small fw-semibold" lang="en" id="labelEn">EN</span>
@@ -102,20 +129,200 @@
     
   </footer>
 </div>
+
+  <!-- Accessible Keyboard Shortcuts Modal -->
+  <div class="modal fade" id="shortcutsModal" tabindex="-1" aria-labelledby="shortcutsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content shadow border-0">
+        <div class="modal-header border-bottom bg-light">
+          <h2 class="modal-title h5 d-flex align-items-center gap-2 mb-0" id="shortcutsModalLabel">
+            <i class="fa-solid fa-universal-access text-primary" aria-hidden="true"></i>
+            <span>Keyboard Shortcuts & Accessibility Navigation</span>
+          </h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close shortcuts modal"></button>
+        </div>
+        <div class="modal-body p-4">
+          <p class="text-muted mb-3">
+            EchoRead is designed from the ground up for blind and low-vision readers. You can control reading and navigation entirely through the keyboard without touching a mouse.
+          </p>
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col" style="width: 32%;">Action</th>
+                  <th scope="col" style="width: 36%;">Shortcut</th>
+                  <th scope="col" style="width: 32%;">Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Play / Pause Reading</strong></td>
+                  <td><kbd class="px-2 py-1 bg-dark text-white rounded">Ctrl</kbd> + <kbd class="px-2 py-1 bg-dark text-white rounded">Space</kbd></td>
+                  <td>Start or pause audio for current page</td>
+                </tr>
+                <tr>
+                  <td><strong>Stop Reading</strong></td>
+                  <td><kbd class="px-2 py-1 bg-dark text-white rounded">Escape</kbd> or <kbd class="px-2 py-1 bg-dark text-white rounded">Ctrl+Shift+Space</kbd></td>
+                  <td>Stops reading immediately</td>
+                </tr>
+                <tr>
+                  <td><strong>Next Page</strong></td>
+                  <td><kbd class="px-2 py-1 bg-dark text-white rounded">Ctrl</kbd> + <kbd class="px-2 py-1 bg-dark text-white rounded">→</kbd></td>
+                  <td>Advance to the next page</td>
+                </tr>
+                <tr>
+                  <td><strong>Previous Page</strong></td>
+                  <td><kbd class="px-2 py-1 bg-dark text-white rounded">Ctrl</kbd> + <kbd class="px-2 py-1 bg-dark text-white rounded">←</kbd></td>
+                  <td>Return to previous page</td>
+                </tr>
+                <tr>
+                  <td><strong>Rewind 10 Seconds</strong></td>
+                  <td><kbd class="px-2 py-1 bg-dark text-white rounded">←</kbd> (Left Arrow)</td>
+                  <td>Skip back 10 seconds in audio</td>
+                </tr>
+                <tr>
+                  <td><strong>Forward 10 Seconds</strong></td>
+                  <td><kbd class="px-2 py-1 bg-dark text-white rounded">→</kbd> (Right Arrow)</td>
+                  <td>Skip forward 10 seconds in audio</td>
+                </tr>
+                <tr>
+                  <td><strong>Faster Speech</strong></td>
+                  <td><kbd class="px-2 py-1 bg-dark text-white rounded">Ctrl</kbd> + <kbd class="px-2 py-1 bg-dark text-white rounded">↑</kbd></td>
+                  <td>Speed up reading voice</td>
+                </tr>
+                <tr>
+                  <td><strong>Slower Speech</strong></td>
+                  <td><kbd class="px-2 py-1 bg-dark text-white rounded">Ctrl</kbd> + <kbd class="px-2 py-1 bg-dark text-white rounded">↓</kbd></td>
+                  <td>Slow down reading voice</td>
+                </tr>
+                <tr>
+                  <td><strong>Toggle High Contrast</strong></td>
+                  <td><kbd class="px-2 py-1 bg-dark text-white rounded">Alt</kbd> + <kbd class="px-2 py-1 bg-dark text-white rounded">H</kbd></td>
+                  <td>Switch high contrast theme</td>
+                </tr>
+                <tr>
+                  <td><strong>Toggle Shortcuts Guide</strong></td>
+                  <td><kbd class="px-2 py-1 bg-dark text-white rounded">?</kbd> (Shift + /)</td>
+                  <td>Show or hide this modal</td>
+                </tr>
+                <tr>
+                  <td><strong>Open Help Page</strong></td>
+                  <td><kbd class="px-2 py-1 bg-dark text-white rounded">Ctrl</kbd> + <kbd class="px-2 py-1 bg-dark text-white rounded">/</kbd></td>
+                  <td>Detailed user guide</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer border-top bg-light">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close (or press Esc)</button>
+        </div>
+      </div>
+    </div>
+  </div>
   
   <script>window.LANG_URL = "{% static 'lang/' %}";</script>
   <script src="{% static 'js/i18n.js' %}"></script>
   <script src="{% static 'js/login_signup.js' %}"></script>
   <script>
+  // Global screen reader announcer
+  window.announceToSR = function(message) {
+      const el = document.getElementById("sr-announcements");
+      if (!el) return;
+      el.textContent = "";
+      setTimeout(() => {
+          el.textContent = message;
+      }, 50);
+  };
+
+  // Accessibility Toolbar & Preferences
+  document.addEventListener("DOMContentLoaded", () => {
+      // 1. High contrast mode
+      const contrastBtn = document.getElementById("toggleContrastBtn");
+      const savedContrast = localStorage.getItem("echoread_contrast");
+      if (savedContrast === "high") {
+          document.body.classList.add("theme-high-contrast");
+          contrastBtn?.setAttribute("aria-pressed", "true");
+      }
+
+      contrastBtn?.addEventListener("click", () => {
+          const isHigh = document.body.classList.toggle("theme-high-contrast");
+          localStorage.setItem("echoread_contrast", isHigh ? "high" : "normal");
+          contrastBtn.setAttribute("aria-pressed", isHigh ? "true" : "false");
+          window.announceToSR(isHigh ? "High contrast mode enabled" : "High contrast mode disabled");
+      });
+
+      // 2. Text sizing
+      const textSizes = ["normal", "lg", "xl"];
+      let currentSizeIndex = 0;
+      const savedSize = localStorage.getItem("echoread_text_size") || "normal";
+      applyTextSize(savedSize);
+
+      function applyTextSize(size) {
+          document.body.classList.remove("text-size-lg", "text-size-xl");
+          if (size === "lg") document.body.classList.add("text-size-lg");
+          if (size === "xl") document.body.classList.add("text-size-xl");
+          localStorage.setItem("echoread_text_size", size);
+      }
+
+      document.getElementById("increaseFontBtn")?.addEventListener("click", () => {
+          const isXl = document.body.classList.contains("text-size-xl");
+          const isLg = document.body.classList.contains("text-size-lg");
+          if (!isLg && !isXl) {
+              applyTextSize("lg");
+              window.announceToSR("Text size set to Large");
+          } else {
+              applyTextSize("xl");
+              window.announceToSR("Text size set to Extra Large");
+          }
+      });
+
+      document.getElementById("decreaseFontBtn")?.addEventListener("click", () => {
+          const isXl = document.body.classList.contains("text-size-xl");
+          if (isXl) {
+              applyTextSize("lg");
+              window.announceToSR("Text size set to Large");
+          } else {
+              applyTextSize("normal");
+              window.announceToSR("Text size reset to default");
+          }
+      });
+
+      document.getElementById("resetFontBtn")?.addEventListener("click", () => {
+          applyTextSize("normal");
+          window.announceToSR("Text size reset to default");
+      });
+  });
+
+  // Global keydown handler
   document.addEventListener("keydown", (event) => {
       const target = event.target;
 
-      // Don't trigger while typing.
-      if (
+      // Don't trigger while typing
+      const isTyping =
           target.tagName === "INPUT" ||
           target.tagName === "TEXTAREA" ||
-          target.isContentEditable
-      ) {
+          target.isContentEditable;
+
+      if (isTyping) {
+          return;
+      }
+
+      // ? : Toggle shortcuts modal
+      if (!event.ctrlKey && !event.altKey && !event.metaKey && (event.key === "?" || (event.shiftKey && event.key === "/"))) {
+          event.preventDefault();
+          const modalEl = document.getElementById("shortcutsModal");
+          if (modalEl) {
+              const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+              modal.toggle();
+          }
+          return;
+      }
+
+      // Alt + H : Toggle high contrast
+      if (event.altKey && (event.key === "h" || event.key === "H")) {
+          event.preventDefault();
+          document.getElementById("toggleContrastBtn")?.click();
           return;
       }
 

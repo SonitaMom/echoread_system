@@ -10,8 +10,8 @@
 {% block title %}New Reader - EchoRead{% endblock %}
 
 {% block content %}
-    <main class="container py-4">
-    <p class="d-flex align-items-center gap-2"><i class="fa-solid fa-arrow-left-long"></i><a href="{% url 'reader:document_list' %}"><span data-i18n="upload.back">Back to My Readers</span></a></p>
+    <main class="container py-4" id="main-content" tabindex="-1">
+    <p class="d-flex align-items-center gap-2"><i class="fa-solid fa-arrow-left-long" aria-hidden="true"></i><a href="{% url 'reader:document_list' %}"><span data-i18n="upload.back">Back to My Documents</span></a></p>
 
     <h1 class="my-4" data-i18n="upload.title">New Reader</h1>
     <p data-i18n="upload.subtitle">Choose a PDF from your device. EchoRead will read it aloud to you.</p>
@@ -28,15 +28,17 @@
         <div id="drop-zone"
              class="border border-2 rounded p-5 text-center mb-3 drop-pdf-box mt-5"
              tabindex="0"
-             role="group"
-             aria-label="PDF upload area">
-            <p id="file-label" class="dropfile-title mb-3" data-i18n="upload.drop">Drop a PDF here or choose a file.</p>
+             role="button"
+             aria-label="PDF upload area. Press Enter or Space to choose a PDF file, or drag and drop.">
+            <p id="file-label" class="dropfile-title mb-2" data-i18n="upload.drop">Drop a PDF here or choose a file.</p>
+            <p class="small text-muted mb-3">Press Enter or Space to browse your files.</p>
 
             <input type="file"
                    name="pdf_file"
                    id="pdf-file"
-                   class="form-control "
+                   class="form-control"
                    accept=".pdf,application/pdf"
+                   aria-label="Choose PDF document to upload"
                    required>
         </div>
 
@@ -50,5 +52,5 @@
 
 
 {% block js %}
-<script src="{% static 'js/reader/new_reader.js'}"></script>
+<script src="{% static 'js/reader/new_reader.js' %}"></script>
 {% endblock %}

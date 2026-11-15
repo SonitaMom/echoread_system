@@ -4,7 +4,24 @@ const fileLabel = document.getElementById("file-label");
 
 fileInput.addEventListener("change", () => {
     if (fileInput.files.length) {
-        fileLabel.textContent = "Selected: " + fileInput.files[0].name;
+        const fileName = fileInput.files[0].name;
+        fileLabel.textContent = "Selected: " + fileName;
+        if (window.announceToSR) {
+            window.announceToSR(`Selected file: ${fileName}`);
+        }
+    }
+});
+
+dropZone.addEventListener("click", (e) => {
+    if (e.target !== fileInput) {
+        fileInput.click();
+    }
+});
+
+dropZone.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        fileInput.click();
     }
 });
 

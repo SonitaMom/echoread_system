@@ -119,7 +119,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Pause icon while preparing or playing, play icon otherwise
-
     function updatePlayButton(){
         const active = isLoading || !audio.paused;
 
@@ -127,14 +126,24 @@ document.addEventListener("DOMContentLoaded", () => {
             playIcon.className = active ? "fa-solid fa-pause" : "fa-solid fa-play";
         }
 
-        playButton.setAttribute(
-            "aria-label", active ? "Pause reading":"Play reading"
-        );
+        const label = active ? "Pause reading (Ctrl+Space)" : "Play reading (Ctrl+Space)";
+        playButton.setAttribute("aria-label", label);
+        playButton.setAttribute("title", label);
+        playButton.setAttribute("aria-pressed", active ? "true" : "false");
 
         // the waveform moves only while the voice is playing
-
         waveBars.forEach(bar =>{
             bar.style.animationPlayState = audio.paused? "paused":"running"
+        });
+
+        // Visually and semantically mark reading state on page text
+        pages.forEach((p, idx) => {
+            const isCurr = idx === (chunks[currentIndex] ? Number(chunks[currentIndex].pageNumber) - 1 : -1);
+            if (isCurr && active) {
+                p.classList.add("is-reading-audio");
+            } else {
+                p.classList.remove("is-reading-audio");
+            }
         });
     }
 
@@ -180,8 +189,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
         waveFill.style.width = percent + "%";
         if(waveProgress){
-            waveProgress.setAttribute("aria-valuenow", Math.round(percent));
+            const rounded = Math.round(percent);
+            waveProgress.setAttribute("aria-valuenow", rounded);
+            waveProgress.setAttribute("aria-valuetext", `${rounded} percent played`);
         }
+    }
+
+    // Keyboard seeking on progress bar for screen reader / keyboard accessibility
+    if (waveProgress) {
+        waveProgress.addEventListener("keydown", (e) => {
+            if (!audio.src) return;
+            if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
+                e.preventDefault();
+                audio.currentTime = Math.max(0, audio.currentTime - 5);
+                updateProgress();
+                if (window.announceToSR) window.announceToSR("Rewound 5 seconds");
+            } else if (e.key === "ArrowRight" || e.key === "ArrowUp") {
+                e.preventDefault();
+                if (Number.isFinite(audio.duration)) {
+                    audio.currentTime = Math.min(audio.duration, audio.currentTime + 5);
+                    updateProgress();
+                    if (window.announceToSR) window.announceToSR("Forwarded 5 seconds");
+                }
+            } else if (e.key === "Home") {
+                e.preventDefault();
+                audio.currentTime = 0;
+                updateProgress();
+                if (window.announceToSR) window.announceToSR("Audio at beginning");
+            } else if (e.key === "End") {
+                e.preventDefault();
+                if (Number.isFinite(audio.duration)) {
+                    audio.currentTime = Math.max(0, audio.duration - 0.5);
+                    updateProgress();
+                }
+            }
+        });
     }
 
 
@@ -354,6 +396,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 `Reading page ${chunk.pageNumber}, ` +
                 `section ${currentIndex + 1} of ${chunks.length}.`
             );
+            if (window.announceToSR) {
+                window.announceToSR(`Reading page ${chunk.pageNumber}, section ${currentIndex + 1} of ${chunks.length}`);
+            }
 
             // Prepare the next section while this one is playing.
             prefetchNext();
@@ -362,6 +407,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             setLoading(false);
             updateStatus(error.message || "Unable to play this audio.");
+            if (window.announceToSR) window.announceToSR(error.message || "Unable to play this audio");
         }
     }
 
@@ -371,12 +417,14 @@ document.addEventListener("DOMContentLoaded", () => {
             rememberPlace();
             cancelPlayback();
             updateStatus("Reading stopped");
+            if (window.announceToSR) window.announceToSR("Reading stopped");
             return;
         }
 
         if(audio.src && !audio.paused){
             audio.pause();
             updateStatus("Reading paused");
+            if (window.announceToSR) window.announceToSR("Reading paused");
             return;
         }
 
@@ -385,6 +433,7 @@ document.addEventListener("DOMContentLoaded", () => {
             try {
                 await audio.play();
                 updateStatus("Reading resumed.");
+                if (window.announceToSR) window.announceToSR("Reading resumed");
             } catch {
                 updateStatus("Unable to resume playback.");
             }
@@ -408,6 +457,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (selectedChunk === -1) {
             updateStatus(`Page ${selectedPage} contains no readable text.`);
+            if (window.announceToSR) window.announceToSR(`Page ${selectedPage} contains no readable text`);
             return;
         }
 
@@ -427,21 +477,25 @@ document.addEventListener("DOMContentLoaded", () => {
         // currentIndex = 0;
         updateProgress();
         updateStatus("Reading stopped.");
+        if (window.announceToSR) window.announceToSR("Reading stopped");
     });
 
     backButton.addEventListener("click", () => {
         if (!audio.src) {
             updateStatus("Start reading before seeking.");
+            if (window.announceToSR) window.announceToSR("Start reading before seeking");
             return;
         }
 
         audio.currentTime = Math.max(0, audio.currentTime - 10);
         updateStatus("Moved back 10 seconds.");
+        if (window.announceToSR) window.announceToSR("Rewound 10 seconds");
     });
 
     forwardButton.addEventListener("click", () => {
         if (!audio.src) {
             updateStatus("Start reading before seeking.");
+            if (window.announceToSR) window.announceToSR("Start reading before seeking");
             return;
         }
 
@@ -460,11 +514,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         updateStatus("Moved forward 10 seconds.");
+        if (window.announceToSR) window.announceToSR("Advanced 10 seconds");
     });
 
     speedSelect.addEventListener("change", () => {
         audio.playbackRate = Number(speedSelect.value);
         updateStatus(`Reading speed set to ${speedSelect.value}x.`);
+        if (window.announceToSR) window.announceToSR(`Reading speed set to ${speedSelect.value}x`);
     });
 
     function changeVoiceSetting() {
@@ -475,6 +531,7 @@ document.addEventListener("DOMContentLoaded", () => {
             playChunk(currentIndex);
         } else {
             updateStatus("Voice settings changed. Press Play to continue.");
+            if (window.announceToSR) window.announceToSR("Voice settings changed. Press Play to continue.");
         }
     }
 
@@ -650,6 +707,9 @@ document.addEventListener("DOMContentLoaded", () => {
             ) {
                 pageStatus.textContent =
                     `Enter a page number between 1 and ${totalPages}.`;
+                if (window.announceToSR) {
+                    window.announceToSR(`Enter a page number between 1 and ${totalPages}`);
+                }
                 return false;
             }
 
@@ -662,6 +722,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
             pageInput.value = currentPage;
             pageStatus.textContent = `Page ${currentPage} of ${totalPages}`;
+
+            const pageBadge = document.getElementById("current-page-badge");
+            if (pageBadge) pageBadge.textContent = `Page ${currentPage} of ${totalPages}`;
+
+            if (window.announceToSR) {
+                window.announceToSR(`Page ${currentPage} of ${totalPages}`);
+            }
 
             return true;
         }
@@ -1061,6 +1128,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             editor.hidden = true;
             resetForm();
+            if (window.announceToSR) {
+                window.announceToSR(`Note saved: ${note.title}`);
+            }
         } catch (error) {
             status.textContent = error.message;
         } finally {
@@ -1139,6 +1209,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Remove the card only after the server confirms deletion.
             button.closest("[data-note-id]").remove();
+            if (window.announceToSR) {
+                window.announceToSR("Note deleted");
+            }
 
             if (!list.querySelector("[data-note-id]")) {
                 const emptyMessage = document.createElement("p");
@@ -1268,6 +1341,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             questionInput.value = "";
             status.textContent = "Answer generated and saved to Notes.";
+            if (window.announceToSR) {
+                window.announceToSR(`Answer generated and saved to Notes: ${data.note.title}`);
+            }
         } catch (error) {
             status.textContent = error.message;
         } finally {

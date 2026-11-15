@@ -317,3 +317,144 @@ border-top: 1px solid var(--border);
     }
 
 }
+
+/* ==========================================================================
+   Accessibility & Blind / Low-Vision Reader Support Styles
+   ========================================================================== */
+
+/* Skip links for keyboard & screen reader users */
+.skip-link {
+    position: absolute;
+    top: -999px;
+    left: 14px;
+    background: #0d6efd;
+    color: #ffffff !important;
+    padding: 12px 20px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    border-radius: 8px;
+    z-index: 99999;
+    text-decoration: none;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+    transition: top 0.15s ease-in-out;
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+    top: 14px;
+    outline: 4px solid #ffbf47 !important;
+    outline-offset: 3px !important;
+}
+
+/* WCAG AAA Visible Focus Rings */
+:focus-visible {
+    outline: 3px solid #ffbf47 !important;
+    outline-offset: 3px !important;
+    box-shadow: 0 0 0 5px rgba(13, 110, 253, 0.4) !important;
+}
+
+/* Accessibility Toolbar in Navbar */
+.a11y-toolbar {
+    margin-right: 0.5rem;
+}
+
+.a11y-tool-btn {
+    min-height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.2rem 0.55rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    border-radius: 6px;
+}
+
+/* Text Size Scaling */
+body.text-size-lg .reader-page-text,
+body.text-size-lg .note-text,
+body.text-size-lg p,
+body.text-size-lg textarea {
+    font-size: 1.25rem !important;
+    line-height: 1.85 !important;
+}
+
+body.text-size-xl .reader-page-text,
+body.text-size-xl .note-text,
+body.text-size-xl p,
+body.text-size-xl textarea {
+    font-size: 1.5rem !important;
+    line-height: 2 !important;
+}
+
+/* High Contrast Mode */
+body.theme-high-contrast {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+}
+
+body.theme-high-contrast::before {
+    background: #000000 !important;
+}
+
+body.theme-high-contrast .navbar-custom {
+    background-color: #000000 !important;
+    border-bottom: 2px solid #ffd056 !important;
+}
+
+body.theme-high-contrast .nav-title,
+body.theme-high-contrast .text-black,
+body.theme-high-contrast .text-muted,
+body.theme-high-contrast p,
+body.theme-high-contrast h1,
+body.theme-high-contrast h2,
+body.theme-high-contrast h3,
+body.theme-high-contrast h4,
+body.theme-high-contrast h5,
+body.theme-high-contrast label {
+    color: #ffffff !important;
+}
+
+body.theme-high-contrast .border,
+body.theme-high-contrast .card,
+body.theme-high-contrast .modal-content,
+body.theme-high-contrast .ready-to-read,
+body.theme-high-contrast .reader-page-text {
+    background-color: #0b0c10 !important;
+    color: #ffffff !important;
+    border: 2px solid #ffd056 !important;
+}
+
+body.theme-high-contrast .btn-primary {
+    background-color: #ffd056 !important;
+    border-color: #ffd056 !important;
+    color: #000000 !important;
+    font-weight: 700 !important;
+}
+
+body.theme-high-contrast .btn-outline-primary,
+body.theme-high-contrast .btn-outline-secondary {
+    border: 2px solid #ffd056 !important;
+    color: #ffd056 !important;
+    background-color: transparent !important;
+}
+
+body.theme-high-contrast .btn-outline-primary:hover,
+body.theme-high-contrast .btn-outline-primary:focus,
+body.theme-high-contrast .btn-outline-secondary:hover,
+body.theme-high-contrast .btn-outline-secondary:focus {
+    background-color: #ffd056 !important;
+    color: #000000 !important;
+}
+
+body.theme-high-contrast select,
+body.theme-high-contrast input,
+body.theme-high-contrast textarea {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 2px solid #ffd056 !important;
+}
+
+body.theme-high-contrast .is-reading-audio {
+    border: 3px solid #ffd056 !important;
+    background-color: #1a1600 !important;
+}
