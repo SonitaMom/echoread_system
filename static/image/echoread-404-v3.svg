@@ -1,0 +1,174 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 320" width="600" height="320" role="img" aria-label="404 page not found" xmlns:c2pa="http://c2pa.org/manifest">
+  <defs>
+    <linearGradient id="g404" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4f46e5"/>
+      <stop offset="1" stop-color="#38bdf8"/>
+    </linearGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a5b4fc" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#a5b4fc" stop-opacity="0.7"/>
+      <stop offset="1" stop-color="#a5b4fc" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Sparkles -->
+  <g>
+    <path transform="translate(60,70) scale(1.2)" d="M0 -8 Q0 0 8 0 Q0 0 0 8 Q0 0 -8 0 Q0 0 0 -8Z" fill="#38bdf8" opacity="0.2">
+      <animate attributeName="opacity" values="0.15;1;0.15" dur="2.6s" begin="0s" repeatCount="indefinite"/>
+    </path>
+    <path transform="translate(545,40) scale(0.9)" d="M0 -8 Q0 0 8 0 Q0 0 0 8 Q0 0 -8 0 Q0 0 0 -8Z" fill="#6366f1" opacity="0.2">
+      <animate attributeName="opacity" values="0.15;1;0.15" dur="2.6s" begin="0.9s" repeatCount="indefinite"/>
+    </path>
+    <path transform="translate(40,235) scale(0.8)" d="M0 -8 Q0 0 8 0 Q0 0 0 8 Q0 0 -8 0 Q0 0 0 -8Z" fill="#6366f1" opacity="0.2">
+      <animate attributeName="opacity" values="0.15;1;0.15" dur="2.6s" begin="1.6s" repeatCount="indefinite"/>
+    </path>
+    <path transform="translate(560,235) scale(1.1)" d="M0 -8 Q0 0 8 0 Q0 0 0 8 Q0 0 -8 0 Q0 0 0 -8Z" fill="#38bdf8" opacity="0.2">
+      <animate attributeName="opacity" values="0.15;1;0.15" dur="2.6s" begin="0.5s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- Echo ripples around the 0 -->
+  <g fill="none" stroke="#818cf8" stroke-width="2.5">
+    <circle cx="300" cy="130" r="62" opacity="0">
+      <animate attributeName="r" values="62;80" dur="2.4s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.4;0" dur="2.4s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="300" cy="130" r="62" opacity="0">
+      <animate attributeName="r" values="62;80" dur="2.4s" begin="1.2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.4;0" dur="2.4s" begin="1.2s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- Left 4 with echo trailing to the left -->
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 0;0 -6;0 0" dur="2.4s" repeatCount="indefinite"/>
+    <path d="M150 60 L85 150 L185 150 M150 60 L150 200" fill="none" stroke="#818cf8" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" opacity="0">
+      <animate attributeName="opacity" values="0.35;0" dur="2.4s" begin="0s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0;-34 0" dur="2.4s" begin="0s" repeatCount="indefinite"/>
+    </path>
+    <path d="M150 60 L85 150 L185 150 M150 60 L150 200" fill="none" stroke="#818cf8" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" opacity="0">
+      <animate attributeName="opacity" values="0.35;0" dur="2.4s" begin="1.2s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0;-34 0" dur="2.4s" begin="1.2s" repeatCount="indefinite"/>
+    </path>
+    <path d="M150 60 L85 150 L185 150 M150 60 L150 200" fill="none" stroke="url(#g404)" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Middle 0 with a sound wave pulsing inside -->
+  <g>
+    <circle cx="300" cy="130" r="60" fill="none" stroke="url(#g404)" stroke-width="20"/>
+    <line x1="264" x2="264" y1="127" y2="133" stroke="#6366f1" stroke-width="6" stroke-linecap="round">
+      <animate attributeName="y1" values="127;127;122;127;127" keyTimes="0;0.15;0.32;0.5;1" dur="2.4s" begin="0.00s" repeatCount="indefinite"/>
+      <animate attributeName="y2" values="133;133;138;133;133" keyTimes="0;0.15;0.32;0.5;1" dur="2.4s" begin="0.00s" repeatCount="indefinite"/>
+    </line>
+    <line x1="276" x2="276" y1="127" y2="133" stroke="#6366f1" stroke-width="6" stroke-linecap="round">
+      <animate attributeName="y1" values="127;127;117;127;127" keyTimes="0;0.15;0.32;0.5;1" dur="2.4s" begin="0.12s" repeatCount="indefinite"/>
+      <animate attributeName="y2" values="133;133;143;133;133" keyTimes="0;0.15;0.32;0.5;1" dur="2.4s" begin="0.12s" repeatCount="indefinite"/>
+    </line>
+    <line x1="288" x2="288" y1="127" y2="133" stroke="#6366f1" stroke-width="6" stroke-linecap="round">
+      <animate attributeName="y1" values="127;127;112;127;127" keyTimes="0;0.15;0.32;0.5;1" dur="2.4s" begin="0.24s" repeatCount="indefinite"/>
+      <animate attributeName="y2" values="133;133;148;133;133" keyTimes="0;0.15;0.32;0.5;1" dur="2.4s" begin="0.24s" repeatCount="indefinite"/>
+    </line>
+    <line x1="300" x2="300" y1="127" y2="133" stroke="#6366f1" stroke-width="6" stroke-linecap="round">
+      <animate attributeName="y1" values="127;127;108;127;127" keyTimes="0;0.15;0.32;0.5;1" dur="2.4s" begin="0.36s" repeatCount="indefinite"/>
+      <animate attributeName="y2" values="133;133;152;133;133" keyTimes="0;0.15;0.32;0.5;1" dur="2.4s" begin="0.36s" repeatCount="indefinite"/>
+    </line>
+    <line x1="312" x2="312" y1="127" y2="133" stroke="#6366f1" stroke-width="6" stroke-linecap="round">
+      <animate attributeName="y1" values="127;127;112;127;127" keyTimes="0;0.15;0.32;0.5;1" dur="2.4s" begin="0.48s" repeatCount="indefinite"/>
+      <animate attributeName="y2" values="133;133;148;133;133" keyTimes="0;0.15;0.32;0.5;1" dur="2.4s" begin="0.48s" repeatCount="indefinite"/>
+    </line>
+    <line x1="324" x2="324" y1="127" y2="133" stroke="#6366f1" stroke-width="6" stroke-linecap="round">
+      <animate attributeName="y1" values="127;127;117;127;127" keyTimes="0;0.15;0.32;0.5;1" dur="2.4s" begin="0.60s" repeatCount="indefinite"/>
+      <animate attributeName="y2" values="133;133;143;133;133" keyTimes="0;0.15;0.32;0.5;1" dur="2.4s" begin="0.60s" repeatCount="indefinite"/>
+    </line>
+    <line x1="336" x2="336" y1="127" y2="133" stroke="#6366f1" stroke-width="6" stroke-linecap="round">
+      <animate attributeName="y1" values="127;127;122;127;127" keyTimes="0;0.15;0.32;0.5;1" dur="2.4s" begin="0.72s" repeatCount="indefinite"/>
+      <animate attributeName="y2" values="133;133;138;133;133" keyTimes="0;0.15;0.32;0.5;1" dur="2.4s" begin="0.72s" repeatCount="indefinite"/>
+    </line>
+  </g>
+
+  <!-- Right 4 with echo trailing to the right -->
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 -6;0 0;0 -6" dur="2.4s" repeatCount="indefinite"/>
+    <path d="M520 60 L455 150 L555 150 M520 60 L520 200" fill="none" stroke="#818cf8" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" opacity="0">
+      <animate attributeName="opacity" values="0.35;0" dur="2.4s" begin="0s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0;34 0" dur="2.4s" begin="0s" repeatCount="indefinite"/>
+    </path>
+    <path d="M520 60 L455 150 L555 150 M520 60 L520 200" fill="none" stroke="#818cf8" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" opacity="0">
+      <animate attributeName="opacity" values="0.35;0" dur="2.4s" begin="1.2s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0;34 0" dur="2.4s" begin="1.2s" repeatCount="indefinite"/>
+    </path>
+    <path d="M520 60 L455 150 L555 150 M520 60 L520 200" fill="none" stroke="url(#g404)" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Floating question marks -->
+  <g font-family="Arial, sans-serif" font-weight="700" fill="#6366f1">
+    <text x="225" y="250" font-size="26" text-anchor="middle">?
+      <animate attributeName="opacity" values="0;1;0" dur="2s" begin="0s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="translate" values="0 8;0 -10" dur="2s" begin="0s" repeatCount="indefinite"/>
+    </text>
+    <text x="385" y="240" font-size="32" text-anchor="middle" fill="#38bdf8">?
+      <animate attributeName="opacity" values="0;1;0" dur="2s" begin="0.7s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="translate" values="0 8;0 -10" dur="2s" begin="0.7s" repeatCount="indefinite"/>
+    </text>
+    <text x="255" y="215" font-size="20" text-anchor="middle" fill="#4338ca">?
+      <animate attributeName="opacity" values="0;1;0" dur="2s" begin="1.3s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="translate" values="0 8;0 -10" dur="2s" begin="1.3s" repeatCount="indefinite"/>
+    </text>
+  </g>
+
+  <!-- Ground -->
+  <rect x="80" y="290" width="440" height="3" rx="1.5" fill="url(#floor)"/>
+  <ellipse cx="300" cy="291" rx="26" ry="4" fill="#0f172a" opacity="0.15"/>
+
+  <!-- Avatar searching with a magnifying glass -->
+  <g transform="translate(300,290) scale(1.2)">
+    <!-- legs -->
+    <line x1="-6" y1="-16" x2="-6" y2="0" stroke="#312e81" stroke-width="5" stroke-linecap="round"/>
+    <line x1="6" y1="-16" x2="6" y2="0" stroke="#312e81" stroke-width="5" stroke-linecap="round"/>
+
+    <!-- left arm (hangs) -->
+    <line x1="-13" y1="-38" x2="-15" y2="-24" stroke="#fcd9b6" stroke-width="5" stroke-linecap="round"/>
+
+    <!-- torso -->
+    <rect x="-13" y="-44" width="26" height="30" rx="9" fill="#4f46e5"/>
+    <g stroke="#ffffff" stroke-width="2.5" stroke-linecap="round">
+      <line x1="-5" y1="-33" x2="-5" y2="-27"/>
+      <line x1="0" y1="-36" x2="0" y2="-24"/>
+      <line x1="5" y1="-33" x2="5" y2="-27"/>
+    </g>
+
+    <!-- right arm + magnifier sweeping around -->
+    <g transform="translate(13,-38)">
+      <g>
+        <animateTransform attributeName="transform" type="rotate" values="-10;12;-10" dur="1.6s" repeatCount="indefinite"/>
+        <line x1="0" y1="0" x2="17" y2="-8" stroke="#fcd9b6" stroke-width="5" stroke-linecap="round"/>
+        <line x1="17" y1="-8" x2="22" y2="-12" stroke="#0f172a" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="30" cy="-19" r="10" fill="#38bdf8" fill-opacity="0.25" stroke="#0f172a" stroke-width="3"/>
+        <path d="M24 -22 Q26 -26 30 -26" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+      </g>
+    </g>
+
+    <!-- head looking left and right -->
+    <g>
+      <animateTransform attributeName="transform" type="rotate" values="-10 0 -46;10 0 -46;-10 0 -46" dur="2.4s" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" repeatCount="indefinite"/>
+      <circle cx="0" cy="-60" r="16" fill="#fcd9b6"/>
+      <path d="M-16 -62 Q-14 -78 0 -78 Q14 -78 16 -62 Q8 -70 0 -68 Q-8 -70 -16 -62 Z" fill="#1e1b4b"/>
+      <g fill="#1e1b4b">
+        <ellipse cx="-5.5" cy="-60" rx="2.2" ry="2.8">
+          <animate attributeName="ry" values="2.8;2.8;0.3;2.8;2.8" keyTimes="0;0.45;0.5;0.55;1" dur="2.4s" repeatCount="indefinite"/>
+        </ellipse>
+        <ellipse cx="5.5" cy="-60" rx="2.2" ry="2.8">
+          <animate attributeName="ry" values="2.8;2.8;0.3;2.8;2.8" keyTimes="0;0.45;0.5;0.55;1" dur="2.4s" repeatCount="indefinite"/>
+        </ellipse>
+      </g>
+      <circle cx="-10" cy="-54" r="2.5" fill="#fda4af" opacity="0.7"/>
+      <circle cx="10" cy="-54" r="2.5" fill="#fda4af" opacity="0.7"/>
+      <!-- confused mouth -->
+      <path d="M-4 -51 Q-1 -54 1 -51 Q3 -48 5 -51" fill="none" stroke="#1e1b4b" stroke-width="2" stroke-linecap="round"/>
+      <!-- headphones -->
+      <path d="M-18 -62 Q-18 -82 0 -82 Q18 -82 18 -62" fill="none" stroke="#0f172a" stroke-width="4" stroke-linecap="round"/>
+      <rect x="-22" y="-68" width="8" height="14" rx="4" fill="#38bdf8"/>
+      <rect x="14" y="-68" width="8" height="14" rx="4" fill="#38bdf8"/>
+    </g>
+  </g>
+<metadata><c2pa:manifest>AAAWgmp1bWIAAAAeanVtZGMycGEAEQAQgAAAqgA4m3EDYzJwYQAAABZcanVtYgAAAEdqdW1kYzJtYQARABCAAACqADibcQN1cm46YzJwYTo4YWRjMTI1YS05ZjBjLTRiYWEtYjdiNi1iYjkzNjA3YzcxZjgAAAADl2p1bWIAAAApanVtZGMyYXMAEQAQgAAAqgA4m3EDYzJwYS5hc3NlcnRpb25zAAAAALxqdW1iAAAARGp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuaW5ncmVkaWVudC52MwAAAAAYYzJzaN4u5m9dTSESVQ4DoOSWDesAAABwY2JvcqNpZGM6Zm9ybWF0bWltYWdlL3N2Zyt4bWxqaW5zdGFuY2VJRHgseG1wOmlpZDplNGJlZWIwOC1iMTMyLTQ2ZDMtODRkMS0yNjRmNmI1YWY5MDhscmVsYXRpb25zaGlwaHBhcmVudE9mAAAB4mp1bWIAAABBanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5hY3Rpb25zLnYyAAAAABhjMnNo0fpN+BL1acV5iEuhufOjNwAAAZljYm9yomdhY3Rpb25zgqJmYWN0aW9ua2MycGEub3BlbmVkanBhcmFtZXRlcnOha2luZ3JlZGllbnRzgaJjdXJseC1zZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmluZ3JlZGllbnQudjNkaGFzaFggKgUehMqlR/nYCDQkah9JOWkxOoM3abh8qXGdRlE8QlGkZmFjdGlvbngdY29tLmFudGhyb3BpYy5jbGF1ZGUucHJvdmlkZWRqcGFyYW1ldGVyc6F4H2NvbS5hbnRocm9waWMub3JpZ2luLWNvbmZpZGVuY2VndW5rbm93bmtkZXNjcmlwdGlvbnhmQ2xhdWRlIHByb3ZpZGVkIHRoaXMgZmlsZSBhdCB0aGUgcmVxdWVzdCBvZiBhIHVzZXIgYW5kIG1heSBoYXZlIGNyZWF0ZWQgb3IgbW9kaWZpZWQgdGhlIGZpbGUgY29udGVudHMubXNvZnR3YXJlQWdlbnShZG5hbWVmQ2xhdWRlcmFsbEFjdGlvbnNJbmNsdWRlZPUAAADIanVtYgAAAEBqdW1kY2JvcgARABCAAACqADibcRNjMnBhLmhhc2guZGF0YQAAAAAYYzJzaIhy2cUrnMfM+lIDDGpn8QsAAACAY2JvcqVjYWxnZnNoYTI1NmNwYWRMAAAAAAAAAAAAAAAAZGhhc2hYIAwbpVp9Rn3Ni1qnnbTQzivzT7tMAxmivCY9J7o1qeAGZG5hbWVuanVtYmYgbWFuaWZlc3RqZXhjbHVzaW9uc4GiZXN0YXJ0GS5DZmxlbmd0aBkeBAAAAj5qdW1iAAAAJ2p1bWRjMmNsABEAEIAAAKoAOJtxA2MycGEuY2xhaW0udjIAAAACD2Nib3KlY2FsZ2ZzaGEyNTZpc2lnbmF0dXJleE1zZWxmI2p1bWJmPS9jMnBhL3VybjpjMnBhOjhhZGMxMjVhLTlmMGMtNGJhYS1iN2I2LWJiOTM2MDdjNzFmOC9jMnBhLnNpZ25hdHVyZWppbnN0YW5jZUlEeCx4bXA6aWlkOjVhZDU3MTA4LTQwYWMtNGYzYy1hMzU3LTgxMTMyYzU4N2U2M3JjcmVhdGVkX2Fzc2VydGlvbnODomN1cmx4LXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaW5ncmVkaWVudC52M2RoYXNoWCAqBR6EyqVH+dgINCRqH0k5aTE6gzdpuHypcZ1GUTxCUaJjdXJseCpzZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmFjdGlvbnMudjJkaGFzaFgg5RQNiTZnEvKKZvxh0gwTA9UcY/XgZtjJrGn6A67wTIOiY3VybHgpc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5oYXNoLmRhdGFkaGFzaFggAEX+oKl5Hlg8a3vOZiqIkp4dOLuSvvHiqv9bN/sKaNx0Y2xhaW1fZ2VuZXJhdG9yX2luZm+jZG5hbWVvQW50aHJvcGljIEZpbGVzZ3ZlcnNpb25lMS4wLjBrc3BlY1ZlcnNpb25lMi40LjAAABA4anVtYgAAAChqdW1kYzJjcwARABCAAACqADibcQNjMnBhLnNpZ25hdHVyZQAAABAIY2JvctKEWQISogEmGCFZAgowggIGMIIBjaADAgECAhRA5aAK7sI50L64g/oGQgU9Z1UTADAKBggqhkjOPQQDAzBJMRcwFQYDVQQKEw5BbnRocm9waWMsIFBCQzEuMCwGA1UEAxMlQW50aHJvcGljIENvbnRlbnQgQ3JlZGVudGlhbHMgUm9vdCBDQTAeFw0yNjA4MDcxODQzNTZaFw0yODA4MDYxOTQzNTZaMEQxFzAVBgNVBAoTDkFudGhyb3BpYywgUEJDMSkwJwYDVQQDEyBBbnRocm9waWMgQ2xhdWRlIENvbnRlbnQgU2lnbmluZzBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABJh6CmvLUBgFFNU0vUKlOVtE6djd17L5SuwX0LemFisBM3dkd/3cyjxFA3Qo5S46fX0/ihY0VZ7mfb9KF703t5OjWDBWMA4GA1UdDwEB/wQEAwIHgDAVBgNVHSUEDjAMBgorBgEEAYPoXgIBMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUzlHiBIFOZFsj+OPEz5o+nMHXXMIwCgYIKoZIzj0EAwMDZwAwZAIwMXMdFJ4BetLLVY7ORuE9noqbbAZOZn/aArXyTwFAZfKrPzxF2vPoJNf1+UCdg1XGAjBwX1zd9WGqYkqmL5SFqw1QySjr1zJfpJM9+1rdDwSPLMOPOjKuiXjoU/pUUeG9RwmhY3BhZFkNngAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPZYQODSCby9ahlDkFLGg+r95mlRJqA/EeS2crPJq0joZNo/R6fYLdLIz1cFaXdQY9qqgOTPuOrcsdWPBtwtLo0f+8c=</c2pa:manifest></metadata></svg>

@@ -26,6 +26,9 @@ from .services.ai_helper import clean_editor_pages
 logger = logging.getLogger(__name__)
 
 
+def custom_404(request, exception):
+    return render(request, '404.html', status=404)
+
 def base_page(request):
     return render(request, 'templates/base.html')
 

@@ -6,6 +6,43 @@
 .reading-title{
     font-family: var(--font-main);
     font-weight: 900;
+    font-size: 1.75rem;
+    line-height: 1.3;
+    margin-bottom: 1rem;
+}
+
+.page-navigation{
+    width:100%
+}
+
+.reading-page-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 16px;
+    width: 100%;
+}
+
+.reading-page-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.reading-page-buttons button {
+    padding: 12px 16px;
+    font-size: 1rem;
+    white-space: nowrap;
+}
+
+.reading-page-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.reading-page-info input {
+    width: 100px;
 }
 
 .fa-arrow-right, .fa-arrow-left{
@@ -22,24 +59,286 @@
 
 .play-btn{
     width: 22rem;
+    max-width: 100%;
+    padding: 0.7rem 1rem;
+    font-size: 1rem;
 }
 
 .btns{
-    justify-content: start;
+     display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.btns .btn {
+    font-size: 1rem;
+    padding: 0.65rem 1rem;
 }
 
 textarea{
     resize: none;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-@media (max-width :470px){
-    .play-btn{
+.reader-settings {
+    display: flex !important;
+    align-items: flex-end !important;
+    flex-wrap: nowrap;
+    gap: 12px !important;
+    width: 100%;
+}
+
+.reader-setting {
+    flex: 0 1 150px;
+    min-width: 0;
+}
+
+
+.reader-setting label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 1rem;
+}
+
+.reader-setting select {
+    width: 100%;
+    min-width: 0;
+    height: 46px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.reader-settings > audio {
+    display: none;
+}
+
+@media (max-width: 991px) {
+    .reading-title {
+        font-size: 1.55rem;
+    }
+
+    .h4,
+    h2 {
+        font-size: 1.35rem;
+    }
+
+    .h5 {
+        font-size: 1.1rem;
+    }
+
+    .play-btn {
+        width: 19rem;
+    }
+
+    .btns {
+        gap: 10px;
+    }
+
+    .btns .btn {
+        font-size: 0.95rem;
+        padding: 0.6rem 0.85rem;
+    }
+
+    textarea {
+        font-size: 0.95rem;
+    }
+
+    .page-navigation{
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
+    }
+
+    .reading-page-buttons {
         width: 100%;
     }
 
-    .btns{
+    .reading-page-buttons button {
+        flex: 1;
+        min-width: 0;
+    }
+
+     .reading-page-info {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+     .reader-settings {
+        flex-wrap: wrap;
+        align-items: flex-end !important;
+    }
+
+    .reader-setting {
+        flex: 1 1 130px;
+    }
+}
+
+@media (max-width: 767px) {
+    .reading-title {
+        font-size: 1.35rem;
+    }
+
+    .h4,
+    h2 {
+        font-size: 1.2rem;
+    }
+
+    .h5 {
+        font-size: 1rem;
+    }
+
+    .play-btn {
+        width: 100%;
+    }
+
+    .btns {
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .btns .btn {
+        flex: 1 1 auto;
+        font-size: 0.9rem;
+        padding: 0.6rem 0.7rem;
+    }
+
+    .fa-arrow-right,
+    .fa-arrow-left {
+        font-size: 0.7rem;
+    }
+
+    textarea {
+        font-size: 0.9rem;
+    }
+
+    .reading-page-buttons {
+        gap: 8px;
+    }
+
+    .reading-page-buttons button {
+        padding: 10px 6px;
+        font-size: 0.85rem;
+    }
+
+    .reading-page-info {
+        font-size: 0.9rem;
+        gap: 8px;
+    }
+
+    .reading-page-info input {
+        width: 85px;
+    }
+
+     .reader-settings {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px !important;
+    }
+
+    .reader-setting {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .reader-setting label {
+        font-size: 0.9rem;
+    }
+
+    .reader-setting select {
+        width: 100%;
+        height: 44px;
+        font-size: 0.9rem;
+        padding: 8px;
+    }
+
+    reader-setting:last-of-type {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width :470px){
+    .reading-title {
+        font-size: 1.25rem;
+    }
+
+    .h4,
+    h2 {
+        font-size: 1.1rem;
+    }
+
+    .h5 {
+        font-size: 0.95rem;
+    }
+
+    .play-btn {
+        width: 100%;
+        padding: 0.65rem;
+    }
+
+    .btns {
         display: flex;
         justify-content: space-between;
+        gap: 8px;
+    }
+
+    .btns .btn {
+        flex: 1 1 calc(50% - 8px);
+        min-width: 0;
+        font-size: 0.8rem;
+        padding: 0.55rem 0.4rem;
+        white-space: normal;
+    }
+
+    textarea {
+        font-size: 0.85rem;
+    }
+
+     .reading-title {
+        font-size: 1.3rem;
+    }
+
+    .reading-page-buttons button {
+        font-size: 0.75rem;
+        padding: 9px 4px;
+    }
+
+     
+}
+
+@media (max-width: 380px) {
+    .reading-title {
+        font-size: 1.15rem;
+    }
+
+    .h4,
+    h2 {
+        font-size: 1rem;
+    }
+
+    .btns {
+        gap: 6px;
+    }
+
+    .btns .btn {
+        font-size: 0.75rem;
+        padding: 0.5rem 0.3rem;
+    }
+
+     .reader-settings {
+        grid-template-columns: 1fr;
+        gap: 12px !important;
+    }
+
+    .reader-setting:last-of-type {
+        grid-column: auto;
+    }
+
+    .reader-setting select {
+        height: 44px;
+        font-size: 0.9rem;
     }
 }
 

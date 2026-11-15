@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const audio = document.getElementById("reader-audio");
     const playButton = document.getElementById("play-reading");
-    const pauseButton = document.getElementById("pause-reading");
     const stopButton = document.getElementById("stop-reading");
     const backButton = document.getElementById("back-10-seconds");
     const forwardButton = document.getElementById("forward-10-seconds");
@@ -26,7 +25,6 @@ document.addEventListener("DOMContentLoaded", () => {
         !audio ||
         !audio.dataset.ttsUrl ||
         !playButton ||
-        !pauseButton ||
         !stopButton ||
         !backButton ||
         !forwardButton ||
@@ -99,6 +97,39 @@ document.addEventListener("DOMContentLoaded", () => {
     let requestVersion = 0;
     let isLoading = false;
 
+    // The Play button is also the Pause button.
+    const playIcon = playButton.querySelector("i");
+    const playLabel = playButton.querySelector("span");
+    const playText = playLabel ? playLabel.textContent : "Play";
+    const pauseText = playButton.dataset.pauseText || "Pause";
+
+    function setLoading(value) {
+        isLoading = value;
+        updatePlayButton();
+    }
+
+    // Pause icon while preparing or playing, play icon otherwise.
+    function updatePlayButton() {
+        const betweenSections =
+            audio.ended && currentIndex < chunks.length - 1;
+        const active = isLoading || !audio.paused || betweenSections;
+
+        if (playIcon) {
+            playIcon.className = active
+                ? "fa-solid fa-pause"
+                : "fa-solid fa-play";
+        }
+
+        if (playLabel) {
+            playLabel.textContent = active ? pauseText : playText;
+        }
+
+        playButton.setAttribute(
+            "aria-label",
+            active ? "Pause reading" : "Play reading"
+        );
+    }
+
     function getSelectedPageNumber() {
         const number = Number(pageInput?.value);
 
@@ -150,7 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function cancelPlayback() {
         requestVersion++;
-        isLoading = false;
+        setLoading(false);
         audio.pause();
         audio.removeAttribute("src");
         audio.load();
@@ -229,7 +260,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         currentIndex = index;
         const version = ++requestVersion;
-        isLoading = true;
+        setLoading(true);
 
         audio.pause();
         audio.removeAttribute("src");
@@ -254,7 +285,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (version !== requestVersion) return;
 
-            isLoading = false;
+            setLoading(false);
             updateStatus(
                 `Reading page ${chunk.pageNumber}, ` +
                 `section ${currentIndex + 1} of ${chunks.length}.`
@@ -264,13 +295,25 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
             if (version !== requestVersion) return;
 
-            isLoading = false;
+            setLoading(false);
             updateStatus(error.message || "Unable to play audio.");
         }
     }
 
     playButton.addEventListener("click", async () => {
-        if (isLoading) return;
+        // This one button is both Play and Pause.
+        if (isLoading) {
+            // Audio is still being prepared: cancel it.
+            cancelPlayback();
+            updateStatus("Reading stopped.");
+            return;
+        }
+
+        if (audio.src && !audio.paused) {
+            audio.pause();
+            updateStatus("Reading paused.");
+            return;
+        }
 
         const selectedPage = getSelectedPageNumber();
         const currentChunk = chunks[currentIndex];
@@ -306,13 +349,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         await playChunk(selectedChunk);
-    });
-
-    pauseButton.addEventListener("click", () => {
-        if (!audio.paused) {
-            audio.pause();
-            updateStatus("Reading paused.");
-        }
     });
 
     stopButton.addEventListener("click", () => {
@@ -388,6 +424,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // Keep the Play / Pause icon in step with the audio.
+    ["play", "pause", "ended", "emptied"].forEach(name => {
+        audio.addEventListener(name, updatePlayButton);
+    });
+
     // Keep page navigation within the real page range.
     function navigateToInputPage() {
         if (!pageInput) return;
@@ -433,4 +474,5 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     showPage(0);
+    updatePlayButton();
 });

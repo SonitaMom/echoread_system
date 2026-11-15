@@ -2,23 +2,29 @@
     background-color: var(--surface);
     border-bottom: 1px solid var(--border);
     padding: 0.3rem 0;
+    min-height: 64px;
+    /* height: 100%; */
 }
 
 .brand{
-    width: 3rem;
-    height: 3rem;
+    width: 2.5rem;
+    height: 2.5rem;
     object-fit: cover;
+    flex-shrink: 0;
 }
 
 .nav-title{
     font-family: var(--font-main);
     font-weight: 700;
     font-size: 1.4rem;
+    white-space: nowrap;
 }
 
 
 
-.user-menu { position: relative; }
+.user-menu { position: relative; 
+flex-shrink: 0;
+}
 
 .user-menu > .user-avatar {
   width: 43px;
@@ -65,6 +71,7 @@
     cursor: pointer;
     padding: 0;
     transition: background .2s;
+    flex-shrink: 0;
 }
 
 .lang-switch .knob{
@@ -97,18 +104,58 @@
     opacity: 1;
 }
 
-@media (max-width:470px){
+.footer {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    /* margin-top: 40px; */
+    
+}
+.footer-section{
+border-top: 1px solid var(--border);
+}
+.footer-content {
+    gap: 16px;
+}
+
+.brand {
+    width: 45px;
+    height: 45px;
+    flex-shrink: 0;
+}
+
+.footer-brand strong {
+    font-size: 18px;
+    font-weight: 600;
+    display: block;
+}
+
+.footer-brand p {
+    font-size: 13px;
+    margin: 4px 0 0;
+}
+
+.footer-copyright {
+    font-size: 12px;
+    color: #777;
+    text-align: right;
+}
+
+@media (min-width:480px) and (max-width:767.98px){
+    .navbar-custom{
+        min-height: 60px;
+    }
     .nav-title{
-        font-size: 1.2rem;
+        font-size: 1.25rem;
     }
 
     .btn-start-reading{
         font-size: 0.75rem;
+        width: 8.5rem;
     }
 
     .brand{
-        width: 2.5rem;
-        height: 2.5rem;
+        width: 36px;
+        height: 36px;
     }
 
     .btn-text{
@@ -116,21 +163,157 @@
     }
 
     .user-menu > .user-avatar{
-        width: 30px;
-        height: 30px;
-         font-size: 0.75rem;
+        width: 36px;
+        height: 36px;
+         font-size: 1rem;
+    }
+
+    .lang-switch {
+        width: 44px;
+        height: 25px;
+    }
+
+    .lang-switch .knob {
+        width: 19px;
+        height: 19px;
+    }
+
+    .lang-switch.on .knob {
+        transform: translateX(19px);
+    }
+
+    .footer {
+        padding-top: 18px;
+        padding-bottom: 18px;
+    }
+
+    .brand {
+        width: 40px;
+        height: 40px;
+    }
+
+    .footer-brand strong {
+        font-size: 17px;
+    }
+    .footer-content {
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+        /* justify-content: center !important; */
+    }
+    .footer-logo{
+        flex-direction: column;
+        /* align-items: center; */
+        align-items: center !important;
+    }
+
+    .footer-brand{
+        align-items: center !important;
+        display: flex;
+        flex-direction: column;
     }
 }
 
-@media (min-width : 490px) and (max-width:767.98px){
+@media (max-width : 480px){
+
+    .navbar-custom {
+        min-height: 56px;
+        padding: 0.25rem 0;
+    }
+    .nav-title {
+        font-size: 1.1rem;
+    }
+
+    .brand {
+        width: 32px;
+        height: 32px;
+    }
 
     .btn-start-reading{
-        width: 8.5rem;
+        font-size: 0.75rem;
+        padding: 0.4rem 0.55rem;
+
+    }
+
+    .btn-text {
+        display: none;
     }
 
     .user-menu >.user-avatar{
-        width: 36px;
-        height: 36px;
+        width: 30px;
+        height: 30px;
+        font-size: 0.8rem;
        
     }
+
+    .lang-switch {
+        width: 42px;
+        height: 24px;
+    }
+
+    .lang-switch .knob {
+        width: 18px;
+        height: 18px;
+    }
+
+    .lang-switch.on .knob {
+        transform: translateX(18px);
+    }
+
+    .footer{
+        justify-content: center !important;
+        
+    }
+    .footer-content {
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+        /* justify-content: center !important; */
+    }
+    .footer-logo{
+        flex-direction: column;
+        /* align-items: center; */
+        align-items: center !important;
+    }
+
+    .footer-brand{
+        align-items: center !important;
+        display: flex;
+        flex-direction: column;
+    }
+    .footer-brand strong {
+        font-size: 16px;
+    }
+
+    .footer-brand p {
+        font-size: 12px;
+    }
+
+    .footer-copyright {
+        font-size: 11px;
+        text-align: left;
+    }
+}
+
+@media (max-width: 360px) {
+
+    .nav-title {
+        font-size: 1rem;
+    }
+
+    .brand {
+        width: 29px;
+        height: 29px;
+    }
+
+    .btn-start-reading {
+        font-size: 0.7rem;
+        padding: 0.35rem 0.45rem;
+    }
+
+    .footer-content{
+        flex-direction: column;
+        justify-content: center;
+    }
+
 }

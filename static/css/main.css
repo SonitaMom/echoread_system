@@ -131,6 +131,7 @@ body {
   overflow-x: hidden;
   background: transparent; /* no gradient here anymore */
   font-family: var(--font-main);
+  padding-top: 60px;
     
 }
 
@@ -147,22 +148,29 @@ body::before {
 
 
 /* Tablet Responsive 48rem = 768px*/
-@media(min-width: 48rem){ 
+/* @media(min-width: 48rem){ 
     :root{
         --fs-h1:2.5rem;
         --fs-h2:2rem;
         --fs-h3:1.5rem;
         --fs-body: 1.0625rem;
     }
-}
+} */
 
 /* Desktop size */
-@media(min-width:75rem){
+/* @media(min-width:75rem){
     :root{
         --fs-h1:3.5rem;
         --fs-h2:2.5rem;
         --fs-h3:1.875rem;
         --fs-body: 1.125rem;
+    }
+} */
+
+@media (max-width: 767px) {
+    html,
+    body {
+        padding-top: 30px;
     }
 }
 
