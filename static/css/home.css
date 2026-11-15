@@ -4,22 +4,34 @@
     padding: 5px 8px;
     border-radius: 30px;
     font-size: 0.75rem;
+    max-width: 100%;
 }
+
 
 .home-title{
     font-family: var(--font-main);
-    font-size: 3rem;
+    font-size: clamp(2rem, 3.5vw, 2.8rem);
     font-weight: bolder;
-    /* line-height: 4rem; */
-    padding-right: 10rem;
+    line-height: 1.25;
+    padding-right: 0;
+    overflow-wrap: break-word;
 }
 
 .vc-wave-card{
     border-radius: 2rem;
     background:var(--surface);
-    width: fit-content;
+    /* width: fit-content; */
+    width: 100%;
+    max-width: 460px;
+    height: auto;
+    min-height: 300px;
     margin: 0 auto;
     box-shadow: 2px 2px 2px var(--primary);
+}
+
+.vc-wave-card > .container {
+    width: 100%;
+    max-width: none;
 }
 
 .document-icon{
@@ -28,6 +40,7 @@
     background: var(--primary);
     padding: 1rem;
     border-radius: 1rem;
+    flex-shrink: 0;
 }
 
 .fa-file{
@@ -36,7 +49,8 @@
 }
 
 .lesson-title{
-    font-weight:900;
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    overflow-wrap: anywhere;
 }
 /* WaveForm  */
 .vc-wave{
@@ -45,13 +59,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: clamp(4px, 1.5vw, 8px);
+    gap: clamp(3px, 1vw, 8px);
+    width: 100%;
 }
 
 .vc-wave span{
     /* width: 14px */
     flex: 0 1 12px;
-    min-width: 4px;
+    min-width: 3px;
     height: var(--h);
     border-radius: 999px;
     background: blue;
@@ -97,6 +112,7 @@
     background: var(--track);
     cursor: pointer;
     position: relative;
+    width: 100%;
 }
 
 .vc-fill{
@@ -109,23 +125,57 @@
 
 /* second content  */
 .second-content{
-    margin: 10rem 0;
+    margin: clamp(4rem, 8vw, 8rem) 0;
 }
 
 .content2-title, .content3-title{
     font-family:var(--font-main);
     font-weight: bolder;
+    font-size: clamp(1.7rem, 3vw, 2.4rem);
+    line-height: 1.3;
 }
 
+.all-cards {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem !important;
+}
+
+.all-cards > .cards {
+    width: auto;
+    max-width: 100%;
+    min-width: 0;
+    flex: initial;
+}
 .cards{
     width: 20rem;
+    max-width: 100%;
 }
 
 .tool-btns{
     background: var(--surface);
-    height: 17rem;
+    height: 100%;
     border-radius: 2rem;
     padding: 1rem !important;
+    min-height: 17rem;
+    width: 100%;
+
+}
+
+.tool-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.tool-btns h4 {
+    font-size: 1.2rem;
+}
+
+.tool-btns p {
+    font-size: 0.95rem;
+    line-height: 1.6;
 }
 
 .icon{
@@ -160,55 +210,216 @@
     font-weight: bolder;
 }
 
+.mb-5 > .d-flex.align-items-center.justify-content-between.flex-wrap {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+}
 
-@media (max-width:470px){
-    .home-title{
-        font-size: 2rem;
-        padding-right: 3rem;
+.st-num {
+    flex-shrink: 0;
+    margin-bottom: 0;
+}
+
+
+
+
+@media (max-width: 1023px) {
+
+    .home-title {
+        font-size: 2.3rem;
+        padding-right: 0;
     }
 
-    .vc-wave-card{
-        width: 23rem;
+    .vc-wave-card {
+        max-width: 420px;
+        min-height: 280px;
     }
 
-    .cards{
+    .all-cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .tool-btns {
+        min-height: 15rem;
+    }
+
+    .second-content {
+        margin: 5rem 0;
+    }
+
+    .content2-title, .content3-title{
+        font-size: 2.3rem;
+    }
+
+    .cards {
         width: 100%;
-        
     }
 
-    .tool-btns{
-        height: fit-content;
+}
+
+@media (max-width: 767px) {
+
+     .container.mt-5 {
+        margin-top: 2rem !important;
     }
-    
-    .all-cards{
-        display: flex;
-        justify-content: start !important;
+
+    .home-title {
+        font-size: 2rem;
+        padding-right: 0;
+        line-height: 1.3;
     }
-    .st-num{
+
+    .home-sub-head {
+        font-size: 0.7rem;
+    }
+
+    .vc-wave-card {
+        width: 100%;
+        max-width: 460px;
+        min-height: 260px;
+        padding: 1.25rem;
+    }
+
+    .vc-wave {
+        height: 55px;
+    }
+
+    .vc-wave-card > .container {
+        padding: 1.25rem !important;
+    }
+
+    .lesson-title {
+        font-size: 1.15rem;
+    }
+
+    .second-content {
+        margin: 4rem 0;
+    }
+
+    .all-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .tool-btns {
+        min-height: auto;
+        height: auto;
+    }
+
+     .mb-5 > .d-flex.align-items-center.justify-content-between.flex-wrap {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .content2-title, .content3-title{
+        font-size: 2rem;
+    }
+
+    .cards {
+        width: 100%;
+    }
+
+    .tool-btns {
+        min-height: auto;
+        height: auto;
+    }
+
+    .st-num {
         width: 2.5rem;
         height: 2.5rem;
         font-size: 1rem;
     }
+
 }
 
-@media (max-width: 380px){
-    .vc-wave-card{
-        width: 18rem;
-    }
-}
+@media (max-width: 480px) {
 
-@media (max-width:770px){
-    .second-content{
-        margin: 6rem 0;
+    .home-title {
+        font-size: 1.8rem;
+        padding-right: 0;
     }
 
-    
-   
+    .home-sub-head {
+        font-size: 0.68rem;
+    }
 
-    /* .tool-card{
+    .vc-wave-card {
+        width: 100%;
+        min-height: 240px;
+        padding: 1rem;
+        border-radius: 1.5rem;
+    }
+
+    .vc-wave {
+        gap: 4px;
+        height: 55px;
+    }
+
+    .vc-wave-card > .container {
+        padding: 1rem !important;
+    }
+
+    .document-icon {
+        padding: 0.75rem;
+    }
+
+    .fa-file {
+        font-size: 1.5rem;
+    }
+
+    .cards {
+        width: 100%;
+    }
+    .display-btns {
+        gap: 0.5rem !important;
+    }
+
+    .all-cards {
         display: flex;
-        align-items: start;
-        justify-content: start;
-        gap: 1rem;
-    } */
+        justify-content: flex-start !important;
+    }
+
+
+    .second-content {
+        margin: 3.5rem 0;
+    }
+
+    .st-num {
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 1rem;
+    }
+    .tool-btns {
+        padding: 1rem !important;
+    }
+
+     .content2-title, .content3-title{
+        font-size: 1.8rem;
+    }
+
+}
+
+@media (max-width: 380px) {
+
+    .home-title {
+        font-size: 1.65rem;
+    }
+
+    .vc-wave-card {
+        width: 100%;
+        padding: 0.85rem;
+        border-radius: 1.2rem;
+    }
+    .lesson-title {
+        font-size: 1rem;
+    }
+
+    .vc-wave {
+        gap: 3px;
+    }
+
+     .content2-title, .content3-title{
+        font-size: 1.65rem;
+    }
+
 }

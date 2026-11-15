@@ -1,6 +1,29 @@
 {% extends 'accounts/base_auth.html' %} 
+{% load static %}
+
 {% block title %}Login{% endblock %} 
 {%block content %}
+
+<!-- <div class="auth-page">
+  <div class="login-content">
+    
+  </div>
+</div> -->
+
+<div id="splash-screen">
+    <img
+        src="{% static 'image/echoread-logo-animated.svg' %}"
+        alt="Logo"
+        class="splash-logo"
+    >
+
+    <!-- <div class="splash-spinner"></div> -->
+     <object type="image/svg+xml" data="{% static 'image/echoread-loading.svg' %}"  class="screen-loading"></object>
+
+    <h2>EchoRead System</h2>
+    <p>Preparing your experience...</p>
+</div>
+
 <h2 class="h4 mb-4">Login</h2>
 
 {% if messages %} {% for message in messages %}
@@ -45,4 +68,35 @@
   Don't have an account? <a href="{% url 'register' %}">Sign Up</a>
 </p>
 
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+    const splash = document.getElementById("splash-screen");
+
+    if (!splash) return;
+
+    // Check whether splash has already been shown
+    if (sessionStorage.getItem("echoreadSplashShown")) {
+        splash.remove();
+        return;
+    }
+
+    // Mark splash as shown for this browser tab session
+    sessionStorage.setItem("echoreadSplashShown", "true");
+
+    // Display splash for 3.3 seconds
+    setTimeout(() => {
+        splash.classList.add("hide");
+
+        setTimeout(() => {
+            splash.remove();
+        }, 500);
+    }, 3300);
+});
+
+</script>
+
 {% endblock %}
+

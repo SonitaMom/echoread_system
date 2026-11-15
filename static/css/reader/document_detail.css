@@ -1,11 +1,45 @@
 .title{
     font-family: var(--font-main);
+    font-size: 2rem;
+    line-height: 1.3;
 }
 
 .fa-arrow-left-long{
         font-size: 1rem;
     color: var(--primary);
 }
+
+.page-navigation .d-flex {
+    display: flex;
+    width: 100%;
+    gap: 12px;
+}
+
+.page-navigation-layout{
+    width: 100%;
+}
+
+.page-navigation-buttons {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.page-navigation-buttons button {
+      min-height: 48px;
+    padding: 12px 20px;
+    font-size: 1.1rem;
+    border-radius: 10px;
+    white-space: nowrap;
+}
+
+.page-navigation-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
 
 .border{
     background-color: var(--surface);
@@ -97,8 +131,17 @@
    /* background-color: var(--primary1); */
    /* border: none; */
    /* border-radius: 10px; */
-   width: 40px;
-   height: 40px;
+   width: 48px;
+   height: 48px;
+   font-size: 1.2rem;
+   display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn {
+    font-size: 1rem;
+    padding: 0.65rem 1rem;
 }
 
 /* .audio-btn i{
@@ -107,22 +150,246 @@
 
 
 /* Ready to Read  */
-h2{
+h2,.ready-to-read-title,
+.ai-title{
     font-family: var(--font-main);
     /* font-size: 1.5rem; */
     font-weight: 700;
     margin-bottom: 1rem;
+    font-size: 1.6rem;
+    
+}
+
+p,
+label,
+.reader-page-text,
+.note-text {
+    font-size: 1rem;
+    line-height: 1.6;
 }
 
 select{
     border: 1px solid var(--text-muted);
     border-radius: 8px;
     color: var(--text-muted);
-    padding: 3px;
+    padding: 6px 10px;
 }
 
 textarea{
     resize:unset;
     height: 9rem;
+    max-width: 100%;
 }
 
+
+select,
+input,
+textarea {
+    font-size: 1rem;
+}
+
+.page-navigation-info input {
+    width: 125px;
+    max-width: 100%;
+}
+
+@media (max-width: 991px) {
+    .title {
+        font-size: 1.8rem;
+    }
+
+    h2,
+    .ready-to-read-title,
+    .ai-title {
+        font-size: 1.35rem;
+    }
+
+    p,
+    label,
+    .reader-page-text,
+    .note-text {
+        font-size: 0.95rem;
+    }
+
+    .audio-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 1.1rem;
+    }
+
+    .btn {
+        font-size: 0.95rem;
+        padding: 0.6rem 0.9rem;
+    }
+
+    select,
+    input,
+    textarea {
+        font-size: 0.95rem;
+    }
+
+     .page-navigation .d-flex {
+        gap: 8px;
+    }
+
+    .page-navigation-buttons button {
+        font-size: 0.9rem;
+        padding: 9px 8px;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .page-navigation-layout {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
+    }
+
+    .page-navigation-buttons {
+        width: 100%;
+    }
+
+    .page-navigation-info {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+}
+
+
+
+/* =================================
+   MOBILE
+================================= */
+
+@media (max-width: 576px) {
+    .title {
+        font-size: 1.5rem;
+    }
+
+    h2,
+    .ready-to-read-title,
+    .ai-title {
+        font-size: 1.2rem;
+    }
+
+    p,
+    label,
+    .reader-page-text,
+    .note-text {
+        font-size: 0.9rem;
+    }
+
+    .audio-btn {
+        width: 42px;
+        height: 42px;
+        font-size: 1rem;
+    }
+
+    .display-btns {
+        gap: 0.6rem !important;
+    }
+
+    .btn {
+        font-size: 0.9rem;
+        padding: 0.55rem 0.8rem;
+    }
+
+    select,
+    input,
+    textarea {
+        font-size: 0.9rem;
+    }
+
+    /* Keep page navigation buttons readable */
+     /* .page-navigation button {
+        font-size: 0.8rem;
+        padding: 8px 5px;
+        gap: 5px;
+    } */
+
+    /* Make the three reading settings easier to fit */
+    .display-info {
+        gap: 0.75rem !important;
+    }
+
+    .display-info > div {
+        flex-wrap: wrap;
+    }
+
+    .page-navigation-buttons {
+        gap: 10px;
+    }
+
+    .page-navigation-buttons button {
+        padding: 12px 10px;
+        font-size: 1rem;
+        min-height: 48px;
+    }
+
+    .page-navigation-info {
+        gap: 8px;
+        font-size: 0.9rem;
+    }
+
+    .page-navigation-info input {
+        width: 100px;
+    }
+
+
+
+}
+
+/* =================================
+   SMALL MOBILE
+================================= */
+
+@media (max-width: 380px) {
+    .title {
+        font-size: 1.3rem;
+    }
+
+    h2,
+    .ready-to-read-title,
+    .ai-title {
+        font-size: 1.1rem;
+    }
+
+    .audio-btn {
+        width: 38px;
+        height: 38px;
+        font-size: 0.9rem;
+    }
+
+    .btn {
+        font-size: 0.85rem;
+        padding: 0.5rem 0.65rem;
+    }
+
+     /* .page-navigation button {
+        font-size: 0.78rem;
+        padding: 9px 5px;
+    } */
+
+    .page-navigation button i {
+        font-size: 0.8rem;
+    }
+
+    .page-navigation-buttons button {
+        padding: 10px 6px;
+        font-size: 0.85rem;
+    }
+
+    .page-navigation-info {
+        font-size: 0.8rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .vc-wave span {
+        animation: none;
+    }
+
+    .vc-fill {
+        transition: none;
+    }
+}

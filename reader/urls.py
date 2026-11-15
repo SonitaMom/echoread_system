@@ -5,6 +5,7 @@ from django.views.generic import TemplateView
 
 app_name = "reader"
 
+handler404 = 'reader.views.custom_404'
 urlpatterns = [
 
 
@@ -53,6 +54,7 @@ urlpatterns = [
 
     # Help url
     path('help/', TemplateView.as_view(template_name = 'helps.html'), name= 'help'),
+    
 ]
 
 

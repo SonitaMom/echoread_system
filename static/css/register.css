@@ -29,8 +29,17 @@
   }
 }
 
-body{
-  background: var(--gradient-hero);
+html,body{
+  padding-top: 0 !important;
+}
+
+.login-content {
+    width: min(100% - 2rem, 32rem);
+    margin: 0 auto;
+    padding: var(--card-pad);
+    border-radius: 1.5rem;
+    box-shadow: var(--shadow-card);
+    background: var(--card-bg, #fff);
 }
 
 .h1{
@@ -39,7 +48,30 @@ body{
   font-weight: 700;
 }
 
+.h4 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-main);
+    font-size: var(--fs-h1);
+    font-weight: 900;
+    text-align: center;
+}
 
+.form-label,
+p {
+    font-size: var(--fs-size);
+}
+
+.form-control {
+    width: 100%;
+    min-height: var(--input-h);
+    box-sizing: border-box;
+    padding: 0.6rem 0.85rem;
+    border: 2px solid #d9dcec;
+    border-radius: 0.6rem;
+    font: inherit;
+}
 
 .card{
   padding: var(--card-pad);
@@ -51,6 +83,8 @@ body{
   padding: 0;
   overflow: hidden;
 }
+
+
 
 .regis-left-side{
   padding: var(--card-pad) var(--card-pad) 0;
@@ -86,16 +120,17 @@ body{
   /* min-height: 54px; */
   border-radius: 8px;
   font-weight: 700;
+  min-height: 2.8rem;
 }
 
 :focus-visible{
-  outline: 4px solid #ff5a00;
-  outline-offset: 2px;
+  outline: 3px solid #ff5a00;
+  outline-offset: 3px;
 }
 
 
 /* Login */
-.h4{
+/* .h4{
   display: flex;
   align-items: center;
   justify-content: center;
@@ -103,7 +138,84 @@ body{
   font-size: var(--fs-h2);
   font-weight: 900;
 
+} */
+
+#splash-screen {
+    position: fixed;
+    inset: 0;
+    background: var(--gradient-hero);
+    color: var(--primary);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(0.75rem, 2vw, 1.25rem);
+    padding: 1.5rem;
+    box-sizing: border-box;
+
+    z-index: 999999;
+    transition: opacity 0.5s ease,
+                visibility 0.5s ease;
 }
+
+.splash-logo {
+    width: clamp(4rem, 12vw, 6rem);
+    height: auto;
+    object-fit: contain;
+    animation: logoPulse 1.5s infinite;
+}
+
+/* .splash-spinner {
+    width: 35px;
+    height: 35px;
+    border: 3px solid #475569;
+    border-top-color: #38bdf8;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+} */
+
+.screen-loading {
+    display: block;
+    width: min(75vw, 30rem);
+    height: clamp(5rem, 18vw, 10rem);
+    border: 0;
+}
+
+#splash-screen h2 {
+    font-size: clamp(1.2rem, 4vw, 2rem);
+    margin: 0;
+}
+
+#splash-screen p {
+    color: #94a3b8;
+    font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+    margin: 0;
+}
+
+#splash-screen.hide {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* @keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+} */
+
+@keyframes logoPulse {
+    50% {
+        opacity: 0.6;
+        transform: scale(0.95);
+    }
+}
+
+/* .screen-loading{
+  width: 30rem;
+  height: auto;
+} */
 
 @media (min-width: 48.01rem){
   .regis-left-side{
@@ -126,8 +238,47 @@ body{
   .btn-primary{
     border-radius: 12px;
   }
+
+    .login-content {
+        margin: 3rem auto;
+        border-radius: 2rem;
+    }
+
+    .regis-left-side {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 2rem;
+
+        background: linear-gradient(
+            150deg,
+            #b5b5e4 0%,
+            #d5dbf5 55%,
+            #dccea9 100%
+        );
+}
 /* 
   #register input{
     height: 30px;
   } */
 }
+
+@media (min-width:75rem){
+  .login-content {
+        width: min(100% - 3rem, 34rem);
+        margin: 4rem auto;
+    }
+}
+
+@media (max-width: 360px) {
+    .login-content {
+        width: calc(100% - 1rem);
+        padding: 1rem;
+    }
+
+    #splash-screen {
+        padding: 1rem;
+    }
+}
+
+

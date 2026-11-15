@@ -29,3 +29,7 @@ staticfiles/
 .DS_Store
 Thumbs.db
 
+
+echoread/settings_local.py
+echoread_backup.json
+backups/
