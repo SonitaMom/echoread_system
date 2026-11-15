@@ -211,8 +211,10 @@
                     value="{{ bookmark.page_number }}"
                     data-bookmark-id="{{ bookmark.id }}"
                     >
-                    {% if bookmark.label %} {{ bookmark.label }} — Page {{
-                    bookmark.page_number }} {% else %} Page {{ bookmark.page_number }}
+                    {% if bookmark.label %}
+                        {{ bookmark.label }} — Page {{ bookmark.page_number }}
+                    {% else %}
+                        Page {{ bookmark.page_number }}
                     {% endif %}
                     </option>
                     {% endfor %}
@@ -349,7 +351,10 @@
             </div>
           </div>
 
-          <div id="notes-list">
+          <div
+            id="notes-list"
+            data-delete-url-template="{% url 'reader:delete_note_ajax' document.pk 0 %}"
+          >
             {% for note in notes %}
             <article class="card mb-3" data-note-id="{{ note.pk }}">
               <div class="card-body">
@@ -425,8 +430,10 @@
                     <option value="" data-i18n="detail.select-bookmark-to-delete">Select a bookmark</option>
                     {% for bookmark in bookmarks %}
                     <option value="{{ bookmark.id }}">
-                    {% if bookmark.label %} {{ bookmark.label }} — Page {{
-                    bookmark.page_number }} {% else %} Page {{ bookmark.page_number }}
+                    {% if bookmark.label %}
+                        {{ bookmark.label }} — Page {{ bookmark.page_number }}
+                    {% else %}
+                        Page {{ bookmark.page_number }}
                     {% endif %}
                     </option>
                     {% endfor %}

@@ -945,6 +945,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const textInput = document.getElementById("note-text");
     const idInput = document.getElementById("note-id");
 
+    function getDeleteUrl(noteId) {
+        if (list && list.dataset.deleteUrlTemplate) {
+            return list.dataset.deleteUrlTemplate
+                .replace("/0/delete/", `/${noteId}/delete/`)
+                .replace("0", noteId);
+        }
+        if (form && form.dataset.saveUrl) {
+            return form.dataset.saveUrl.replace(/\/notes\/save\/?$/, `/notes/${noteId}/delete/`);
+        }
+        const match = window.location.pathname.match(/\/reader\/(\d+)\//);
+        if (match) {
+            return `/reader/${match[1]}/notes/${noteId}/delete/`;
+        }
+        return `/reader/notes/${noteId}/delete/`;
+    }
+
     function resetForm() {
         form.reset();
         idInput.value = "";
@@ -1019,22 +1035,21 @@ document.addEventListener("DOMContentLoaded", () => {
                                     style="white-space: pre-wrap;"></div>
 
                                 <button type="button"
-                                        class="btn btn-outline-primary btn-sm mt-3 edit-note-btn">
+                                        class="btn btn-outline-primary btn-sm mt-3 edit-note-btn"
+                                        data-i18n="detail.note-edit">
                                     Edit
                                 </button>
 
                                 <button type="button"
-                                        class="btn btn-outline-danger btn-sm mt-3 delete-note-btn">
+                                        class="btn btn-outline-danger btn-sm mt-3 delete-note-btn"
+                                        data-i18n="detail.note-delete">
                                     Delete
                                 </button>
                             </div>
                         `;
 
-                const deleteUrlTemplate =
-                    "{% url 'reader:delete_note_ajax' document.pk 999999 %}";
-
                 article.querySelector(".delete-note-btn").dataset.deleteUrl =
-                    deleteUrlTemplate.replace("999999", note.id);
+                    getDeleteUrl(note.id);
                 list.prepend(article);
             }
 
@@ -1060,6 +1075,22 @@ document.addEventListener("DOMContentLoaded", () => {
         const button = event.target.closest(".delete-note-btn");
         if (!button) return;
 
+        const article = button.closest("[data-note-id]");
+        const noteId = article ? article.dataset.noteId : null;
+
+        let deleteUrl = button.dataset.deleteUrl;
+        if (!deleteUrl || deleteUrl.includes("{%") || deleteUrl.includes("%7B%25")) {
+            if (noteId) {
+                deleteUrl = getDeleteUrl(noteId);
+                button.dataset.deleteUrl = deleteUrl;
+            }
+        }
+
+        if (!deleteUrl) {
+            alert("Delete URL not found.");
+            return;
+        }
+
         if (!confirm("Delete this note?")) return;
 
         button.disabled = true;
@@ -1067,9 +1098,9 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const csrfToken = form.querySelector(
                 '[name="csrfmiddlewaretoken"]'
-            ).value;
+            )?.value || document.querySelector('[name="csrfmiddlewaretoken"]')?.value;
 
-            const response = await fetch(button.dataset.deleteUrl, {
+            const response = await fetch(deleteUrl, {
                 method: "POST",
                 headers: {
                     "X-CSRFToken": csrfToken,
@@ -1142,6 +1173,22 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
+    function getDeleteUrl(noteId) {
+        if (list && list.dataset.deleteUrlTemplate) {
+            return list.dataset.deleteUrlTemplate
+                .replace("/0/delete/", `/${noteId}/delete/`)
+                .replace("0", noteId);
+        }
+        if (form && form.dataset.aiUrl) {
+            return form.dataset.aiUrl.replace(/\/ai\/ask\/?$/, `/notes/${noteId}/delete/`);
+        }
+        const match = window.location.pathname.match(/\/reader\/(\d+)\//);
+        if (match) {
+            return `/reader/${match[1]}/notes/${noteId}/delete/`;
+        }
+        return `/reader/notes/${noteId}/delete/`;
+    }
+
     function addNoteToList(note) {
         let article = list.querySelector(
             `[data-note-id="${note.id}"]`
@@ -1159,22 +1206,21 @@ document.addEventListener("DOMContentLoaded", () => {
                          style="white-space: pre-wrap;"></div>
 
                     <button type="button"
-                            class="btn btn-outline-primary btn-sm mt-3 edit-note-btn">
+                            class="btn btn-outline-primary btn-sm mt-3 edit-note-btn"
+                            data-i18n="detail.note-edit">
                         Edit
                     </button>
 
                     <button type="button"
-                            class="btn btn-outline-danger btn-sm mt-3 delete-note-btn">
+                            class="btn btn-outline-danger btn-sm mt-3 delete-note-btn"
+                            data-i18n="detail.note-delete">
                         Delete
                     </button>
                 </div>
             `;
 
-            const deleteUrlTemplate =
-                "{% url 'reader:delete_note_ajax' document.pk 999999 %}";
-
             article.querySelector(".delete-note-btn").dataset.deleteUrl =
-                deleteUrlTemplate.replace("999999", note.id);
+                getDeleteUrl(note.id);
 
             list.prepend(article);
         }

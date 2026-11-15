@@ -26,7 +26,7 @@ def generate_note(question, document_text):
             "No Gemini API keys are configured. Check your .env file."
         )
 
-    model = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+    model = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
 
     prompt = f"""
 You are EchoRead, an assistant helping users understand PDF documents.

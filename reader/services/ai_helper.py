@@ -78,7 +78,7 @@ RULES:
 Clean the text while changing as little as possible.
 """
 
-    model = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
+    model = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
     payload = json.dumps(
         {"pages": pages},
         ensure_ascii=False,
