@@ -19,6 +19,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const nextButton = document.getElementById("next-page");
     const pageInput = document.getElementById("page-number-input");
     const pageStatus = document.getElementById("page-navigation-status");
+    const editForm = document.getElementById("edit-reader-form");
+
+    document.addEventListener("keydown", event => {
+        if (
+            (event.ctrlKey || event.metaKey) &&
+            event.key.toLowerCase() === "s"
+        ) {
+            event.preventDefault();
+            editForm?.requestSubmit();
+        }
+    });
 
     if (
         !pages.length ||
