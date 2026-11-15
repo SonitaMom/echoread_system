@@ -73,7 +73,7 @@
                         Editable text
                     </label>
                     <textarea id="page-{{ page.page_number }}" name="page_{{ page.page_number }}"
-                        class="form-control reader-page-text p-2 p-md-4" rows="18"
+                        form="edit-reader-form" class="form-control reader-page-text p-2 p-md-4" rows="18"
                         style="white-space: pre-wrap;">{{ page.text }}</textarea>
                 </section>
                 {% endfor %}
@@ -84,7 +84,7 @@
                         AI Helper — Clean Formatting
                     </button>
 
-                    <button type="submit" class="btn btn-primary" data-i18n="edit.save">
+                    <button type="submit" form="edit-reader-form" class="btn btn-primary" data-i18n="edit.save">
                         Save changes
                     </button>
                 </div>

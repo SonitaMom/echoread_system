@@ -1,0 +1,131 @@
+[
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1500000$TKOrxl5iy1FkJBQtwacKhg$92UgSv8aS9oZjYgkcN/UgWoOIjs7+zZkq/jxTtT7nqA=",
+    "last_login": "2026-10-26T11:50:11.058Z",
+    "is_superuser": false,
+    "username": "Nita",
+    "first_name": "",
+    "last_name": "",
+    "email": "sonitamom9@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-10-26T11:50:10.094Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1500000$LRQntM5E8J1JRkMskcnede$RBwn9exoR+/xiUiHqLvvgAXBQ0hE3oD+ITPwFpDqRVo=",
+    "last_login": "2026-11-15T06:17:55.112Z",
+    "is_superuser": false,
+    "username": "tata",
+    "first_name": "",
+    "last_name": "",
+    "email": "sonitamom758@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-10-31T03:19:41.451Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "reader.readerdocument",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "tata"
+    ],
+    "title": "កិច្ចការផ្ទះ.pdf",
+    "pdf_file": "pdfs/2026/10/កចចករផទ.pdf",
+    "uploaded_at": "2026-10-31T08:57:49.530Z"
+  }
+},
+{
+  "model": "reader.readerdocument",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "tata"
+    ],
+    "title": "JSXand ComponentHomework.pdf",
+    "pdf_file": "pdfs/2026/10/JSXand_ComponentHomework.pdf",
+    "uploaded_at": "2026-10-31T10:54:53.934Z"
+  }
+},
+{
+  "model": "reader.readerdocument",
+  "pk": 3,
+  "fields": {
+    "user": [
+      "tata"
+    ],
+    "title": "Mom-Sonita-CV (1).pdf",
+    "pdf_file": "pdfs/2026/11/Mom-Sonita-CV_1.pdf",
+    "uploaded_at": "2026-11-02T13:09:50.061Z"
+  }
+},
+{
+  "model": "reader.readerdocument",
+  "pk": 4,
+  "fields": {
+    "user": [
+      "tata"
+    ],
+    "title": "word_cards.pdf",
+    "pdf_file": "pdfs/2026/11/word_cards.pdf",
+    "uploaded_at": "2026-11-14T09:34:07.930Z"
+  }
+},
+{
+  "model": "reader.readerpage",
+  "pk": 1,
+  "fields": {
+    "document": 1,
+    "page_number": 1,
+    "original_text": "Frontend Development Professor. Mon Minh\nន្ិសសិរម្ មះ ៖ េ ំ សូន្ើតា\nបន្ទប់ ៖ ្កមច្ះ\nេ ខវិជាជ ៖ Frontend Development\nកិច្ចការផ្ទះ\n1. Props (Properties)គឺជាទិន្ន្័យដែល Component មេ (Parent Component) បញ្ជូន្មៅ Component\nកូន្ (Child Component) មែើេបើម្បើ្ាស់។ Props មាន្លកខណៈ Read-only ែូមច្នះេិន្្រូវដកដ្បមោយ\nផ្ទទល់មទ ម្រះអាច្ម្វើឱ្យទិន្ន្័យេិន្ស ើគ្នន ន្ិងពិាក្គប់្គងកេមវិ្ើ។ ្បសិន្មបើច្ង់ផ្ទាស់បតូរទិន្ន្័យ គួរម្បើ\nState ឬដកដ្បទិន្ន្័យមៅ Component មេ។\nឧទាហរណ៍:\nfunction Student({ name }) {\n// េិន្គួរម្វើ៖ name = \"Dara\";\nreturn <h1>{name}</h1>;\n}\n2. ភាពខ សគ្ននរវាង age=”20” ន្ិង age={20} មៅមពលមផ្ញើ Props\n- age=\"20\" បញ្ជូន្រម្េាជា String (អកសរ)\n- age={20} បញ្ជូន្រម្េាជា Number (ច្ំន្ួន្)\nឧទាហរណ៍៖\n<p>{“20” + 1}</p> // result: 201 (string)\n<p>{20 + 1}</p> // result :21 (calculate)\n3. ាន្ជា្រូវមាន្ key មពលម្បើ .map() កន ង studentList ម្រះ key ជួយ React សមាាល់ធារ ន្ើេួយៗកន ង\nបញ្ជើ មែើេបើែឹងថាធារ ណា្រូវាន្បដន្ែេ ល ប ឬផ្ទាស់បតូរ មហើយម្វើបច្ច បបន្នភាព UI ាន្្រឹេ្រូវ។ key គួរ\nម្បើ ID ដរេួយគរ់ ន្ិងមាន្សែិរភាពរបស់ទិន្ន្័យ ែូច្ជា student.id។ គួរមជៀសវាងការម្បើ index ជា key ្\nបសិន្មបើបញ្ជើអាច្បតូរលំោប់។\nឧទាហរណ៍:\n{students.map(student => (\n<Student key={student.id} name={student.name} />\n))}\n4. គ ណសេបរតិ ន្ិងគ ណវិបរតិម្ន្ Spreading Props\nគ ណសេបរតិ ៖\npg. 1",
+    "text": "Frontend Development Professor. Mon Minh\r\nន្ិសសិរម្ មះ ៖ េ ំ សូន្ើតា\r\nបន្ទប់ ៖ ្កមច្ះ\r\nេ ខវិជាជ ៖ Frontend Development\r\nកិច្ចការផ្ទះ\r\n1. Props (Properties)គឺជាទិន្ន្័យដែល Component មេ (Parent Component) បញ្ជូន្មៅ Component\r\nកូន្ (Child Component) មែើេបើម្បើ្ាស់។ Props មាន្លកខណៈ Read-only ែូមច្នះេិន្្រូវដកដ្បមោយ\r\nផ្ទទល់មទ ម្រះអាច្ម្វើឱ្យទិន្ន្័យេិន្ស ើគ្នន ន្ិងពិាក្គប់្គងកេមវិ្ើ។ ្បសិន្មបើច្ង់ផ្ទាស់បតូរទិន្ន្័យ គួរម្បើ\r\nState ឬដកដ្បទិន្ន្័យមៅ Component មេ។\r\nឧទាហរណ៍:\r\nfunction Student({ name }) {\r\n// េិន្គួរម្វើ៖ name = \"Dara\";\r\nreturn <h1>{name}</h1>;\r\n}\r\n2. ភាពខ សគ្ននរវាង age=”20” ន្ិង age={20} មៅមពលមផ្ញើ Props\r\n- age=\"20\" បញ្ជូន្រម្េាជា String (អកសរ)\r\n- age={20} បញ្ជូន្រម្េាជា Number (ច្ំន្ួន្)\r\nឧទាហរណ៍៖\r\n<p>{“20” + 1}</p> // result: 201 (string)\r\n<p>{20 + 1}</p> // result :21 (calculate)\r\n3. ាន្ជា្រូវមាន្ key មពលម្បើ .map() កន ង studentList ម្រះ key ជួយ React សមាាល់ធារ ន្ើេួយៗកន ង\r\nបញ្ជើ មែើេបើែឹងថាធារ ណា្រូវាន្បដន្ែេ ល ប ឬផ្ទាស់បតូរ មហើយម្វើបច្ច បបន្នភាព UI ាន្្រឹេ្រូវ។ key គួរ\r\nម្បើ ID ដរេួយគរ់ ន្ិងមាន្សែិរភាពរបស់ទិន្ន្័យ ែូច្ជា student.id។ គួរមជៀសវាងការម្បើ index ជា key ្\r\nបសិន្មបើបញ្ជើអាច្បតូរលំោប់។\r\nឧទាហរណ៍:\r\n{students.map(student => (\r\n<Student key={student.id} name={student.name} />\r\n))}\r\n4. គ ណសេបរតិ ន្ិងគ ណវិបរតិម្ន្ Spreading Props\r\nគ ណសេបរតិ ៖\r\npg. 1",
+    "updated_at": "2026-11-02T00:21:12.043Z"
+  }
+},
+{
+  "model": "reader.readerpage",
+  "pk": 2,
+  "fields": {
+    "document": 1,
+    "page_number": 2,
+    "original_text": "Frontend Development Professor. Mon Minh\n- ការ់បន្ែយការសរមសរ props េតងេួយៗ។\n- កូែខាើ ន្ិងងាយដែទាំ មៅមពល object មាន្ properties ម្ច្ើន្។\nគ ណវិបរតិ ៖\n- អាច្បញ្ជូន្ props ដែល Component េិន្្រូវការ។\n- ពិាកមេើលថា Component ទទួល props អវើខាះ ្បសិន្មបើ object មាន្ properties ម្ច្ើន្។\n- ្ បសិន្មបើមាន្ម្ មះ prop ែូច្គ្នន រម្េាដែលសរមសរមៅម្កាយអាច្ជំន្ួសរម្េាេ ន្។\n5. Prop Drilling គឺជាការបញ្ជូន្ props ពើ Component មេឆ្ាងការ់ Component កណាាលជាម្ច្ើន្ មែើេបើឱ្យ\nComponent កូន្ដែលមៅម្ៅអាច្ទទួលាន្ទិន្ន្័យ មទាះបើ Component កណាាលេិន្ាន្ម្បើទិន្ន្័យ\nម ះក៏មោយ។\nវាជាបញ្ហាកន ងកេមវិ្ើ្ំ ម្រះម្វើឱ្យកូែសម គស្មមញ ពិាកដែទាំ ន្ិងការផ្ទាស់បតូរ props ្រូវដកតាេ\nComponent ជាម្ច្ើន្។ ែំមណាះ្ស្មយអាច្ម្បើ React Context ឬ state management library ែូច្ជា\nRedux មៅមពលសេ្សប។\npg. 2",
+    "text": "Frontend Development Professor. Mon Minh\r\n- ការ់បន្ែយការសរមសរ props េតងេួយៗ។\r\n- កូែខាើ ន្ិងងាយដែទាំ មៅមពល object មាន្ properties ម្ច្ើន្។\r\nគ ណវិបរតិ ៖\r\n- អាច្បញ្ជូន្ props ដែល Component េិន្្រូវការ។\r\n- ពិាកមេើលថា Component ទទួល props អវើខាះ ្បសិន្មបើ object មាន្ properties ម្ច្ើន្។\r\n- ្ បសិន្មបើមាន្ម្ មះ prop ែូច្គ្នន រម្េាដែលសរមសរមៅម្កាយអាច្ជំន្ួសរម្េាេ ន្។\r\n5. Prop Drilling គឺជាការបញ្ជូន្ props ពើ Component មេឆ្ាងការ់ Component កណាាលជាម្ច្ើន្ មែើេបើឱ្យ\r\nComponent កូន្ដែលមៅម្ៅអាច្ទទួលាន្ទិន្ន្័យ មទាះបើ Component កណាាលេិន្ាន្ម្បើទិន្ន្័យ\r\nម ះក៏មោយ។\r\nវាជាបញ្ហាកន ងកេមវិ្ើ្ំ ម្រះម្វើឱ្យកូែសម គស្មមញ ពិាកដែទាំ ន្ិងការផ្ទាស់បតូរ props ្រូវដកតាេ\r\nComponent ជាម្ច្ើន្។ ែំមណាះ្ស្មយអាច្ម្បើ React Context ឬ state management library ែូច្ជា\r\nRedux មៅមពលសេ្សប។\r\npg. 2",
+    "updated_at": "2026-11-02T00:21:12.046Z"
+  }
+},
+{
+  "model": "reader.readerpage",
+  "pk": 3,
+  "fields": {
+    "document": 3,
+    "page_number": 1,
+    "original_text": "MOM SONITA\nSoftware developer\nCONTACT\n+855 12 665 984\nsonitamom9@gmail.com\nTropeang Ses Village, Kok Chok Commune, Siem Reap District and Province\nSKILLS\nTECHNICAL SKILL\nHTML5, CSS3, JavaScript\nReact.js, Node.js, Express.js\nMySQL, MongoDB\nGit & GitHub\nResponsive Web Design\nRESTful APIs\nSOFT SKILL\nProblem Solving\nTeamwork\nCommunication\nTime Management\nAdaptability\nLANGUAGE\nKhmer\nEnglsih\nABOUT ME\nI'm Mom Sonita. I'm a sophomore student in majoring Computer Science at Angkor University. I am a motivated and hard-working person and I also like to learn new things. I am addicted to this job in case to apply skills that I have learned from school in work field and I would able to create creative designs and marketing materials while learning new tools and industry trends. I would be able to work as a team, it would be improve communication skills, problem solving. Looking for an opportunity to develop my skills and contribute to the success of an organization.\nPERSONAL INFORMATION\nSex : Female\nDate of Birth : October 3 2006 rd\nBirth Place : Siem Reap District and Province\nNationality : Khmer\nMarital Status : Single\nEDUCATION\n2024-Present\n- Sophomore student in Computer Science at AU .\n- Finished English Diploma programme at  AU.\n- Finished Entrepreneur and Digital Marketing short course from\nSister Of Code.\n- Completed Digital and AI programme at AU\n2023-2024\n- Graduated high school in 2024\n- Studied English at USA International School (Elementary, Pre-\nIntermediate, Intermediate and Upper-Intermediate)\n- Studied Basic Computer at CNYC (Cambodia National Youth\nCenter )\nREFERENCE\nAvailable upon request",
+    "text": "MOM SONITA\nSoftware developer\nCONTACT\n+855 12 665 984\nsonitamom9@gmail.com\nTropeang Ses Village, Kok Chok Commune, Siem Reap District and Province\nSKILLS\nTECHNICAL SKILL\nHTML5, CSS3, JavaScript\nReact.js, Node.js, Express.js\nMySQL, MongoDB\nGit & GitHub\nResponsive Web Design\nRESTful APIs\nSOFT SKILL\nProblem Solving\nTeamwork\nCommunication\nTime Management\nAdaptability\nLANGUAGE\nKhmer\nEnglsih\nABOUT ME\nI'm Mom Sonita. I'm a sophomore student in majoring Computer Science at Angkor University. I am a motivated and hard-working person and I also like to learn new things. I am addicted to this job in case to apply skills that I have learned from school in work field and I would able to create creative designs and marketing materials while learning new tools and industry trends. I would be able to work as a team, it would be improve communication skills, problem solving. Looking for an opportunity to develop my skills and contribute to the success of an organization.\nPERSONAL INFORMATION\nSex : Female\nDate of Birth : October 3 2006 rd\nBirth Place : Siem Reap District and Province\nNationality : Khmer\nMarital Status : Single\nEDUCATION\n2024-Present\n- Sophomore student in Computer Science at AU .\n- Finished English Diploma programme at  AU.\n- Finished Entrepreneur and Digital Marketing short course from\nSister Of Code.\n- Completed Digital and AI programme at AU\n2023-2024\n- Graduated high school in 2024\n- Studied English at USA International School (Elementary, Pre-\nIntermediate, Intermediate and Upper-Intermediate)\n- Studied Basic Computer at CNYC (Cambodia National Youth\nCenter )\nREFERENCE\nAvailable upon request",
+    "updated_at": "2026-11-02T13:10:16.936Z"
+  }
+},
+{
+  "model": "reader.note",
+  "pk": 1,
+  "fields": {
+    "document": 1,
+    "user": [
+      "tata"
+    ],
+    "title": "Clarification Needed for Question",
+    "text": "Your question \"why\" is not specific enough to provide a direct answer. The provided document covers several React concepts explaining the \"why\" behind certain practices:\n\n1. Why props are read-only: To prevent data inconsistency and keep the application predictable and manageable. If changes are needed, state should be used in the parent component instead.\n2. Why a `key` is required when using `.map()`: Keys help React identify which items in a list have been added, changed, or removed, allowing it to efficiently and correctly update the UI.\n3. Why prop drilling is an issue: Passing props through multiple intermediate components that don't need them makes code overly complex, difficult to maintain, and harder to refactor.\n\nPlease clarify what specific topic or question you would like explained.",
+    "created_at": "2026-11-15T06:12:10.529Z",
+    "updated_at": "2026-11-15T06:12:10.530Z"
+  }
+}
+]
