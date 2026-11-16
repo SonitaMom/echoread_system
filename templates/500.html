@@ -1,0 +1,38 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>500 - Server Error | EchoRead</title>
+
+    <link rel="stylesheet" href="{% static 'css/404.css' %}">
+    <link rel="icon" type="image/svg+xml" href="/static/image/echoread-logo-animated.svg">
+</head>
+
+<body>
+    <div class="error-container">
+
+        <h1>500</h1>
+        <h2>Something Went Wrong</h2>
+
+        <p>
+            Sorry! We encountered an unexpected error on our server.
+            Please try refreshing or return to the home page.
+        </p>
+
+        <a href="{% url 'home' %}" class="home-btn">
+            Back to Home
+        </a>
+
+        <img
+            src="{% static 'image/echoread-404-v3.svg' %}"
+            alt="EchoRead Error Illustration"
+            class="error-image"
+        >
+
+    </div>
+</body>
+</html>

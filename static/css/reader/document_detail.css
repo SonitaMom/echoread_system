@@ -41,7 +41,7 @@
 
 
 
-.border{
+#main-content .border{
     background-color: var(--surface);
     border-radius: 2rem !important;
 }
@@ -139,7 +139,8 @@
     justify-content: center;
 }
 
-.btn {
+#main-content .btn,
+.modal .btn {
     font-size: 1rem;
     padding: 0.65rem 1rem;
 }
@@ -160,31 +161,31 @@ h2,.ready-to-read-title,
     
 }
 
-p,
-label,
+#main-content p,
+#main-content label,
 .reader-page-text,
 .note-text {
     font-size: 1rem;
     line-height: 1.6;
 }
 
-select{
+#main-content select{
     border: 1px solid var(--text-muted);
     border-radius: 8px;
     color: var(--text-muted);
     padding: 6px 10px;
 }
 
-textarea{
+#main-content textarea{
     resize:unset;
     height: 9rem;
     max-width: 100%;
 }
 
 
-select,
-input,
-textarea {
+#main-content select,
+#main-content input,
+#main-content textarea {
     font-size: 1rem;
 }
 
@@ -204,8 +205,8 @@ textarea {
         font-size: 1.35rem;
     }
 
-    p,
-    label,
+    #main-content p,
+    #main-content label,
     .reader-page-text,
     .note-text {
         font-size: 0.95rem;
@@ -217,14 +218,15 @@ textarea {
         font-size: 1.1rem;
     }
 
-    .btn {
+    #main-content .btn,
+    .modal .btn {
         font-size: 0.95rem;
         padding: 0.6rem 0.9rem;
     }
 
-    select,
-    input,
-    textarea {
+    #main-content select,
+    #main-content input,
+    #main-content textarea {
         font-size: 0.95rem;
     }
 
@@ -272,8 +274,8 @@ textarea {
         font-size: 1.2rem;
     }
 
-    p,
-    label,
+    #main-content p,
+    #main-content label,
     .reader-page-text,
     .note-text {
         font-size: 0.9rem;
@@ -289,14 +291,15 @@ textarea {
         gap: 0.6rem !important;
     }
 
-    .btn {
+    #main-content .btn,
+    .modal .btn {
         font-size: 0.9rem;
         padding: 0.55rem 0.8rem;
     }
 
-    select,
-    input,
-    textarea {
+    #main-content select,
+    #main-content input,
+    #main-content textarea {
         font-size: 0.9rem;
     }
 
@@ -360,7 +363,8 @@ textarea {
         font-size: 0.9rem;
     }
 
-    .btn {
+    #main-content .btn,
+    .modal .btn {
         font-size: 0.85rem;
         padding: 0.5rem 0.65rem;
     }

@@ -7,43 +7,18 @@
 <link rel="stylesheet" href="{% static 'css/reader/document_detail.css' %}" />
 {% endblock %}
 
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{{ document.title }} - EchoRead</title>
-  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,100..700;1,100..700&display=swap"
-    rel="stylesheet"
-  />
-</head>
-
-{% block title %}{{ document.title }} - EchoRead {% endblock %} 
-{% block content%}
+{% block title %}{{ document.title }} - EchoRead{% endblock %} 
+{% block content %}
 
 <main class="container py-4" id="main-content" tabindex="-1">
-  <p class="d-flex gap-2 align-items-center">
-    <i class="fa-solid fa-arrow-left-long" aria-hidden="true"></i
-    ><a href="{% url 'reader:document_list' %}"><span data-i18n="detail.back">Back to My Documents</span></a>
-  </p>
+  <div class="mb-3">
+    <a href="{% url 'reader:document_list' %}" class="btn-back">
+      <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+      <span data-i18n="detail.back">Back to My Documents</span>
+    </a>
+  </div>
 
   <h1 class="title">{{ document.title }}</h1>
-
-  <!-- Accessible status and shortcuts helper bar -->
-  <div class="reader-a11y-bar d-flex justify-content-between align-items-center p-2 px-3 mb-3 rounded bg-light border" role="region" aria-label="Reader status and shortcuts">
-    <div class="d-flex align-items-center gap-2 flex-wrap">
-      <i class="fa-solid fa-universal-access text-primary" aria-hidden="true"></i>
-      <span class="small fw-bold">Accessible Reader Active</span>
-      {% if pages %}
-      <span class="badge bg-primary text-white" id="current-page-badge" aria-live="polite">Page 1 of {{ pages|length }}</span>
-      {% endif %}
-    </div>
-    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#shortcutsModal" aria-label="Keyboard Shortcuts (Press ?)">
-      <i class="fa-solid fa-keyboard me-1" aria-hidden="true"></i> Shortcuts (?)
-    </button>
-  </div>
 
   <!-- #1 -->
   {% if pages %}
@@ -588,18 +563,3 @@ document.addEventListener("keydown", (event) => {
 });
 </script>
 {% endblock %}
-<!-- <!doctype html>
-<html lang="en"> -->
-
-<!-- <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ document.title }} - EchoRead</title>
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-</head>
-
-<body> -->
-
-<!-- </body>
-
-</html> -->

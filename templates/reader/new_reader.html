@@ -11,7 +11,12 @@
 
 {% block content %}
     <main class="container py-4" id="main-content" tabindex="-1">
-    <p class="d-flex align-items-center gap-2"><i class="fa-solid fa-arrow-left-long" aria-hidden="true"></i><a href="{% url 'reader:document_list' %}"><span data-i18n="upload.back">Back to My Documents</span></a></p>
+    <div class="mb-3">
+        <a href="{% url 'reader:document_list' %}" class="btn-back">
+            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+            <span data-i18n="upload.back">Back to My Documents</span>
+        </a>
+    </div>
 
     <h1 class="my-4" data-i18n="upload.title">New Reader</h1>
     <p data-i18n="upload.subtitle">Choose a PDF from your device. EchoRead will read it aloud to you.</p>

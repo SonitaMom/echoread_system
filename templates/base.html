@@ -19,7 +19,7 @@
     
     {% block js %}
     {% endblock  %}
-    <title>EchoRead - System </title>
+    <title>{% block title %}EchoRead - System{% endblock %}</title>
     <link rel="icon" type="image/svg+xml" href="/static/image/echoread-logo-animated.svg">
 </head>
 <body data-page="{% block page_num %}{% endblock %}">
@@ -34,24 +34,20 @@
   <!-- Live screen reader assertive announcement region -->
   <div id="sr-announcements" class="visually-hidden" aria-live="assertive" aria-atomic="true"></div>
 
-  <nav class="navbar nav-expand-lg fixed-top navbar-custom" aria-label="Main navigation">
-    <div class="container">
+  <nav class="navbar navbar-expand-lg fixed-top navbar-custom" aria-label="Main navigation">
+    <div class="container d-flex align-items-center justify-content-between flex-nowrap">
 
         <!-- Brand -->
-         <a href="{% url 'home' %}" class="navbar-brand d-flex align-items-center justify-content-start gap-2">
+         <a href="{% url 'home' %}" class="navbar-brand d-flex align-items-center justify-content-start gap-2 me-1 me-sm-3 flex-shrink-0">
             <object type="image/svg+xml" data="{% static 'image/echoread-logo-animated.svg' %}"  class="brand" aria-label="EchoRead Logo"></object>
             <span class="text-black nav-title">Echo<span class="text-primary">Read</span></span>
          </a>
 
          <!-- right-side: A11y controls, start reading, En->kh, account -->
-          <div class="d-flex align-items-center justify-content-end gap-2 flex-wrap">
+          <div class="d-flex align-items-center justify-content-end gap-1 gap-sm-2 flex-nowrap flex-shrink-0">
 
-            <!-- Accessibility quick controls toolbar -->
-            <div class="d-flex align-items-center gap-1 a11y-toolbar" role="toolbar" aria-label="Accessibility options">
-              <button class="btn btn-sm btn-outline-secondary a11y-tool-btn" type="button" id="toggleContrastBtn" aria-label="Toggle high contrast mode" title="High Contrast Mode">
-                <i class="fa-solid fa-circle-half-stroke" aria-hidden="true"></i>
-              </button>
-
+            <!-- Accessibility quick controls toolbar (hidden on mobile / small screens) -->
+            <div class="d-none d-md-flex align-items-center gap-1 a11y-toolbar" role="toolbar" aria-label="Accessibility options">
               <div class="btn-group btn-group-sm" role="group" aria-label="Text size adjustments">
                 <button type="button" class="btn btn-outline-secondary a11y-tool-btn" id="decreaseFontBtn" aria-label="Decrease text size" title="Smaller text">A-</button>
                 <button type="button" class="btn btn-outline-secondary a11y-tool-btn" id="resetFontBtn" aria-label="Reset text size" title="Default text size">A</button>
@@ -196,11 +192,6 @@
                   <td>Slow down reading voice</td>
                 </tr>
                 <tr>
-                  <td><strong>Toggle High Contrast</strong></td>
-                  <td><kbd class="px-2 py-1 bg-dark text-white rounded">Alt</kbd> + <kbd class="px-2 py-1 bg-dark text-white rounded">H</kbd></td>
-                  <td>Switch high contrast theme</td>
-                </tr>
-                <tr>
                   <td><strong>Toggle Shortcuts Guide</strong></td>
                   <td><kbd class="px-2 py-1 bg-dark text-white rounded">?</kbd> (Shift + /)</td>
                   <td>Show or hide this modal</td>
@@ -237,22 +228,11 @@
 
   // Accessibility Toolbar & Preferences
   document.addEventListener("DOMContentLoaded", () => {
-      // 1. High contrast mode
-      const contrastBtn = document.getElementById("toggleContrastBtn");
-      const savedContrast = localStorage.getItem("echoread_contrast");
-      if (savedContrast === "high") {
-          document.body.classList.add("theme-high-contrast");
-          contrastBtn?.setAttribute("aria-pressed", "true");
-      }
+      // Clean up any legacy contrast setting
+      localStorage.removeItem("echoread_contrast");
+      document.body.classList.remove("theme-high-contrast");
 
-      contrastBtn?.addEventListener("click", () => {
-          const isHigh = document.body.classList.toggle("theme-high-contrast");
-          localStorage.setItem("echoread_contrast", isHigh ? "high" : "normal");
-          contrastBtn.setAttribute("aria-pressed", isHigh ? "true" : "false");
-          window.announceToSR(isHigh ? "High contrast mode enabled" : "High contrast mode disabled");
-      });
-
-      // 2. Text sizing
+      // Text sizing
       const textSizes = ["normal", "lg", "xl"];
       let currentSizeIndex = 0;
       const savedSize = localStorage.getItem("echoread_text_size") || "normal";
@@ -316,13 +296,6 @@
               const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
               modal.toggle();
           }
-          return;
-      }
-
-      // Alt + H : Toggle high contrast
-      if (event.altKey && (event.key === "h" || event.key === "H")) {
-          event.preventDefault();
-          document.getElementById("toggleContrastBtn")?.click();
           return;
       }
 
