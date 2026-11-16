@@ -46,7 +46,8 @@
          <!-- right-side: A11y controls, start reading, En->kh, account -->
           <div class="d-flex align-items-center justify-content-end gap-1 gap-sm-2 flex-nowrap flex-shrink-0">
 
-            <!-- Accessibility quick controls toolbar (hidden on mobile / small screens) -->
+            <!-- Accessibility quick controls toolbar (commented out per user request, shortcuts remain active) -->
+            <!--
             <div class="d-none d-md-flex align-items-center gap-1 a11y-toolbar" role="toolbar" aria-label="Accessibility options">
               <div class="btn-group btn-group-sm" role="group" aria-label="Text size adjustments">
                 <button type="button" class="btn btn-outline-secondary a11y-tool-btn" id="decreaseFontBtn" aria-label="Decrease text size" title="Smaller text">A-</button>
@@ -58,6 +59,7 @@
                 <i class="fa-solid fa-keyboard" aria-hidden="true"></i> <span class="d-none d-lg-inline">Shortcuts</span>
               </button>
             </div>
+            -->
 
             <!-- switch language -->
             <div id="langAnnounce" class="visually-hidden" aria-live="polite"></div>
@@ -193,7 +195,7 @@
                 </tr>
                 <tr>
                   <td><strong>Toggle Shortcuts Guide</strong></td>
-                  <td><kbd class="px-2 py-1 bg-dark text-white rounded">?</kbd> (Shift + /)</td>
+                  <td><kbd class="px-2 py-1 bg-dark text-white rounded">?</kbd> or <kbd class="px-2 py-1 bg-dark text-white rounded">/</kbd></td>
                   <td>Show or hide this modal</td>
                 </tr>
                 <tr>
@@ -233,26 +235,24 @@
       document.body.classList.remove("theme-high-contrast");
 
       // Text sizing
-      const textSizes = ["normal", "lg", "xl"];
-      let currentSizeIndex = 0;
-      const savedSize = localStorage.getItem("echoread_text_size") || "normal";
-      applyTextSize(savedSize);
-
-      function applyTextSize(size) {
+      window.applyTextSize = function(size) {
           document.body.classList.remove("text-size-lg", "text-size-xl");
           if (size === "lg") document.body.classList.add("text-size-lg");
           if (size === "xl") document.body.classList.add("text-size-xl");
           localStorage.setItem("echoread_text_size", size);
-      }
+      };
+
+      const savedSize = localStorage.getItem("echoread_text_size") || "normal";
+      window.applyTextSize(savedSize);
 
       document.getElementById("increaseFontBtn")?.addEventListener("click", () => {
           const isXl = document.body.classList.contains("text-size-xl");
           const isLg = document.body.classList.contains("text-size-lg");
           if (!isLg && !isXl) {
-              applyTextSize("lg");
+              window.applyTextSize("lg");
               window.announceToSR("Text size set to Large");
           } else {
-              applyTextSize("xl");
+              window.applyTextSize("xl");
               window.announceToSR("Text size set to Extra Large");
           }
       });
@@ -260,16 +260,16 @@
       document.getElementById("decreaseFontBtn")?.addEventListener("click", () => {
           const isXl = document.body.classList.contains("text-size-xl");
           if (isXl) {
-              applyTextSize("lg");
+              window.applyTextSize("lg");
               window.announceToSR("Text size set to Large");
           } else {
-              applyTextSize("normal");
+              window.applyTextSize("normal");
               window.announceToSR("Text size reset to default");
           }
       });
 
       document.getElementById("resetFontBtn")?.addEventListener("click", () => {
-          applyTextSize("normal");
+          window.applyTextSize("normal");
           window.announceToSR("Text size reset to default");
       });
   });
@@ -288,13 +288,56 @@
           return;
       }
 
-      // ? : Toggle shortcuts modal
-      if (!event.ctrlKey && !event.altKey && !event.metaKey && (event.key === "?" || (event.shiftKey && event.key === "/"))) {
+      // ? or / : Toggle shortcuts modal
+      if (!event.ctrlKey && !event.altKey && !event.metaKey && (event.key === "?" || event.key === "/")) {
           event.preventDefault();
           const modalEl = document.getElementById("shortcutsModal");
           if (modalEl) {
               const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
               modal.toggle();
+          }
+          return;
+      }
+
+      // Alt + + / Alt + = : Increase text size
+      if (event.altKey && (event.key === "+" || event.key === "=")) {
+          event.preventDefault();
+          if (window.applyTextSize) {
+              const isXl = document.body.classList.contains("text-size-xl");
+              const isLg = document.body.classList.contains("text-size-lg");
+              if (!isLg && !isXl) {
+                  window.applyTextSize("lg");
+                  window.announceToSR("Text size set to Large");
+              } else {
+                  window.applyTextSize("xl");
+                  window.announceToSR("Text size set to Extra Large");
+              }
+          }
+          return;
+      }
+
+      // Alt + - : Decrease text size
+      if (event.altKey && event.key === "-") {
+          event.preventDefault();
+          if (window.applyTextSize) {
+              const isXl = document.body.classList.contains("text-size-xl");
+              if (isXl) {
+                  window.applyTextSize("lg");
+                  window.announceToSR("Text size set to Large");
+              } else {
+                  window.applyTextSize("normal");
+                  window.announceToSR("Text size reset to default");
+              }
+          }
+          return;
+      }
+
+      // Alt + 0 : Reset text size
+      if (event.altKey && event.key === "0") {
+          event.preventDefault();
+          if (window.applyTextSize) {
+              window.applyTextSize("normal");
+              window.announceToSR("Text size reset to default");
           }
           return;
       }

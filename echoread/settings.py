@@ -9,7 +9,7 @@ import os
 load_dotenv(override=True)
 
 LOGIN_URL = "login"
-LOGIN_REDIRECT_URL = "home"
+LOGIN_REDIRECT_URL = "reader:document_list"
 LOGOUT_REDIRECT_URL = "login"
 
 BASE_DIR = Path(__file__).resolve().parent.parent
